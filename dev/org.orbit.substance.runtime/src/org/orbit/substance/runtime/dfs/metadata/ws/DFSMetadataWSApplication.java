@@ -13,7 +13,7 @@ public class DFSMetadataWSApplication extends OrbitWSApplication {
 	 * @param feature
 	 */
 	public DFSMetadataWSApplication(DFSMetadataService service, int feature) {
-		super(service.getContextRoot(), feature);
+		super(service, feature);
 		adapt(DFSMetadataService.class, service);
 		adapt(WebServiceAware.class, service);
 

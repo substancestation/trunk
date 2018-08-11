@@ -9,7 +9,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.orbit.platform.sdk.token.OrbitRoles;
 import org.orbit.substance.runtime.dfs.metadata.service.DFSMetadataService;
+import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -23,6 +25,7 @@ import org.origin.common.rest.server.AbstractWSApplicationResource;
  * URL (POST): {scheme}://{host}:{port}/{contextRoot}/request (body parameter: Request)
  * 
  */
+@Secured(roles = { OrbitRoles.SYSTEM_COMPONENT, OrbitRoles.USER })
 @javax.ws.rs.Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class DFSMetadataWSResource extends AbstractWSApplicationResource {

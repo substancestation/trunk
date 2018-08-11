@@ -108,7 +108,7 @@ public class DFSMetadataServiceAdapter {
 		editPolicies.install(this.editPolicy);
 
 		// Start web app
-		this.webApp = new DFSMetadataWSApplication(service, OrbitFeatureConstants.PING | OrbitFeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
+		this.webApp = new DFSMetadataWSApplication(service, OrbitFeatureConstants.PING | OrbitFeatureConstants.NAME | OrbitFeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
 		this.webApp.start(bundleContext);
 
 		// Start indexing timer

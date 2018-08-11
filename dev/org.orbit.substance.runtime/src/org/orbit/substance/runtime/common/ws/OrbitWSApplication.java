@@ -1,16 +1,17 @@
 package org.orbit.substance.runtime.common.ws;
 
 import org.origin.common.rest.server.AbstractJerseyWSApplication;
+import org.origin.common.service.WebServiceAware;
 
 public class OrbitWSApplication extends AbstractJerseyWSApplication {
 
 	/**
 	 * 
-	 * @param contextRoot
+	 * @param webServiceAware
 	 * @param feature
 	 */
-	public OrbitWSApplication(String contextRoot, int feature) {
-		super(contextRoot, feature);
+	public OrbitWSApplication(WebServiceAware webServiceAware, int feature) {
+		super(webServiceAware, feature);
 
 		// if (hasFeature(OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER)) {
 		// register(OrbitAuthTokenRequestFilter.class);
