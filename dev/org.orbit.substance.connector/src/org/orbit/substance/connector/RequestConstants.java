@@ -1,4 +1,4 @@
-package org.orbit.substance.runtime;
+package org.orbit.substance.connector;
 
 public interface RequestConstants {
 

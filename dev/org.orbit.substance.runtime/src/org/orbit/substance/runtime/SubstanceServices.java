@@ -4,8 +4,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexProvider;
-import org.orbit.substance.runtime.dfs.metadata.service.DFSMetadataService;
-import org.orbit.substance.runtime.dfs.metadata.ws.DFSMetadataServiceAdapter;
+import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
+import org.orbit.substance.runtime.dfs.filesystem.ws.FileSystemServiceAdapter;
 import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.ServiceConnectorAdapter;
 import org.origin.common.util.PropertyUtil;
@@ -26,7 +26,7 @@ public class SubstanceServices {
 	protected Map<Object, Object> properties;
 	protected ServiceConnectorAdapter<IndexProvider> indexProviderConnector;
 
-	protected DFSMetadataServiceAdapter dfsMetadataServiceAdapter;
+	protected FileSystemServiceAdapter fileSystemServiceAdapter;
 
 	/**
 	 * 
@@ -64,8 +64,8 @@ public class SubstanceServices {
 	 */
 	public void doStart(BundleContext bundleContext) {
 		// Start service adapters
-		this.dfsMetadataServiceAdapter = new DFSMetadataServiceAdapter(this.properties);
-		this.dfsMetadataServiceAdapter.start(bundleContext);
+		this.fileSystemServiceAdapter = new FileSystemServiceAdapter(this.properties);
+		this.fileSystemServiceAdapter.start(bundleContext);
 	}
 
 	/**
@@ -74,14 +74,14 @@ public class SubstanceServices {
 	 */
 	public void doStop(BundleContext bundleContext) {
 		// Stop service adapters
-		if (this.dfsMetadataServiceAdapter != null) {
-			this.dfsMetadataServiceAdapter.stop(bundleContext);
-			this.dfsMetadataServiceAdapter = null;
+		if (this.fileSystemServiceAdapter != null) {
+			this.fileSystemServiceAdapter.stop(bundleContext);
+			this.fileSystemServiceAdapter = null;
 		}
 	}
 
-	public DFSMetadataService getDFSMetadataService() {
-		return (this.dfsMetadataServiceAdapter != null) ? this.dfsMetadataServiceAdapter.getService() : null;
+	public FileSystemService getFileSystemService() {
+		return (this.fileSystemServiceAdapter != null) ? this.fileSystemServiceAdapter.getService() : null;
 	}
 
 }

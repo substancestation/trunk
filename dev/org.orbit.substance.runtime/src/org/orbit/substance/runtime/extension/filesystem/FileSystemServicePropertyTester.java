@@ -1,0 +1,36 @@
+package org.orbit.substance.runtime.extension.filesystem;
+
+import java.util.Hashtable;
+import java.util.Map;
+
+import org.orbit.platform.sdk.IPlatformContext;
+import org.orbit.substance.runtime.SubstanceConstants;
+import org.origin.common.extensions.condition.IPropertyTester;
+import org.origin.common.util.PropertyUtil;
+import org.osgi.framework.BundleContext;
+
+public class FileSystemServicePropertyTester implements IPropertyTester {
+
+	public static String ID = "org.orbit.substance.runtime.FileSystemServicePropertyTester";
+
+	public static FileSystemServicePropertyTester INSTANCE = new FileSystemServicePropertyTester();
+
+	@Override
+	public boolean accept(Object context, Object source, Object target, Map<String, Object> args) {
+		BundleContext bundleContext = null;
+		if (context instanceof IPlatformContext) {
+			IPlatformContext platformContext = (IPlatformContext) context;
+			bundleContext = platformContext.getBundleContext();
+		}
+		if (bundleContext != null) {
+			Map<Object, Object> properties = new Hashtable<Object, Object>();
+			PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.FILE_SYSTEM_AUTOSTART);
+			String autoStart = (String) properties.get(SubstanceConstants.FILE_SYSTEM_AUTOSTART);
+			if ("true".equalsIgnoreCase(autoStart)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+}
