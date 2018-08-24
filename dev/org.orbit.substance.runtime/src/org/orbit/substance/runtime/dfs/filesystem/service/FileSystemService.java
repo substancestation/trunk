@@ -1,19 +1,19 @@
 package org.orbit.substance.runtime.dfs.filesystem.service;
 
-import org.origin.common.rest.editpolicy.ServiceEditPoliciesAware;
+import org.origin.common.rest.editpolicy.EditPoliciesAwareService;
 import org.origin.common.rest.server.ServerException;
 import org.origin.common.service.WebServiceAware;
 
-public interface FileSystemService extends WebServiceAware, ServiceEditPoliciesAware {
+public interface FileSystemService extends WebServiceAware, EditPoliciesAwareService {
 
-	String getUUID();
+	String getDfsId();
 
 	/**
 	 * 
-	 * @param accessToken
+	 * @param accountId
 	 * @return
-	 * @throws Exception
+	 * @throws ServerException
 	 */
-	FileSystem getFileSystem(String accessToken) throws ServerException;
+	FileSystem getFileSystem(String accountId) throws ServerException;
 
 }

@@ -1,12 +1,7 @@
 package org.orbit.substance.runtime.model.dfs;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.origin.common.util.StringUtil;
 
-@XmlRootElement
 public class Path implements Comparable<Path> {
 
 	public static final Path ROOT = new Path("/");
@@ -17,7 +12,6 @@ public class Path implements Comparable<Path> {
 
 	private static final String[] EMPTY_STRINGS = new String[] {};
 
-	@XmlElement
 	protected String pathString;
 
 	/**
@@ -127,7 +121,6 @@ public class Path implements Comparable<Path> {
 	 * 
 	 * @return
 	 */
-	@XmlElement
 	public String getPathString() {
 		return this.pathString;
 	}
@@ -139,7 +132,6 @@ public class Path implements Comparable<Path> {
 	 *            start index of path segment, inclusive
 	 * @return
 	 */
-	@XmlTransient
 	public String getPathString(int startIndex) {
 		if (isRoot() || isEmpty()) {
 			return null;
@@ -163,7 +155,6 @@ public class Path implements Comparable<Path> {
 	 *            end index of path segment, exclusive
 	 * @return
 	 */
-	@XmlTransient
 	public String getPathString(int startIndex, int endIndex) {
 		if (isRoot() || isEmpty()) {
 			return null;
@@ -205,7 +196,6 @@ public class Path implements Comparable<Path> {
 	 * 
 	 * @return
 	 */
-	@XmlTransient
 	public String getParentPathString() {
 		Path parentPath = getParent();
 		if (parentPath != null) {
@@ -219,7 +209,6 @@ public class Path implements Comparable<Path> {
 	 * 
 	 * @return return true when the path is "/". return false otherwise.
 	 */
-	@XmlTransient
 	public boolean isRoot() {
 		return (SEPARATOR.equals(this.pathString)) ? true : false;
 	}
@@ -229,7 +218,6 @@ public class Path implements Comparable<Path> {
 	 * 
 	 * @return return true when the path has 0 path segments. return false when the path has 1 or more path segments.
 	 */
-	@XmlTransient
 	public boolean isEmpty() {
 		return (getSegments().length == 0) ? true : false;
 	}
@@ -239,7 +227,6 @@ public class Path implements Comparable<Path> {
 	 * 
 	 * @return
 	 */
-	@XmlTransient
 	public String[] getSegments() {
 		String[] segments = null;
 		if (this.pathString != null) {
@@ -262,7 +249,6 @@ public class Path implements Comparable<Path> {
 		return segments;
 	}
 
-	@XmlTransient
 	public String getLastSegment() {
 		String[] segments = getSegments();
 		if (segments != null && segments.length > 0) {
@@ -271,7 +257,6 @@ public class Path implements Comparable<Path> {
 		return null;
 	}
 
-	@XmlTransient
 	public Path getParent() {
 		if (pathString.length() == 0) {
 			// path is empty --- empty path --- doesn't have parent path.

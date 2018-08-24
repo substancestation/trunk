@@ -2,20 +2,25 @@ package org.orbit.substance.runtime.dfs.filesystem.service;
 
 import java.io.IOException;
 
+import org.orbit.substance.runtime.model.dfs.FileMetadata;
 import org.orbit.substance.runtime.model.dfs.Path;
 
 public interface FileSystem {
 
-	// String getUUID();
+	FileMetadata getMetaData(Path path);
 
-	Path[] listRoots();
+	Path[] listRoots() throws IOException;
 
-	Path[] listFiles(Path parent);
+	Path[] listFiles(Path parent) throws IOException;
 
-	boolean exists(Path path);
+	boolean exists(Path path) throws IOException;
 
-	boolean isDirectory(Path path);
+	boolean isDirectory(Path path) throws IOException;
+
+	boolean createNewFile(Path path) throws IOException;
 
 	boolean mkdirs(Path path) throws IOException;
+
+	boolean delete(Path path) throws IOException;
 
 }

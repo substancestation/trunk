@@ -1,13 +1,5 @@
 package org.orbit.substance.runtime.model.dfs;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-/**
- * DTO for File meta data.
- *
- */
-@XmlRootElement
 public class FileMetadata {
 
 	public static final String FILEID = "fileId";
@@ -24,37 +16,23 @@ public class FileMetadata {
 	public static final String LENGTH = "length";
 	public static final String LAST_MODIFIED = "lastModified";
 
-	@XmlElement
 	protected int fileId;
-	@XmlElement
 	protected int parentFileId;
-	@XmlElement
 	protected String name;
-	@XmlElement
 	protected boolean isDirectory;
-	@XmlElement
 	protected boolean isHidden;
-	@XmlElement
 	protected String path;
-	@XmlElement
 	protected String parentPath;
-	@XmlElement
 	protected boolean exists;
-	@XmlElement
 	protected boolean canExecute;
-	@XmlElement
 	protected boolean canRead;
-	@XmlElement
 	protected boolean canWrite;
-	@XmlElement
 	protected long length;
-	@XmlElement
 	protected long lastModified;
 
 	public FileMetadata() {
 	}
 
-	@XmlElement
 	public int getFileId() {
 		return fileId;
 	}
@@ -63,7 +41,6 @@ public class FileMetadata {
 		this.fileId = fileId;
 	}
 
-	@XmlElement
 	public int getParentFileId() {
 		return parentFileId;
 	}
@@ -72,7 +49,6 @@ public class FileMetadata {
 		this.parentFileId = parentFileId;
 	}
 
-	@XmlElement
 	public String getName() {
 		return name;
 	}
@@ -81,7 +57,6 @@ public class FileMetadata {
 		this.name = name;
 	}
 
-	@XmlElement
 	public boolean isDirectory() {
 		return isDirectory;
 	}
@@ -90,7 +65,6 @@ public class FileMetadata {
 		this.isDirectory = isDirectory;
 	}
 
-	@XmlElement
 	public boolean isHidden() {
 		return isHidden;
 	}
@@ -99,7 +73,6 @@ public class FileMetadata {
 		this.isHidden = isHidden;
 	}
 
-	@XmlElement
 	public String getPath() {
 		return path;
 	}
@@ -108,7 +81,6 @@ public class FileMetadata {
 		this.path = path;
 	}
 
-	@XmlElement
 	public String getParentPath() {
 		return parentPath;
 	}
@@ -117,7 +89,6 @@ public class FileMetadata {
 		this.parentPath = parentPath;
 	}
 
-	@XmlElement
 	public boolean exists() {
 		return exists;
 	}
@@ -126,7 +97,6 @@ public class FileMetadata {
 		this.exists = exists;
 	}
 
-	@XmlElement
 	public boolean canExecute() {
 		return canExecute;
 	}
@@ -135,7 +105,6 @@ public class FileMetadata {
 		this.canExecute = canExecute;
 	}
 
-	@XmlElement
 	public boolean canRead() {
 		return canRead;
 	}
@@ -144,7 +113,6 @@ public class FileMetadata {
 		this.canRead = canRead;
 	}
 
-	@XmlElement
 	public boolean canWrite() {
 		return canWrite;
 	}
@@ -153,7 +121,6 @@ public class FileMetadata {
 		this.canWrite = canWrite;
 	}
 
-	@XmlElement
 	public long getLength() {
 		return length;
 	}
@@ -162,7 +129,6 @@ public class FileMetadata {
 		this.length = length;
 	}
 
-	@XmlElement
 	public long getLastModified() {
 		return lastModified;
 	}

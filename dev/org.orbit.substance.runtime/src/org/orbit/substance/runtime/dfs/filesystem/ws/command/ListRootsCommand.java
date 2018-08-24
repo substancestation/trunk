@@ -6,12 +6,12 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfs.PathDTO;
-import org.orbit.substance.runtime.RequestConstants;
-import org.orbit.substance.runtime.common.util.ModelConverter;
 import org.orbit.substance.runtime.dfs.filesystem.service.FileSystem;
 import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
 import org.orbit.substance.runtime.model.dfs.Path;
+import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -52,7 +52,7 @@ public class ListRootsCommand extends AbstractFileSystemCommand<FileSystemServic
 
 		List<PathDTO> pathDTOs = new ArrayList<PathDTO>();
 		for (Path path : rootFiles) {
-			PathDTO pathDTO = ModelConverter.FILE_SYSTEM.toDTO(path);
+			PathDTO pathDTO = ModelConverter.File_System.toDTO(path);
 			if (pathDTO != null) {
 				pathDTOs.add(pathDTO);
 			}

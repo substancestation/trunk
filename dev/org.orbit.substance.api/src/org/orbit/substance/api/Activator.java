@@ -1,5 +1,6 @@
 package org.orbit.substance.api;
 
+import org.orbit.substance.api.util.SubstanceClients;
 import org.origin.common.osgi.AbstractBundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -22,11 +23,14 @@ public class Activator extends AbstractBundleActivator {
 
 		Activator.instance = this;
 
+		SubstanceClients.getInstance().start(bundleContext);
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		LOG.debug("stop()");
+
+		SubstanceClients.getInstance().stop(bundleContext);
 
 		Activator.instance = null;
 		super.stop(bundleContext);

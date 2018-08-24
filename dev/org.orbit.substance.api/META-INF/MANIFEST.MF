@@ -11,5 +11,5 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.origin.common;bundle-version="[1.0.0,2.0.0)",
  org.origin.common.extensions;bundle-version="[1.0.0,2.0.0)"
 Export-Package: org.orbit.substance.api;version="1.0.0",
- org.orbit.substance.api.dfs.datastorage;version="1.0.0",
+ org.orbit.substance.api.dfs.filecontent;version="1.0.0",
  org.orbit.substance.api.dfs.filesystem;version="1.0.0"

@@ -35,12 +35,12 @@ public class FileSystemServiceTimer extends ServiceIndexTimer<FileSystemService>
 	public IndexItem getIndex(IndexProvider indexProvider, FileSystemService service) throws IOException {
 		String name = service.getName();
 
-		return indexProvider.getIndexItem(SubstanceConstants.DFS_METADATA_INDEXER_ID, SubstanceConstants.DFS_METADATA_TYPE, name);
+		return indexProvider.getIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE, name);
 	}
 
 	@Override
 	public IndexItem addIndex(IndexProvider indexProvider, FileSystemService service) throws IOException {
-		String uuid = service.getUUID();
+		String dfsId = service.getDfsId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();
@@ -48,18 +48,18 @@ public class FileSystemServiceTimer extends ServiceIndexTimer<FileSystemService>
 		Date now = new Date();
 
 		Map<String, Object> props = new Hashtable<String, Object>();
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_UUID, uuid);
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_NAME, name);
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_HOST_URL, hostURL);
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_CONTEXT_ROOT, contextRoot);
+		props.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
+		props.put(SubstanceConstants.IDX_PROP__DFS__NAME, name);
+		props.put(SubstanceConstants.IDX_PROP__DFS__HOST_URL, hostURL);
+		props.put(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT, contextRoot);
 		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
 
-		return indexProvider.addIndexItem(SubstanceConstants.DFS_METADATA_INDEXER_ID, SubstanceConstants.DFS_METADATA_TYPE, name, props);
+		return indexProvider.addIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE, name, props);
 	}
 
 	@Override
 	public void updateIndex(IndexProvider indexProvider, FileSystemService service, IndexItem indexItem) throws IOException {
-		String uuid = service.getUUID();
+		String dfsId = service.getDfsId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();
@@ -68,20 +68,20 @@ public class FileSystemServiceTimer extends ServiceIndexTimer<FileSystemService>
 
 		Integer indexItemId = indexItem.getIndexItemId();
 		Map<String, Object> props = new Hashtable<String, Object>();
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_UUID, uuid);
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_NAME, name);
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_HOST_URL, hostURL);
-		props.put(SubstanceConstants.IDX_PROP__FILE_SYSTEM_CONTEXT_ROOT, contextRoot);
+		props.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
+		props.put(SubstanceConstants.IDX_PROP__DFS__NAME, name);
+		props.put(SubstanceConstants.IDX_PROP__DFS__HOST_URL, hostURL);
+		props.put(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT, contextRoot);
 		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
 
-		indexProvider.setProperties(SubstanceConstants.DFS_METADATA_INDEXER_ID, indexItemId, props);
+		indexProvider.setProperties(SubstanceConstants.IDX__DFS__INDEXER_ID, indexItemId, props);
 	}
 
 	@Override
 	public void removeIndex(IndexProvider indexProvider, IndexItem indexItem) throws IOException {
 		Integer indexItemId = indexItem.getIndexItemId();
 
-		indexProvider.removeIndexItem(SubstanceConstants.DFS_METADATA_INDEXER_ID, indexItemId);
+		indexProvider.removeIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, indexItemId);
 	}
 
 }

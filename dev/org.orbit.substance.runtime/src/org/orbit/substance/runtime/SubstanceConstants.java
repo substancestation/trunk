@@ -5,101 +5,111 @@ public class SubstanceConstants {
 	// ----------------------------------------------------------------------------------------
 	// Global
 	// ----------------------------------------------------------------------------------------
+	// Configuration property names
 	public static String ORBIT_HOST_URL = "orbit.host.url";
 	public static String ORBIT_INDEX_SERVICE_URL = "orbit.index_service.url";
 
-	// index item properties
+	// Index item property names
 	public static String IDX_PROP__LAST_HEARTBEAT_TIME = "last_heartbeat_time";
 
 	// ----------------------------------------------------------------------------------------
-	// File System service
+	// Distributed file system service
 	// ----------------------------------------------------------------------------------------
-	public static String FILE_SYSTEM_UUID = "substance.file_system.uuid";
-	public static String FILE_SYSTEM_NAME = "substance.file_system.name";
-	public static String FILE_SYSTEM_HOST_URL = "substance.file_system.host.url";
-	public static String FILE_SYSTEM_CONTEXT_ROOT = "substance.file_system.context_root";
-	public static String FILE_SYSTEM_JDBC_DRIVER = "substance.file_system.jdbc.driver";
-	public static String FILE_SYSTEM_JDBC_URL = "substance.file_system.jdbc.url";
-	public static String FILE_SYSTEM_JDBC_USERNAME = "substance.file_system.jdbc.username";
-	public static String FILE_SYSTEM_JDBC_PASSWORD = "substance.file_system.jdbc.password";
-	public static String FILE_SYSTEM_AUTOSTART = "substance.file_system.autostart";
+	// Configuration property names
+	public static String DFS__AUTOSTART = "substance.dfs.autostart";
+	public static String DFS__ID = "substance.dfs.id";
+	public static String DFS__NAME = "substance.dfs.name";
+	public static String DFS__HOST_URL = "substance.dfs.host.url";
+	public static String DFS__CONTEXT_ROOT = "substance.dfs.context_root";
+	public static String DFS__JDBC_DRIVER = "substance.dfs.jdbc.driver";
+	public static String DFS__JDBC_URL = "substance.dfs.jdbc.url";
+	public static String DFS__JDBC_USERNAME = "substance.dfs.jdbc.username";
+	public static String DFS__JDBC_PASSWORD = "substance.dfs.jdbc.password";
 
-	// index item values
-	public static String DFS_METADATA_INDEXER_ID = "substance.file_system.indexer";
-	public static String DFS_METADATA_TYPE = "FileSystem";
+	// EditPolicy values
+	public static String DFS__EDITPOLICY_ID = "substance.dfs.editpolicy";
+	public static String DFS__SERVICE_NAME = "substance.dfs.service";
 
-	// index item properties
-	public static String IDX_PROP__FILE_SYSTEM_UUID = "file_system.uuid";
-	public static String IDX_PROP__FILE_SYSTEM_NAME = "file_system.name";
-	public static String IDX_PROP__FILE_SYSTEM_HOST_URL = "file_system.host.url";
-	public static String IDX_PROP__FILE_SYSTEM_CONTEXT_ROOT = "file_system.context_root";
+	// Index item properties
+	public static String IDX_PROP__DFS__ID = "dfs.id";
+	public static String IDX_PROP__DFS__NAME = "dfs.name";
+	public static String IDX_PROP__DFS__HOST_URL = "dfs.host.url";
+	public static String IDX_PROP__DFS__CONTEXT_ROOT = "dfs.context_root";
 
-	// EditPolicy
-	public static String DFS_FILE_SYSTEM_EDITPOLICY_ID = "substance.file_system.editpolicy";
-	public static String DFS_FILE_SYSTEM_SERVICE_NAME = "substance.file_system.service";
-
-	// ----------------------------------------------------------------------------------------
-	// Data Storage service
-	// ----------------------------------------------------------------------------------------
-	public static String DATA_STORAGE_UUID = "substance.data_storage.uuid";
-	public static String DATA_STORAGE_NAME = "substance.data_storage.name";
-	public static String DATA_STORAGE_HOST_URL = "substance.data_storage.host.url";
-	public static String DATA_STORAGE_CONTEXT_ROOT = "substance.data_storage.context_root";
-	public static String DATA_STORAGE_JDBC_DRIVER = "substance.data_storage.jdbc.driver";
-	public static String DATA_STORAGE_JDBC_URL = "substance.data_storage.jdbc.url";
-	public static String DATA_STORAGE_JDBC_USERNAME = "substance.data_storage.jdbc.username";
-	public static String DATA_STORAGE_JDBC_PASSWORD = "substance.data_storage.jdbc.password";
-	public static String DATA_STORAGE_AUTOSTART = "substance.data_storage.autostart";
-
-	// index item values
-	public static String DATA_STORAGE_INDEXER_ID = "substance.data_storage.indexer";
-	public static String DATA_STORAGE_TYPE = "DataStorage";
-
-	// index item properties
-	public static String IDX_PROP__DATA_STORAGE_UUID = "data_storage.uuid";
-	public static String IDX_PROP__DATA_STORAGE_NAME = "data_storage.name";
-	public static String IDX_PROP__DATA_STORAGE_HOST_URL = "data_storage.host.url";
-	public static String IDX_PROP__DATA_STORAGE_CONTEXT_ROOT = "data_storage.context_root";
-
-	// EditPolicy
-	public static String DATA_STORAGE_EDITPOLICY_ID = "substance.data_storage.editpolicy";
+	// Index item values
+	public static String IDX__DFS__INDEXER_ID = "substance.dfs.indexer";
+	public static String IDX__DFS__TYPE = "DFS";
 
 	// ----------------------------------------------------------------------------------------
-	// DMS Metadata
+	// Distributed file system volume service
 	// ----------------------------------------------------------------------------------------
-	public static String DMS_METADATA_UUID = "substance.dms_metadata.uuid";
-	public static String DMS_METADATA_HOST_URL = "substance.dms_metadata.host.url";
-	public static String DMS_METADATA_NAME = "substance.dms_metadata.name";
-	public static String DMS_METADATA_CONTEXT_ROOT = "substance.dms_metadata.context_root";
-	public static String DMS_METADATA_AUTOSTART = "substance.dms_metadata.autostart";
+	// Configuration property names
+	public static String DFS_VOLUME__AUTOSTART = "substance.dfs_volume.autostart";
+	public static String DFS_VOLUME__DFS_ID = "substance.dfs_volume.dfs_id";
+	public static String DFS_VOLUME__ID = "substance.dfs_volume.id";
+	public static String DFS_VOLUME__NAME = "substance.dfs_volume.name";
+	public static String DFS_VOLUME__HOST_URL = "substance.dfs_volume.host.url";
+	public static String DFS_VOLUME__CONTEXT_ROOT = "substance.dfs_volume.context_root";
+	public static String DFS_VOLUME__JDBC_DRIVER = "substance.dfs_volume.jdbc.driver";
+	public static String DFS_VOLUME__JDBC_URL = "substance.dfs_volume.jdbc.url";
+	public static String DFS_VOLUME__JDBC_USERNAME = "substance.dfs_volume.jdbc.username";
+	public static String DFS_VOLUME__JDBC_PASSWORD = "substance.dfs_volume.jdbc.password";
+	public static String DFS_VOLUME__VOLUME_CAPACITY_GB = "substance.dfs_volume.volume_capacity_gb";
+	public static String DFS_VOLUME__BLOCK_CAPACITY_MB = "substance.dfs_volume.block_capacity_mb";
 
-	// index item values
-	public static String DMS_METADATA_INDEXER_ID = "substance.dms_metadata.indexer";
-	public static String DMS_METADATA_TYPE = "DMSMetadata";
+	// EditPolicy values
+	public static String DFS_VOLUME__EDITPOLICY_ID = "substance.dfs_volume.editpolicy";
+	public static String DFS_VOLUME__SERVICE_NAME = "substance.dfs_volume.service";
 
-	// index item properties
-	public static String IDX_PROP__DMS_METADATA_NAME = "dms_metadata.name";
-	public static String IDX_PROP__DMS_METADATA_HOST_URL = "dms_metadata.host.url";
-	public static String IDX_PROP__DMS_METADATA_CONTEXT_ROOT = "dms_metadata.context_root";
-	public static String IDX_PROP__DMS_METADATA_HOME = "dms_metadata.home";
+	// Index item properties
+	public static String IDX_PROP__DFS_VOLUME__DFS_ID = "dfs_volume.dfs_id";
+	public static String IDX_PROP__DFS_VOLUME__ID = "dfs_volume.id";
+	public static String IDX_PROP__DFS_VOLUME__NAME = "dfs_volume.name";
+	public static String IDX_PROP__DFS_VOLUME__HOST_URL = "dfs_volume.host.url";
+	public static String IDX_PROP__DFS_VOLUME__CONTEXT_ROOT = "dfs_volume.context_root";
+	public static String IDX_PROP__DFS_VOLUME__VOLUME_CAPACITY = "dfs_volume.volume_capacity";
+	public static String IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY = "dfs_volume.block_capacity";
 
-	// ----------------------------------------------------------------------------------------
-	// DMS Content
-	// ----------------------------------------------------------------------------------------
-	public static String DMS_CONTENT_UUID = "substance.dms_content.uuid";
-	public static String DMS_CONTENT_HOST_URL = "substance.dms_content.host.url";
-	public static String DMS_CONTENT_NAME = "substance.dms_content.name";
-	public static String DMS_CONTENT_CONTEXT_ROOT = "substance.dms_content.context_root";
-	public static String DMS_CONTENT_AUTOSTART = "substance.dms_content.autostart";
+	// Index item values
+	public static String IDX__DFS_VOLUME__INDEXER_ID = "substance.dfs_volume.indexer";
+	public static String IDX__DFS_VOLUME__TYPE = "Volume";
 
-	// index item values
-	public static String DMS_CONTENT_INDEXER_ID = "substance.dms_content.indexer";
-	public static String DMS_CONTENT_TYPE = "DMSContent";
-
-	// index item properties
-	public static String IDX_PROP__DMS_CONTENT_NAME = "dms_content.name";
-	public static String IDX_PROP__DMS_CONTENT_HOST_URL = "dms_content.host.url";
-	public static String IDX_PROP__DMS_CONTENT_CONTEXT_ROOT = "dms_content.context_root";
-	public static String IDX_PROP__DMS_CONTENT_HOME = "dms_content.home";
+	// // ----------------------------------------------------------------------------------------
+	// // DMS Metadata
+	// // ----------------------------------------------------------------------------------------
+	// public static String DMS_METADATA_UUID = "substance.dms_metadata.uuid";
+	// public static String DMS_METADATA_HOST_URL = "substance.dms_metadata.host.url";
+	// public static String DMS_METADATA_NAME = "substance.dms_metadata.name";
+	// public static String DMS_METADATA_CONTEXT_ROOT = "substance.dms_metadata.context_root";
+	// public static String DMS_METADATA_AUTOSTART = "substance.dms_metadata.autostart";
+	//
+	// // index item values
+	// public static String DMS_METADATA_INDEXER_ID = "substance.dms_metadata.indexer";
+	// public static String DMS_METADATA_TYPE = "DMSMetadata";
+	//
+	// // index item properties
+	// public static String IDX_PROP__DMS_METADATA_NAME = "dms_metadata.name";
+	// public static String IDX_PROP__DMS_METADATA_HOST_URL = "dms_metadata.host.url";
+	// public static String IDX_PROP__DMS_METADATA_CONTEXT_ROOT = "dms_metadata.context_root";
+	// public static String IDX_PROP__DMS_METADATA_HOME = "dms_metadata.home";
+	//
+	// // ----------------------------------------------------------------------------------------
+	// // DMS Content
+	// // ----------------------------------------------------------------------------------------
+	// public static String DMS_CONTENT_UUID = "substance.dms_content.uuid";
+	// public static String DMS_CONTENT_HOST_URL = "substance.dms_content.host.url";
+	// public static String DMS_CONTENT_NAME = "substance.dms_content.name";
+	// public static String DMS_CONTENT_CONTEXT_ROOT = "substance.dms_content.context_root";
+	// public static String DMS_CONTENT_AUTOSTART = "substance.dms_content.autostart";
+	//
+	// // index item values
+	// public static String DMS_CONTENT_INDEXER_ID = "substance.dms_content.indexer";
+	// public static String DMS_CONTENT_TYPE = "DMSContent";
+	//
+	// // index item properties
+	// public static String IDX_PROP__DMS_CONTENT_NAME = "dms_content.name";
+	// public static String IDX_PROP__DMS_CONTENT_HOST_URL = "dms_content.host.url";
+	// public static String IDX_PROP__DMS_CONTENT_CONTEXT_ROOT = "dms_content.context_root";
+	// public static String IDX_PROP__DMS_CONTENT_HOME = "dms_content.home";
 
 }

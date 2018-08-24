@@ -10,10 +10,10 @@ import org.orbit.platform.sdk.PlatformSDKActivator;
 import org.orbit.platform.sdk.util.ExtensibleServiceEditPolicy;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.common.ws.OrbitFeatureConstants;
-import org.orbit.substance.runtime.dfs.filesystem.service.FileSystem;
 import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
 import org.origin.common.extensions.core.IExtension;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
+import org.origin.common.rest.server.FeatureConstants;
 import org.origin.common.rest.util.LifecycleAware;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -106,19 +106,19 @@ public class FileSystemServiceAdapter implements LifecycleAware {
 	 */
 	protected void doStart(BundleContext bundleContext, FileSystemService service) {
 		// Install edit policies
-		this.editPolicy = new ExtensibleServiceEditPolicy(SubstanceConstants.DFS_FILE_SYSTEM_EDITPOLICY_ID, FileSystemService.class, SubstanceConstants.DFS_FILE_SYSTEM_SERVICE_NAME);
+		this.editPolicy = new ExtensibleServiceEditPolicy(SubstanceConstants.DFS__EDITPOLICY_ID, FileSystemService.class, SubstanceConstants.DFS__SERVICE_NAME);
 		ServiceEditPolicies editPolicies = service.getEditPolicies();
 		editPolicies.uninstall(this.editPolicy.getId());
 		editPolicies.install(this.editPolicy);
 
 		// Start web app
-		this.webApp = new FileSystemWSApplication(service, OrbitFeatureConstants.PING | OrbitFeatureConstants.NAME | OrbitFeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
+		this.webApp = new FileSystemWSApplication(service, FeatureConstants.METADATA | FeatureConstants.NAME | FeatureConstants.PING | FeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
 		this.webApp.start(bundleContext);
 
 		// Start indexing timer
 		IndexProvider indexProvider = getIndexProvider();
 
-		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.DFS_METADATA_INDEXER_ID);
+		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS__INDEXER_ID);
 		if (extension != null) {
 			@SuppressWarnings("unchecked")
 			ServiceIndexTimerFactory<FileSystemService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);

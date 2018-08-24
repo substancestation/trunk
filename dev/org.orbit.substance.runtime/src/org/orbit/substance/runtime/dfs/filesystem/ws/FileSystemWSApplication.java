@@ -3,7 +3,8 @@ package org.orbit.substance.runtime.dfs.filesystem.ws;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.orbit.substance.runtime.common.ws.OrbitWSApplication;
 import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
-import org.origin.common.service.WebServiceAware;
+import org.origin.common.rest.model.ServiceMetadata;
+import org.origin.common.rest.model.ServiceMetadataImpl;
 
 public class FileSystemWSApplication extends OrbitWSApplication {
 
@@ -14,8 +15,7 @@ public class FileSystemWSApplication extends OrbitWSApplication {
 	 */
 	public FileSystemWSApplication(FileSystemService service, int feature) {
 		super(service, feature);
-		adapt(FileSystemService.class, service);
-		adapt(WebServiceAware.class, service);
+		// adapt(FileSystemService.class, service);
 
 		register(new AbstractBinder() {
 			@Override
@@ -24,6 +24,19 @@ public class FileSystemWSApplication extends OrbitWSApplication {
 			}
 		});
 		register(FileSystemWSResource.class);
+	}
+
+	@Override
+	public ServiceMetadata getMetadata() {
+		ServiceMetadata metadata = super.getMetadata();
+
+		FileSystemService service = getAdapter(FileSystemService.class);
+		if (metadata instanceof ServiceMetadataImpl && service != null) {
+			String dfsId = service.getDfsId();
+			((ServiceMetadataImpl) metadata).setProperty("dfs_id", dfsId);
+		}
+
+		return metadata;
 	}
 
 }

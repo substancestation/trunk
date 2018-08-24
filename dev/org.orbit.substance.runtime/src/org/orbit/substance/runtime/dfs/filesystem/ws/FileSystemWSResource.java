@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
-import org.origin.common.annotation.AnnotationUtil;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
@@ -21,7 +20,7 @@ import org.origin.common.rest.model.Request;
 import org.origin.common.rest.server.AbstractWSApplicationResource;
 
 /*
- * DFS metadata web service resource.
+ * File web service resource.
  * 
  * {contextRoot} example: /orbit/v1/dfs_metadata
  *
@@ -49,16 +48,9 @@ public class FileSystemWSResource extends AbstractWSApplicationResource {
 	public Response request(@Context HttpHeaders httpHeaders, Request request) {
 		FileSystemService service = getService();
 
-		WSCommand command = service.getEditPolicies().getCommand(request);
+		WSCommand command = service.getEditPolicies().getCommand(httpHeaders, request);
 		if (command != null) {
 			try {
-				// Inject HttpHeaders to the command, so the command can get the access token (and username from it) for accessing the user's file system.
-				try {
-					AnnotationUtil.fieldInject(command, Inject.class, HttpHeaders.class, httpHeaders);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
 				return command.execute(request);
 
 			} catch (Exception e) {

@@ -1,14 +1,13 @@
 package org.orbit.substance.connector.dfs.filesystem;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
 import org.orbit.substance.api.dfs.filesystem.File;
 import org.orbit.substance.api.dfs.filesystem.FileSystemClient;
-import org.orbit.substance.connector.RequestConstants;
 import org.orbit.substance.connector.util.ModelConverter;
+import org.orbit.substance.model.RequestConstants;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.ServiceClientImpl;
 import org.origin.common.rest.client.ServiceConnector;
@@ -34,27 +33,13 @@ public class FileSystemClientImpl extends ServiceClientImpl<FileSystemClient, Fi
 		return new FileSystemWSClient(config);
 	}
 
-	/**
-	 * 
-	 * @param e
-	 * @return
-	 * @throws IOException
-	 */
-	protected IOException handleException(ClientException e) throws IOException {
-		throw new IOException(e);
-	}
-
 	@Override
-	public File[] listRoots() throws IOException {
+	public File[] listRoots() throws ClientException {
 		File[] files = null;
-		try {
-			Request request = new Request(RequestConstants.LIST_ROOTS);
-			Response response = sendRequest(request);
-			if (response != null) {
-				files = ModelConverter.DFS.getFiles(response);
-			}
-		} catch (ClientException e) {
-			handleException(e);
+		Request request = new Request(RequestConstants.LIST_ROOTS);
+		Response response = sendRequest(request);
+		if (response != null) {
+			files = ModelConverter.FILE_SYSTEM.getFiles(response);
 		}
 		if (files == null) {
 			files = EMPTY_FILES;
@@ -63,3 +48,13 @@ public class FileSystemClientImpl extends ServiceClientImpl<FileSystemClient, Fi
 	}
 
 }
+
+// /**
+// *
+// * @param e
+// * @return
+// * @throws IOException
+// */
+// protected IOException handleException(ClientException e) throws IOException {
+// throw new IOException(e);
+// }

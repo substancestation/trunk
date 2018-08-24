@@ -2,18 +2,17 @@ package org.orbit.substance.runtime.dfs.filesystem.ws.command;
 
 import javax.ws.rs.core.Response;
 
-import org.orbit.substance.runtime.RequestConstants;
-import org.orbit.substance.runtime.dfs.filesystem.service.FileSystem;
-import org.origin.common.rest.editpolicy.ServiceAwareWSCommand;
+import org.orbit.substance.model.RequestConstants;
+import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.Request;
 
-public class UploadFileToDirectoryCommand extends ServiceAwareWSCommand<FileSystem> implements WSCommand {
+public class UploadFileToDirectoryCommand extends AbstractFileSystemCommand<FileSystemService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_metadata.UploadFileToDirectoryCommand";
 
 	public UploadFileToDirectoryCommand() {
-		super(FileSystem.class);
+		super(FileSystemService.class);
 	}
 
 	@Override

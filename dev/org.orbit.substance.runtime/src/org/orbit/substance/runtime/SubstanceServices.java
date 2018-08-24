@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexProvider;
+import org.orbit.substance.runtime.dfs.filecontent.service.FileContentService;
+import org.orbit.substance.runtime.dfs.filecontent.ws.FileContentServiceAdapter;
 import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
 import org.orbit.substance.runtime.dfs.filesystem.ws.FileSystemServiceAdapter;
 import org.origin.common.rest.client.ServiceConnector;
@@ -27,6 +29,7 @@ public class SubstanceServices {
 	protected ServiceConnectorAdapter<IndexProvider> indexProviderConnector;
 
 	protected FileSystemServiceAdapter fileSystemServiceAdapter;
+	protected FileContentServiceAdapter fileContentServiceAdapter;
 
 	/**
 	 * 
@@ -66,6 +69,9 @@ public class SubstanceServices {
 		// Start service adapters
 		this.fileSystemServiceAdapter = new FileSystemServiceAdapter(this.properties);
 		this.fileSystemServiceAdapter.start(bundleContext);
+
+		this.fileContentServiceAdapter = new FileContentServiceAdapter(this.properties);
+		this.fileContentServiceAdapter.start(bundleContext);
 	}
 
 	/**
@@ -78,10 +84,19 @@ public class SubstanceServices {
 			this.fileSystemServiceAdapter.stop(bundleContext);
 			this.fileSystemServiceAdapter = null;
 		}
+
+		if (this.fileContentServiceAdapter != null) {
+			this.fileContentServiceAdapter.stop(bundleContext);
+			this.fileContentServiceAdapter = null;
+		}
 	}
 
 	public FileSystemService getFileSystemService() {
 		return (this.fileSystemServiceAdapter != null) ? this.fileSystemServiceAdapter.getService() : null;
+	}
+
+	public FileContentService getFileContentService() {
+		return (this.fileContentServiceAdapter != null) ? this.fileContentServiceAdapter.getService() : null;
 	}
 
 }
