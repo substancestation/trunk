@@ -1,8 +1,8 @@
 package org.orbit.substance.connector;
 
 import org.orbit.platform.sdk.connector.ConnectorActivator;
-import org.orbit.substance.connector.dfs.filecontent.FileContentConnector;
-import org.orbit.substance.connector.dfs.filesystem.FileSystemConnector;
+import org.orbit.substance.connector.dfs.FileSystemConnector;
+import org.orbit.substance.connector.dfsvolume.FileContentConnector;
 import org.origin.common.extensions.Extension;
 import org.origin.common.extensions.InterfaceDescription;
 import org.origin.common.extensions.ProgramExtensions;

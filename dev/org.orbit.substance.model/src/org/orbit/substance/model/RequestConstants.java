@@ -6,13 +6,24 @@ public interface RequestConstants {
 	// File system service request constants
 	// ---------------------------------------------------------------
 	public static String LIST_ROOTS = "list_roots";
-	public static String LIST_FILES = "list_files";
-	public static String GET_FILE = "get_file";
-	public static String EXISTS = "exists";
+	public static String LIST_FILES_BY_PARENT_ID = "list_files_by_parent_id";
+	public static String LIST_FILES_BY_PARENT_PATH = "list_files_by_parent_path";
+	public static String GET_FILE_BY_ID = "get_file_id";
+	public static String GET_FILE_BY_PATH = "get_file_by_path";
+	public static String GET_FILE_ID_BY_PATH = "get_file_id_by_path";
+	public static String FILE_ID_EXISTS = "file_id_exists";
+	public static String PATH_EXISTS = "path_exists";
 	public static String IS_DIRECTORY = "is_directory";
-	public static String MKDIRS = "mkdirs";
 	public static String CREATE_NEW_FILE = "create_new_file";
-	public static String DELETE_FILE = "delete_file";
+	public static String MKDIRS = "mkdirs";
+	public static String MOVE_TO_TRASH_BY_ID = "move_to_trash_by_id";
+	public static String MOVE_TO_TRASH_BY_PATH = "move_to_trash_by_path";
+	public static String PUT_BACK_FROM_TRASH_BY_ID = "put_back_from_trash_by_id";
+	public static String PUT_BACK_FROM_TRASH_BY_PATH = "put_back_from_trash_by_path";
+	public static String EMPTY_TRASH = "empty_trash";
+	public static String DELETE_BY_ID = "delete_by_id";
+	public static String DELETE_BY_PATH = "delete_by_path";
+
 	public static String UPLOAD_FILE_TO_FILE = "upload_file_to_file";
 	public static String UPLOAD_FILE_TO_DIRECTORY = "upload_file_to_directory";
 	public static String DOWNLOAD_FILE = "download_file";

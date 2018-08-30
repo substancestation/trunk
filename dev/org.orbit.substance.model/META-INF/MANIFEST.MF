@@ -10,4 +10,5 @@ Import-Package: org.osgi.framework;version="[1.3.0,2.0.0)",
 Require-Bundle: org.origin.common;bundle-version="[1.0.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.orbit.substance.model;version="1.0.0",
- org.orbit.substance.model.dfs;version="1.0.0"
+ org.orbit.substance.model.dfs;version="1.0.0",
+ org.orbit.substance.model.dfsvolume;version="1.0.0"

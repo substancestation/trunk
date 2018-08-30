@@ -1,197 +1,71 @@
 package org.orbit.substance.runtime.model.dfs;
 
-public class FileMetadata {
+import java.util.List;
+import java.util.Map;
 
-	public static final String FILEID = "fileId";
-	public static final String PARENT_FILEID = "parentFileId";
-	public static final String NAME = "name";
-	public static final String IS_DIRECTORY = "isDirectory";
-	public static final String IS_HIDDEN = "isHidden";
-	public static final String PATH = "path";
-	public static final String PARENT_PATH = "parentPath";
-	public static final String EXISTS = "exists";
-	public static final String CAN_EXECUTE = "canExecute";
-	public static final String CAN_READ = "canRead";
-	public static final String CAN_WRITE = "canWrite";
-	public static final String LENGTH = "length";
-	public static final String LAST_MODIFIED = "lastModified";
+public interface FileMetadata {
 
-	protected int fileId;
-	protected int parentFileId;
-	protected String name;
-	protected boolean isDirectory;
-	protected boolean isHidden;
-	protected String path;
-	protected String parentPath;
-	protected boolean exists;
-	protected boolean canExecute;
-	protected boolean canRead;
-	protected boolean canWrite;
-	protected long length;
-	protected long lastModified;
+	public static final String ATTR__FILEID = "fileId";
+	public static final String ATTR__PARENT_FILEID = "parentFileId";
+	public static final String ATTR__NAME = "name";
+	public static final String ATTR__EXISTS = "exists";
+	public static final String ATTR__IS_DIRECTORY = "isDirectory";
+	public static final String ATTR__SIZE = "size";
+	public static final String ATTR__DATE_CREATED = "dateCreated";
+	public static final String ATTR__DATE_MODIFIED = "dateModified";
 
-	public FileMetadata() {
-	}
+	int getId();
 
-	public int getFileId() {
-		return fileId;
-	}
+	void setId(int id);
 
-	public void setFileId(int fileId) {
-		this.fileId = fileId;
-	}
+	String getAccountId();
 
-	public int getParentFileId() {
-		return parentFileId;
-	}
+	void setAccountId(String accountId);
 
-	public void setParentFileId(int parentFileId) {
-		this.parentFileId = parentFileId;
-	}
+	String getFileId();
 
-	public String getName() {
-		return name;
-	}
+	void setFileId(String fileId);
 
-	public void setName(String name) {
-		this.name = name;
-	}
+	String getParentFileId();
 
-	public boolean isDirectory() {
-		return isDirectory;
-	}
+	void setParentFileId(String parentFileId);
 
-	public void setIsDirectory(boolean isDirectory) {
-		this.isDirectory = isDirectory;
-	}
+	Path getPath();
 
-	public boolean isHidden() {
-		return isHidden;
-	}
+	void setPath(Path path);
 
-	public void setHidden(boolean isHidden) {
-		this.isHidden = isHidden;
-	}
+	String getName();
 
-	public String getPath() {
-		return path;
-	}
+	void setName(String name);
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+	long getSize();
 
-	public String getParentPath() {
-		return parentPath;
-	}
+	void setSize(long size);
 
-	public void setParentPath(String parentPath) {
-		this.parentPath = parentPath;
-	}
+	boolean isDirectory();
 
-	public boolean exists() {
-		return exists;
-	}
+	void setIsDirectory(boolean isDirectory);
 
-	public void setExists(boolean exists) {
-		this.exists = exists;
-	}
+	boolean isHidden();
 
-	public boolean canExecute() {
-		return canExecute;
-	}
+	void setHidden(boolean isHidden);
 
-	public void setCanExecute(boolean canExecute) {
-		this.canExecute = canExecute;
-	}
+	boolean isInTrash();
 
-	public boolean canRead() {
-		return canRead;
-	}
+	void setInTrash(boolean inTrash);
 
-	public void setCanRead(boolean canRead) {
-		this.canRead = canRead;
-	}
+	Map<String, Object> getProperties();
 
-	public boolean canWrite() {
-		return canWrite;
-	}
+	List<FilePart> getFileParts();
 
-	public void setCanWrite(boolean canWrite) {
-		this.canWrite = canWrite;
-	}
+	Object getAttribute(String attrName);
 
-	public long getLength() {
-		return length;
-	}
+	long getDateCreated();
 
-	public void setLength(long length) {
-		this.length = length;
-	}
+	void setDateCreated(long dateCreated);
 
-	public long getLastModified() {
-		return lastModified;
-	}
+	long getDateModified();
 
-	public void setLastModified(long lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	/**
-	 * 
-	 * @param attrName
-	 * @return
-	 */
-	public Object getAttribute(String attrName) {
-		if (FILEID.equalsIgnoreCase(attrName)) {
-			return getFileId();
-		} else if (PARENT_FILEID.equalsIgnoreCase(attrName)) {
-			return getParentFileId();
-		} else if (NAME.equalsIgnoreCase(attrName)) {
-			return getName();
-		} else if (IS_DIRECTORY.equalsIgnoreCase(attrName)) {
-			return isDirectory();
-		} else if (IS_HIDDEN.equalsIgnoreCase(attrName)) {
-			return isHidden();
-		} else if (PATH.equalsIgnoreCase(attrName)) {
-			return getPath();
-		} else if (PARENT_PATH.equalsIgnoreCase(attrName)) {
-			return getParentPath();
-		} else if (EXISTS.equalsIgnoreCase(attrName)) {
-			return exists();
-		} else if (CAN_EXECUTE.equalsIgnoreCase(attrName)) {
-			return canExecute();
-		} else if (CAN_READ.equalsIgnoreCase(attrName)) {
-			return canRead();
-		} else if (CAN_WRITE.equalsIgnoreCase(attrName)) {
-			return canWrite();
-		} else if (LENGTH.equalsIgnoreCase(attrName)) {
-			return getLength();
-		} else if (LAST_MODIFIED.equalsIgnoreCase(attrName)) {
-			return getLastModified();
-		}
-		return null;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("FileMetadata (");
-		sb.append("name='").append(this.name).append("'");
-		sb.append(", isDirectory=").append(this.isDirectory);
-		sb.append(", isHidden=").append(this.isHidden);
-		sb.append(", path=").append(this.path).append("'");
-		sb.append(", parentPath=").append(this.parentPath).append("'");
-		sb.append(", exists=").append(this.exists);
-		sb.append(", canExecute=").append(this.canExecute);
-		sb.append(", canRead=").append(this.canRead);
-		sb.append(", canWrite=").append(this.canWrite);
-		sb.append(", length=").append(this.length);
-		sb.append(", lastModified=").append(this.lastModified);
-		sb.append(")");
-
-		return sb.toString();
-	}
+	void setDateModified(long dateModified);
 
 }

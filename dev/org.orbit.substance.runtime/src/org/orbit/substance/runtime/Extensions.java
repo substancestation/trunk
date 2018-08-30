@@ -2,33 +2,42 @@ package org.orbit.substance.runtime;
 
 import org.orbit.infra.api.indexes.ServiceIndexTimerFactory;
 import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
-import org.orbit.substance.runtime.dfs.filecontent.ws.FileContentServiceTimerFactory;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.CreateDataBlockCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.DataBlockExistsCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.DeleteDataBlockCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.DeleteFileContentCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.FileContentExistsCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.GetDataBlockCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.GetFileContentCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.ListAllDataBlocksCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.ListDataBlocksCommand;
-import org.orbit.substance.runtime.dfs.filecontent.ws.command.ListFileContentsCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.FileSystemServiceTimerFactory;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.CreateNewFileCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.DeleteFileCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.DownloadFileCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.FileExistsCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.FileIsDirectoryCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.GetFileCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.ListFilesCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.ListRootsCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.MkdirCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.UploadFileToDirectoryCommand;
-import org.orbit.substance.runtime.dfs.filesystem.ws.command.UploadFileToFileCommand;
-import org.orbit.substance.runtime.extension.dfs.FileContentServiceActivator;
-import org.orbit.substance.runtime.extension.dfs.FileContentServicePropertyTester;
-import org.orbit.substance.runtime.extension.dfs.FileSystemServiceActivator;
-import org.orbit.substance.runtime.extension.dfs.FileSystemServicePropertyTester;
+import org.orbit.substance.runtime.dfs.ws.FileSystemServiceTimerFactory;
+import org.orbit.substance.runtime.dfs.ws.command.CreateNewFileCommand;
+import org.orbit.substance.runtime.dfs.ws.command.DeleteFileByIdCommand;
+import org.orbit.substance.runtime.dfs.ws.command.DeleteFileByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.DownloadFileCommand;
+import org.orbit.substance.runtime.dfs.ws.command.FileExistsByIdCommand;
+import org.orbit.substance.runtime.dfs.ws.command.FileExistsByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.FileIsDirectoryCommand;
+import org.orbit.substance.runtime.dfs.ws.command.GetFileByIdCommand;
+import org.orbit.substance.runtime.dfs.ws.command.GetFileByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.GetFileIdByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.ListFilesByParentFileIdCommand;
+import org.orbit.substance.runtime.dfs.ws.command.ListFilesByParentPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.ListRootsCommand;
+import org.orbit.substance.runtime.dfs.ws.command.MkdirCommand;
+import org.orbit.substance.runtime.dfs.ws.command.MoveToTrashByIdCommand;
+import org.orbit.substance.runtime.dfs.ws.command.MoveToTrashByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByIdCommand;
+import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.UploadFileToDirectoryCommand;
+import org.orbit.substance.runtime.dfs.ws.command.UploadFileToFileCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.FileContentServiceTimerFactory;
+import org.orbit.substance.runtime.dfsvolume.ws.command.CreateDataBlockCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.DataBlockExistsCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.DeleteDataBlockCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.DeleteFileContentCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.FileContentExistsCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.GetDataBlockCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.GetFileContentCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.ListAllDataBlocksCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.ListDataBlocksCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.ListFileContentsCommand;
+import org.orbit.substance.runtime.extension.FileContentServiceActivator;
+import org.orbit.substance.runtime.extension.FileContentServicePropertyTester;
+import org.orbit.substance.runtime.extension.FileSystemServiceActivator;
+import org.orbit.substance.runtime.extension.FileSystemServicePropertyTester;
 import org.origin.common.extensions.Extension;
 import org.origin.common.extensions.InterfaceDescription;
 import org.origin.common.extensions.ProgramExtensions;
@@ -115,75 +124,138 @@ public class Extensions extends ProgramExtensions {
 		extension1.addInterface(desc1);
 		addExtension(extension1);
 
-		Extension extension2 = new Extension(extensionTypeId, ListFilesCommand.ID);
+		Extension extension2 = new Extension(extensionTypeId, ListFilesByParentFileIdCommand.ID);
 		extension2.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc2 = new InterfaceDescription(WSCommand.class, ListFilesCommand.class);
+		InterfaceDescription desc2 = new InterfaceDescription(WSCommand.class, ListFilesByParentFileIdCommand.class);
 		desc2.setSingleton(false);
 		extension2.addInterface(desc2);
 		addExtension(extension2);
 
-		Extension extension3 = new Extension(extensionTypeId, GetFileCommand.ID);
+		Extension extension3 = new Extension(extensionTypeId, ListFilesByParentPathCommand.ID);
 		extension3.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc3 = new InterfaceDescription(WSCommand.class, GetFileCommand.class);
-		desc3.setSingleton(false);
-		extension3.addInterface(desc3);
+		InterfaceDescription desc22 = new InterfaceDescription(WSCommand.class, ListFilesByParentPathCommand.class);
+		desc22.setSingleton(false);
+		extension3.addInterface(desc22);
 		addExtension(extension3);
 
-		Extension extension4 = new Extension(extensionTypeId, FileExistsCommand.ID);
+		Extension extension4 = new Extension(extensionTypeId, GetFileByIdCommand.ID);
 		extension4.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc4 = new InterfaceDescription(WSCommand.class, FileExistsCommand.class);
+		InterfaceDescription desc4 = new InterfaceDescription(WSCommand.class, GetFileByIdCommand.class);
 		desc4.setSingleton(false);
 		extension4.addInterface(desc4);
 		addExtension(extension4);
 
-		Extension extension5 = new Extension(extensionTypeId, FileIsDirectoryCommand.ID);
+		Extension extension5 = new Extension(extensionTypeId, GetFileByPathCommand.ID);
 		extension5.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc5 = new InterfaceDescription(WSCommand.class, FileIsDirectoryCommand.class);
+		InterfaceDescription desc5 = new InterfaceDescription(WSCommand.class, GetFileByPathCommand.class);
 		desc5.setSingleton(false);
 		extension5.addInterface(desc5);
 		addExtension(extension5);
 
-		Extension extension6 = new Extension(extensionTypeId, MkdirCommand.ID);
+		Extension extension6 = new Extension(extensionTypeId, GetFileIdByPathCommand.ID);
 		extension6.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc6 = new InterfaceDescription(WSCommand.class, MkdirCommand.class);
+		InterfaceDescription desc6 = new InterfaceDescription(WSCommand.class, GetFileIdByPathCommand.class);
 		desc6.setSingleton(false);
 		extension6.addInterface(desc6);
 		addExtension(extension6);
 
-		Extension extension7 = new Extension(extensionTypeId, CreateNewFileCommand.ID);
+		Extension extension7 = new Extension(extensionTypeId, FileExistsByPathCommand.ID);
 		extension7.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc7 = new InterfaceDescription(WSCommand.class, CreateNewFileCommand.class);
+		InterfaceDescription desc7 = new InterfaceDescription(WSCommand.class, FileExistsByPathCommand.class);
 		desc7.setSingleton(false);
 		extension7.addInterface(desc7);
 		addExtension(extension7);
 
-		Extension extension8 = new Extension(extensionTypeId, DeleteFileCommand.ID);
+		Extension extension8 = new Extension(extensionTypeId, FileExistsByIdCommand.ID);
 		extension8.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc8 = new InterfaceDescription(WSCommand.class, DeleteFileCommand.class);
+		InterfaceDescription desc8 = new InterfaceDescription(WSCommand.class, FileExistsByIdCommand.class);
 		desc8.setSingleton(false);
 		extension8.addInterface(desc8);
 		addExtension(extension8);
 
-		Extension extension9 = new Extension(extensionTypeId, UploadFileToFileCommand.ID);
+		Extension extension9 = new Extension(extensionTypeId, FileIsDirectoryCommand.ID);
 		extension9.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc9 = new InterfaceDescription(WSCommand.class, UploadFileToFileCommand.class);
+		InterfaceDescription desc9 = new InterfaceDescription(WSCommand.class, FileIsDirectoryCommand.class);
 		desc9.setSingleton(false);
 		extension9.addInterface(desc9);
 		addExtension(extension9);
 
-		Extension extension10 = new Extension(extensionTypeId, UploadFileToDirectoryCommand.ID);
+		Extension extension10 = new Extension(extensionTypeId, MkdirCommand.ID);
 		extension10.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc10 = new InterfaceDescription(WSCommand.class, UploadFileToDirectoryCommand.class);
+		InterfaceDescription desc10 = new InterfaceDescription(WSCommand.class, MkdirCommand.class);
 		desc10.setSingleton(false);
 		extension10.addInterface(desc10);
 		addExtension(extension10);
 
-		Extension extension11 = new Extension(extensionTypeId, DownloadFileCommand.ID);
+		Extension extension11 = new Extension(extensionTypeId, CreateNewFileCommand.ID);
 		extension11.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc11 = new InterfaceDescription(WSCommand.class, DownloadFileCommand.class);
+		InterfaceDescription desc11 = new InterfaceDescription(WSCommand.class, CreateNewFileCommand.class);
 		desc11.setSingleton(false);
 		extension11.addInterface(desc11);
 		addExtension(extension11);
+
+		Extension extension12 = new Extension(extensionTypeId, MoveToTrashByIdCommand.ID);
+		extension12.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc12 = new InterfaceDescription(WSCommand.class, MoveToTrashByIdCommand.class);
+		desc12.setSingleton(false);
+		extension12.addInterface(desc12);
+		addExtension(extension12);
+
+		Extension extension13 = new Extension(extensionTypeId, MoveToTrashByPathCommand.ID);
+		extension13.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc13 = new InterfaceDescription(WSCommand.class, MoveToTrashByPathCommand.class);
+		desc13.setSingleton(false);
+		extension13.addInterface(desc13);
+		addExtension(extension13);
+
+		Extension extension14 = new Extension(extensionTypeId, PutBackFromTrashByIdCommand.ID);
+		extension14.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc14 = new InterfaceDescription(WSCommand.class, PutBackFromTrashByIdCommand.class);
+		desc14.setSingleton(false);
+		extension14.addInterface(desc14);
+		addExtension(extension14);
+
+		Extension extension15 = new Extension(extensionTypeId, PutBackFromTrashByPathCommand.ID);
+		extension15.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc15 = new InterfaceDescription(WSCommand.class, PutBackFromTrashByPathCommand.class);
+		desc15.setSingleton(false);
+		extension15.addInterface(desc15);
+		addExtension(extension15);
+
+		Extension extension16 = new Extension(extensionTypeId, DeleteFileByIdCommand.ID);
+		extension16.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc16 = new InterfaceDescription(WSCommand.class, DeleteFileByIdCommand.class);
+		desc16.setSingleton(false);
+		extension16.addInterface(desc16);
+		addExtension(extension16);
+
+		Extension extension17 = new Extension(extensionTypeId, DeleteFileByPathCommand.ID);
+		extension17.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc17 = new InterfaceDescription(WSCommand.class, DeleteFileByPathCommand.class);
+		desc17.setSingleton(false);
+		extension17.addInterface(desc17);
+		addExtension(extension17);
+
+		Extension extension18 = new Extension(extensionTypeId, UploadFileToFileCommand.ID);
+		extension18.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc18 = new InterfaceDescription(WSCommand.class, UploadFileToFileCommand.class);
+		desc18.setSingleton(false);
+		extension18.addInterface(desc18);
+		addExtension(extension18);
+
+		Extension extension19 = new Extension(extensionTypeId, UploadFileToDirectoryCommand.ID);
+		extension19.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc19 = new InterfaceDescription(WSCommand.class, UploadFileToDirectoryCommand.class);
+		desc19.setSingleton(false);
+		extension19.addInterface(desc19);
+		addExtension(extension19);
+
+		Extension extension20 = new Extension(extensionTypeId, DownloadFileCommand.ID);
+		extension20.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc20 = new InterfaceDescription(WSCommand.class, DownloadFileCommand.class);
+		desc20.setSingleton(false);
+		extension20.addInterface(desc20);
+		addExtension(extension20);
 	}
 
 	protected void createEditPolicyCommandExtensions2() {

@@ -2,8 +2,8 @@ package org.orbit.substance.api.util;
 
 import java.util.Map;
 
-import org.orbit.substance.api.dfs.filecontent.FileContentClient;
-import org.orbit.substance.api.dfs.filesystem.FileSystemClient;
+import org.orbit.substance.api.dfs.FileSystemClient;
+import org.orbit.substance.api.dfsvolume.FileContentClient;
 import org.origin.common.rest.client.ServiceConnectorAdapter;
 import org.origin.common.rest.util.LifecycleAware;
 import org.osgi.framework.BundleContext;

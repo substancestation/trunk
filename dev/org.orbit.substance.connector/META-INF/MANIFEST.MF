@@ -15,4 +15,6 @@ Require-Bundle: org.origin.common;bundle-version="[1.0.0,2.0.0)",
  org.orbit.substance.model;bundle-version="[1.0.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.orbit.substance.connector;version="1.0.0",
- org.orbit.substance.connector.dfs.filesystem;version="1.0.0"
+ org.orbit.substance.connector.dfs;version="1.0.0",
+ org.orbit.substance.connector.dfsvolume;version="1.0.0",
+ org.orbit.substance.connector.util;version="1.0.0"

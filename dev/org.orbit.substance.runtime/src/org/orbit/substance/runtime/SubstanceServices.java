@@ -4,10 +4,10 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexProvider;
-import org.orbit.substance.runtime.dfs.filecontent.service.FileContentService;
-import org.orbit.substance.runtime.dfs.filecontent.ws.FileContentServiceAdapter;
-import org.orbit.substance.runtime.dfs.filesystem.service.FileSystemService;
-import org.orbit.substance.runtime.dfs.filesystem.ws.FileSystemServiceAdapter;
+import org.orbit.substance.runtime.dfs.service.FileSystemService;
+import org.orbit.substance.runtime.dfs.ws.FileSystemServiceAdapter;
+import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.dfsvolume.ws.FileContentServiceAdapter;
 import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.ServiceConnectorAdapter;
 import org.origin.common.util.PropertyUtil;

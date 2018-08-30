@@ -6,15 +6,14 @@ import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
-import org.orbit.substance.api.dfs.filecontent.DataBlockMetadata;
-import org.orbit.substance.api.dfs.filecontent.FileContentMetadata;
-import org.orbit.substance.api.dfs.filesystem.File;
-import org.orbit.substance.connector.dfs.filecontent.DataBlockMetadataImpl;
-import org.orbit.substance.connector.dfs.filecontent.FileContentMetadataImpl;
-import org.orbit.substance.connector.dfs.filesystem.FileImpl;
-import org.orbit.substance.model.dfs.DataBlockMetadataDTO;
-import org.orbit.substance.model.dfs.FileContentMetadataDTO;
-import org.orbit.substance.model.dfs.FileDTO;
+import org.orbit.substance.api.dfs.File;
+import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
+import org.orbit.substance.api.dfsvolume.FileContentMetadata;
+import org.orbit.substance.connector.dfsvolume.DataBlockMetadataImpl;
+import org.orbit.substance.connector.dfsvolume.FileContentMetadataImpl;
+import org.orbit.substance.model.dfs.FileMetadataDTO;
+import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
+import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.util.ResponseUtil;
 
@@ -25,13 +24,117 @@ public class ModelConverter {
 
 	public static class FILE_SYSTEM {
 
-		public File toFile(FileDTO nodeDTO) {
-			FileImpl file = new FileImpl();
-			return file;
+		public File toFile(FileMetadataDTO fileMetadataDTO) {
+			// FileImpl file = new FileImpl();
+			return null;
 		}
 
 		public File[] getFiles(Response response) {
 			return null;
+		}
+
+		public File getFile(Response response) {
+			return null;
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public String getFileId(Response response) throws ClientException {
+			if (!ResponseUtil.isSuccessful(response)) {
+				throw new ClientException(response);
+			}
+			String fileId = null;
+			try {
+				fileId = ResponseUtil.getSimpleValue(response, "file_id", String.class);
+
+			} catch (Exception e) {
+				throw new ClientException(500, e.getMessage(), e);
+			}
+			return fileId;
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean exists(Response response) throws ClientException {
+			if (!ResponseUtil.isSuccessful(response)) {
+				throw new ClientException(response);
+			}
+			boolean exists = false;
+			try {
+				exists = ResponseUtil.getSimpleValue(response, "exists", Boolean.class);
+
+			} catch (Exception e) {
+				throw new ClientException(500, e.getMessage(), e);
+			}
+			return exists;
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean isDirectory(Response response) throws ClientException {
+			if (!ResponseUtil.isSuccessful(response)) {
+				throw new ClientException(response);
+			}
+			boolean exists = false;
+			try {
+				exists = ResponseUtil.getSimpleValue(response, "isDirectory", Boolean.class);
+
+			} catch (Exception e) {
+				throw new ClientException(500, e.getMessage(), e);
+			}
+			return exists;
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean isDeleted(Response response) throws ClientException {
+			return isSucceed(response);
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean isEmptied(Response response) throws ClientException {
+			return isSucceed(response);
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean isSucceed(Response response) throws ClientException {
+			if (!ResponseUtil.isSuccessful(response)) {
+				throw new ClientException(response);
+			}
+			boolean succeed = false;
+			try {
+				succeed = ResponseUtil.getSimpleValue(response, "succeed", Boolean.class);
+
+			} catch (Exception e) {
+				throw new ClientException(500, e.getMessage(), e);
+			}
+			return succeed;
 		}
 	}
 
@@ -164,18 +267,18 @@ public class ModelConverter {
 			}
 
 			String fileId = dto.getFileId();
-			long size = dto.getSize();
 			int partId = dto.getPartId();
-			int startIndex = dto.getStartIndex();
-			int endIndex = dto.getEndIndex();
+			// long size = dto.getSize();
+			// int startIndex = dto.getStartIndex();
+			// int endIndex = dto.getEndIndex();
 			String checksum = dto.getChecksum();
 
 			FileContentMetadataImpl metadata = new FileContentMetadataImpl();
 			metadata.setFileId(fileId);
-			metadata.setSize(size);
 			metadata.setPartId(partId);
-			metadata.setStartIndex(startIndex);
-			metadata.setEndIndex(endIndex);
+			// metadata.setSize(size);
+			// metadata.setStartIndex(startIndex);
+			// metadata.setEndIndex(endIndex);
 			metadata.setChecksum(checksum);
 
 			return metadata;

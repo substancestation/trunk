@@ -3,9 +3,10 @@ package org.orbit.substance.api.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.orbit.substance.api.dfs.filecontent.DataBlockMetadata;
-import org.orbit.substance.api.dfs.filecontent.FileContentClient;
-import org.orbit.substance.api.dfs.filesystem.FileSystemClient;
+import org.orbit.substance.api.dfs.File;
+import org.orbit.substance.api.dfs.FileSystemClient;
+import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
+import org.orbit.substance.api.dfsvolume.FileContentClient;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.WSClientConstants;
 import org.origin.common.rest.model.ServiceMetadata;
@@ -13,10 +14,49 @@ import org.origin.common.rest.model.ServiceMetadataImpl;
 
 public class SubstanceClientsUtil {
 
-	public static File_System File_System = new File_System();
-	public static File_Content File_Content = new File_Content();
+	public static Dfs Dfs = new Dfs();
+	public static DfsVolume DfsVolume = new DfsVolume();
 
-	public static class File_System {
+	public static class Dfs {
+		public static File[] EMPTY_FILES = new File[0];
+
+		/**
+		 * 
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @return
+		 * @throws ClientException
+		 */
+		public File[] listRoots(String dfsServiceUrl, String accessToken) throws ClientException {
+			File[] rootFiles = null;
+			FileSystemClient dfsClient = getFileSystemClient(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				rootFiles = dfsClient.listRoots();
+			}
+			if (rootFiles == null) {
+				rootFiles = EMPTY_FILES;
+			}
+			return rootFiles;
+		}
+
+		/**
+		 * 
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @return
+		 */
+		public FileSystemClient getFileSystemClient(String dfsServiceUrl, String accessToken) {
+			FileSystemClient dfsClient = null;
+			if (dfsServiceUrl != null) {
+				Map<String, Object> properties = new HashMap<String, Object>();
+				properties.put(WSClientConstants.REALM, null);
+				properties.put(WSClientConstants.ACCESS_TOKEN, accessToken);
+				properties.put(WSClientConstants.URL, dfsServiceUrl);
+				dfsClient = SubstanceClients.getInstance().getFileSystemClient(properties);
+			}
+			return dfsClient;
+		}
+
 		/**
 		 * 
 		 * @param fileSystemServiceUrl
@@ -24,7 +64,7 @@ public class SubstanceClientsUtil {
 		 * @return
 		 * @throws ClientException
 		 */
-		public ServiceMetadata getFileSystemMetadata(String fileSystemServiceUrl, String accessToken) throws ClientException {
+		public ServiceMetadata getFileSystemServiceMetadata(String fileSystemServiceUrl, String accessToken) throws ClientException {
 			ServiceMetadata metadata = null;
 			FileSystemClient client = getFileSystemClient(fileSystemServiceUrl, accessToken);
 			if (client != null) {
@@ -35,27 +75,9 @@ public class SubstanceClientsUtil {
 			}
 			return metadata;
 		}
-
-		/**
-		 * 
-		 * @param fileSystemServiceUrl
-		 * @param accessToken
-		 * @return
-		 */
-		public FileSystemClient getFileSystemClient(String fileSystemServiceUrl, String accessToken) {
-			FileSystemClient client = null;
-			if (fileSystemServiceUrl != null) {
-				Map<String, Object> properties = new HashMap<String, Object>();
-				properties.put(WSClientConstants.REALM, null);
-				properties.put(WSClientConstants.ACCESS_TOKEN, accessToken);
-				properties.put(WSClientConstants.URL, fileSystemServiceUrl);
-				client = SubstanceClients.getInstance().getFileSystemClient(properties);
-			}
-			return client;
-		}
 	}
 
-	public static class File_Content {
+	public static class DfsVolume {
 		public static final DataBlockMetadata[] EMPTY_DATA_BLOCKS = new DataBlockMetadata[0];
 
 		/**
@@ -80,6 +102,25 @@ public class SubstanceClientsUtil {
 		 * 
 		 * @param fileContentServiceUrl
 		 * @param accessToken
+		 * @return
+		 * @throws ClientException
+		 */
+		public ServiceMetadata getFileContentServiceMetadata(String fileContentServiceUrl, String accessToken) throws ClientException {
+			ServiceMetadata metadata = null;
+			FileContentClient client = getFileContentClient(fileContentServiceUrl, accessToken);
+			if (client != null) {
+				metadata = client.getMetadata();
+			}
+			if (metadata == null) {
+				metadata = new ServiceMetadataImpl();
+			}
+			return metadata;
+		}
+
+		/**
+		 * 
+		 * @param fileContentServiceUrl
+		 * @param accessToken
 		 * @param accountId
 		 * @param blockId
 		 * @return
@@ -97,25 +138,6 @@ public class SubstanceClientsUtil {
 		// ----------------------------------------------------------------------
 		// Methods for accessing data blocks (of users)
 		// ----------------------------------------------------------------------
-		/**
-		 * 
-		 * @param fileContentServiceUrl
-		 * @param accessToken
-		 * @return
-		 * @throws ClientException
-		 */
-		public ServiceMetadata getFileContentMetadata(String fileContentServiceUrl, String accessToken) throws ClientException {
-			ServiceMetadata metadata = null;
-			FileContentClient client = getFileContentClient(fileContentServiceUrl, accessToken);
-			if (client != null) {
-				metadata = client.getMetadata();
-			}
-			if (metadata == null) {
-				metadata = new ServiceMetadataImpl();
-			}
-			return metadata;
-		}
-
 		/**
 		 * 
 		 * @param fileContentServiceUrl
