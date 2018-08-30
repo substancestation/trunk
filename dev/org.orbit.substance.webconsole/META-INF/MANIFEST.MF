@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Orbit :: Substance Webconsole
+Bundle-SymbolicName: org.orbit.substance.webconsole;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.orbit.substance.webconsole.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: javax.servlet;version="[3.1.0,4.0.0)",
+ javax.servlet.http;version="[3.1.0,4.0.0)",
+ org.orbit.service.servlet;version="[1.0.0,2.0.0)",
+ org.orbit.service.servlet.impl;version="[1.0.0,2.0.0)",
+ org.osgi.framework;version="[1.3.0,2.0.0)",
+ org.osgi.service.http;version="[1.2.1,2.0.0)",
+ org.slf4j;version="[1.7.25,2.0.0)"
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.origin.common;bundle-version="[1.0.0,2.0.0)",
+ org.origin.common.extensions;bundle-version="[1.0.0,2.0.0)",
+ org.orbit.platform.sdk;bundle-version="[1.0.0,2.0.0)",
+ org.orbit.infra.api;bundle-version="[1.0.0,2.0.0)",
+ org.orbit.substance.api;bundle-version="[1.0.0,2.0.0)"
