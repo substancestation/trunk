@@ -1,9 +1,9 @@
 package org.orbit.substance.runtime.model.dfs.impl;
 
-import org.orbit.substance.runtime.model.dfs.FileContentAccess;
 import org.orbit.substance.runtime.model.dfs.FilePart;
+import org.orbit.substance.runtime.model.dfs.VolumeAccess;
 
-public class FileContentAccessImpl implements FileContentAccess {
+public class VolumeAccessImpl implements VolumeAccess {
 
 	protected FilePart filePart;
 	protected int id;
@@ -11,7 +11,7 @@ public class FileContentAccessImpl implements FileContentAccess {
 	protected String dfsVolumeId;
 	protected String dataBlockId;
 
-	public FileContentAccessImpl() {
+	public VolumeAccessImpl() {
 	}
 
 	/**
@@ -21,7 +21,7 @@ public class FileContentAccessImpl implements FileContentAccess {
 	 * @param dfsVolumeId
 	 * @param dataBlockId
 	 */
-	public FileContentAccessImpl(int id, String dfsId, String dfsVolumeId, String dataBlockId) {
+	public VolumeAccessImpl(int id, String dfsId, String dfsVolumeId, String dataBlockId) {
 		this.id = id;
 		this.dfsId = dfsId;
 		this.dfsVolumeId = dfsVolumeId;

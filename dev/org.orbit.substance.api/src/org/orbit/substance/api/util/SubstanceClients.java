@@ -2,8 +2,8 @@ package org.orbit.substance.api.util;
 
 import java.util.Map;
 
-import org.orbit.substance.api.dfs.FileSystemClient;
-import org.orbit.substance.api.dfsvolume.FileContentClient;
+import org.orbit.substance.api.dfs.DfsClient;
+import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.origin.common.rest.client.ServiceConnectorAdapter;
 import org.origin.common.rest.util.LifecycleAware;
 import org.osgi.framework.BundleContext;
@@ -20,15 +20,15 @@ public class SubstanceClients implements LifecycleAware {
 		return INSTANCE;
 	}
 
-	protected ServiceConnectorAdapter<FileSystemClient> fileSystemServiceConnector;
-	protected ServiceConnectorAdapter<FileContentClient> fileContentServiceConnector;
+	protected ServiceConnectorAdapter<DfsClient> fileSystemServiceConnector;
+	protected ServiceConnectorAdapter<DfsVolumeClient> fileContentServiceConnector;
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		this.fileSystemServiceConnector = new ServiceConnectorAdapter<FileSystemClient>(FileSystemClient.class);
+		this.fileSystemServiceConnector = new ServiceConnectorAdapter<DfsClient>(DfsClient.class);
 		this.fileSystemServiceConnector.start(bundleContext);
 
-		this.fileContentServiceConnector = new ServiceConnectorAdapter<FileContentClient>(FileContentClient.class);
+		this.fileContentServiceConnector = new ServiceConnectorAdapter<DfsVolumeClient>(DfsVolumeClient.class);
 		this.fileContentServiceConnector.start(bundleContext);
 	}
 
@@ -50,10 +50,10 @@ public class SubstanceClients implements LifecycleAware {
 	 * @param properties
 	 * @return
 	 */
-	public FileSystemClient getFileSystemClient(Map<String, Object> properties) {
-		FileSystemClient client = this.fileSystemServiceConnector.getService(properties);
+	public DfsClient getDfsClient(Map<String, Object> properties) {
+		DfsClient client = this.fileSystemServiceConnector.getService(properties);
 		if (client == null) {
-			throw new RuntimeException("FileSystemClient is not available.");
+			throw new RuntimeException("DfsClient is not available.");
 		}
 		return client;
 	}
@@ -63,10 +63,10 @@ public class SubstanceClients implements LifecycleAware {
 	 * @param properties
 	 * @return
 	 */
-	public FileContentClient getFileContentClient(Map<String, Object> properties) {
-		FileContentClient client = this.fileContentServiceConnector.getService(properties);
+	public DfsVolumeClient getDfsVolumeClient(Map<String, Object> properties) {
+		DfsVolumeClient client = this.fileContentServiceConnector.getService(properties);
 		if (client == null) {
-			throw new RuntimeException("FileContentClient is not available.");
+			throw new RuntimeException("DfsVolumeClient is not available.");
 		}
 		return client;
 	}

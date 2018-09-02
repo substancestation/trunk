@@ -6,12 +6,10 @@ public interface FileContentMetadata {
 
 	int getPartId();
 
-	// long getSize();
-	//
-	// int getStartIndex();
-	//
-	// int getEndIndex();
-
 	String getChecksum();
 
 }
+
+// long getSize();
+// int getStartIndex();
+// int getEndIndex();

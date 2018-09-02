@@ -6,16 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orbit.substance.api.dfs.File;
+import org.orbit.substance.api.dfs.DfsClient;
+import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfs.FilePart;
-import org.orbit.substance.api.dfs.FileSystemClient;
 import org.orbit.substance.api.dfs.Path;
 import org.origin.common.rest.client.ClientException;
 
-public class FileImpl implements File {
+public class FileImpl implements FileMetadata {
 
-	protected FileSystemClient fsClient;
+	protected DfsClient fsClient;
 
+	protected String accountId;
 	protected String fileId;
 	protected String parentFileId;
 	protected Path path;
@@ -32,13 +33,25 @@ public class FileImpl implements File {
 	 * 
 	 * @param fsClient
 	 */
-	public FileImpl(FileSystemClient fsClient) {
+	public FileImpl(DfsClient fsClient) {
 		this.fsClient = fsClient;
 	}
 
 	@Override
-	public FileSystemClient getFileSystemClient() {
+	public DfsClient getFileSystemClient() {
 		return this.fsClient;
+	}
+
+	public void setFileSystemClient(DfsClient fsClient) {
+		this.fsClient = fsClient;
+	}
+
+	public String getAccountId() {
+		return this.accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 
 	@Override
@@ -46,14 +59,26 @@ public class FileImpl implements File {
 		return this.fileId;
 	}
 
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
+
 	@Override
 	public String getParentFileId() {
 		return this.parentFileId;
 	}
 
+	public void setParentFileId(String parentFileId) {
+		this.parentFileId = parentFileId;
+	}
+
 	@Override
 	public Path getPath() {
 		return this.path;
+	}
+
+	public void setPath(Path path) {
+		this.path = path;
 	}
 
 	@Override
@@ -66,9 +91,17 @@ public class FileImpl implements File {
 		return this.size;
 	}
 
+	public void setSize(long size) {
+		this.size = size;
+	}
+
 	@Override
 	public boolean isDirectory() {
 		return this.isDirectory;
+	}
+
+	public void setIsDirectory(boolean isDirectory) {
+		this.isDirectory = isDirectory;
 	}
 
 	@Override
@@ -76,19 +109,41 @@ public class FileImpl implements File {
 		return this.isHidden;
 	}
 
+	public void setHidden(boolean isHidden) {
+		this.isHidden = isHidden;
+	}
+
 	@Override
 	public boolean inTrash() {
 		return this.inTrash;
 	}
 
-	@Override
-	public List<FilePart> getFileParts() {
-		return this.fileParts;
+	public void setInTrash(boolean inTrash) {
+		this.inTrash = inTrash;
 	}
 
 	@Override
-	public Map<String, Object> getProperties() {
+	public synchronized List<FilePart> getFileParts() {
+		if (this.fileParts == null) {
+			this.fileParts = new ArrayList<FilePart>();
+		}
+		return this.fileParts;
+	}
+
+	public synchronized void setFileParts(List<FilePart> fileParts) {
+		this.fileParts = fileParts;
+	}
+
+	@Override
+	public synchronized Map<String, Object> getProperties() {
+		if (this.properties == null) {
+			this.properties = new HashMap<String, Object>();
+		}
 		return this.properties;
+	}
+
+	public synchronized void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
 	}
 
 	@Override
@@ -96,9 +151,17 @@ public class FileImpl implements File {
 		return this.dateCreated;
 	}
 
+	public void setDateCreated(long dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
 	@Override
 	public long getDateModified() {
 		return this.dateModified;
+	}
+
+	public void setDateModified(long dateModified) {
+		this.dateModified = dateModified;
 	}
 
 	// ------------------------------------------------------
@@ -117,7 +180,7 @@ public class FileImpl implements File {
 	 * 
 	 * @param sourceFile
 	 */
-	protected synchronized void update(File sourceFile) {
+	protected synchronized void update(FileMetadata sourceFile) {
 		if (sourceFile == null) {
 			return;
 		}
@@ -125,6 +188,7 @@ public class FileImpl implements File {
 		this.fileId = sourceFile.getFileId();
 		this.parentFileId = sourceFile.getParentFileId();
 		this.path = sourceFile.getPath();
+		// this.name = sourceFile.getName();
 		this.size = sourceFile.getSize();
 		this.isDirectory = sourceFile.isDirectory();
 		this.isHidden = sourceFile.isHidden();
@@ -146,7 +210,7 @@ public class FileImpl implements File {
 	public boolean createNewFile() throws IOException {
 		boolean succeed = false;
 		try {
-			File newFile = this.fsClient.createNewFile(this.path);
+			FileMetadata newFile = this.fsClient.createNewFile(this.path);
 			if (newFile != null) {
 				succeed = true;
 				update(newFile);
@@ -161,7 +225,7 @@ public class FileImpl implements File {
 	public boolean mkdirs() throws IOException {
 		boolean succeed = false;
 		try {
-			File newFile = this.fsClient.mkdirs(this.path);
+			FileMetadata newFile = this.fsClient.mkdirs(this.path);
 			if (newFile != null) {
 				succeed = true;
 				update(newFile);
@@ -177,7 +241,7 @@ public class FileImpl implements File {
 		boolean succeed = false;
 		try {
 			if (this.fileId == null && this.path != null) {
-				File file = this.fsClient.getFile(this.path);
+				FileMetadata file = this.fsClient.getFile(this.path);
 				if (file != null) {
 					update(file);
 				}
@@ -190,7 +254,7 @@ public class FileImpl implements File {
 				throw new IOException("File is already in trash.");
 			}
 
-			File newFile = this.fsClient.moveToTrash(this.fileId);
+			FileMetadata newFile = this.fsClient.moveToTrash(this.fileId);
 			if (newFile != null) {
 				succeed = true;
 				update(newFile);
@@ -206,7 +270,7 @@ public class FileImpl implements File {
 		boolean succeed = false;
 		try {
 			if (this.fileId == null && this.path != null) {
-				File file = this.fsClient.getFile(this.path);
+				FileMetadata file = this.fsClient.getFile(this.path);
 				if (file != null) {
 					update(file);
 				}
@@ -219,7 +283,7 @@ public class FileImpl implements File {
 				throw new IOException("File is not in trash.");
 			}
 
-			File newFile = this.fsClient.putBackFromTrash(this.fileId);
+			FileMetadata newFile = this.fsClient.putBackFromTrash(this.fileId);
 			if (newFile != null) {
 				succeed = true;
 				update(newFile);
@@ -235,7 +299,7 @@ public class FileImpl implements File {
 		boolean succeed = false;
 		try {
 			if (this.fileId == null && this.path != null) {
-				File file = this.fsClient.getFile(this.path);
+				FileMetadata file = this.fsClient.getFile(this.path);
 				if (file != null) {
 					update(file);
 				}
@@ -253,3 +317,5 @@ public class FileImpl implements File {
 	}
 
 }
+
+// protected String name;

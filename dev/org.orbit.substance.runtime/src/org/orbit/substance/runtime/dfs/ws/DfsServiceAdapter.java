@@ -1,4 +1,4 @@
-package org.orbit.substance.runtime.dfsvolume.ws;
+package org.orbit.substance.runtime.dfs.ws;
 
 import java.util.Map;
 
@@ -10,7 +10,7 @@ import org.orbit.platform.sdk.PlatformSDKActivator;
 import org.orbit.platform.sdk.util.ExtensibleServiceEditPolicy;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.common.ws.OrbitFeatureConstants;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.origin.common.extensions.core.IExtension;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.server.FeatureConstants;
@@ -34,21 +34,21 @@ import org.slf4j.LoggerFactory;
  * - uninstall edit policy
  * 
  */
-public class FileContentServiceAdapter implements LifecycleAware {
+public class DfsServiceAdapter implements LifecycleAware {
 
-	protected static Logger LOG = LoggerFactory.getLogger(FileContentServiceAdapter.class);
+	protected static Logger LOG = LoggerFactory.getLogger(DfsServiceAdapter.class);
 
 	protected Map<Object, Object> properties;
-	protected ServiceTracker<FileContentService, FileContentService> serviceTracker;
-	protected FileContentWSApplication webApp;
-	protected ServiceIndexTimer<FileContentService> indexTimer;
+	protected ServiceTracker<DfsService, DfsService> serviceTracker;
+	protected DfsWSApplication webApp;
+	protected ServiceIndexTimer<DfsService> indexTimer;
 	protected ExtensibleServiceEditPolicy editPolicy;
 
 	/**
 	 * 
 	 * @param properties
 	 */
-	public FileContentServiceAdapter(Map<Object, Object> properties) {
+	public DfsServiceAdapter(Map<Object, Object> properties) {
 		this.properties = properties;
 	}
 
@@ -56,7 +56,7 @@ public class FileContentServiceAdapter implements LifecycleAware {
 		return InfraClients.getInstance().getIndexProvider(this.properties, true);
 	}
 
-	public FileContentService getService() {
+	public DfsService getService() {
 		return (this.serviceTracker != null) ? serviceTracker.getService() : null;
 	}
 
@@ -66,21 +66,21 @@ public class FileContentServiceAdapter implements LifecycleAware {
 	 */
 	@Override
 	public void start(final BundleContext bundleContext) {
-		this.serviceTracker = new ServiceTracker<FileContentService, FileContentService>(bundleContext, FileContentService.class, new ServiceTrackerCustomizer<FileContentService, FileContentService>() {
+		this.serviceTracker = new ServiceTracker<DfsService, DfsService>(bundleContext, DfsService.class, new ServiceTrackerCustomizer<DfsService, DfsService>() {
 			@Override
-			public FileContentService addingService(ServiceReference<FileContentService> reference) {
-				FileContentService service = bundleContext.getService(reference);
+			public DfsService addingService(ServiceReference<DfsService> reference) {
+				DfsService service = bundleContext.getService(reference);
 
 				doStart(bundleContext, service);
 				return service;
 			}
 
 			@Override
-			public void modifiedService(ServiceReference<FileContentService> reference, FileContentService service) {
+			public void modifiedService(ServiceReference<DfsService> reference, DfsService service) {
 			}
 
 			@Override
-			public void removedService(ServiceReference<FileContentService> reference, FileContentService service) {
+			public void removedService(ServiceReference<DfsService> reference, DfsService service) {
 				doStop(bundleContext, service);
 			}
 		});
@@ -104,23 +104,24 @@ public class FileContentServiceAdapter implements LifecycleAware {
 	 * @param bundleContext
 	 * @param service
 	 */
-	protected void doStart(BundleContext bundleContext, FileContentService service) {
-		// 1. Install edit policies
-		this.editPolicy = new ExtensibleServiceEditPolicy(SubstanceConstants.DFS_VOLUME__EDITPOLICY_ID, FileContentService.class, SubstanceConstants.DFS_VOLUME__SERVICE_NAME);
+	protected void doStart(BundleContext bundleContext, DfsService service) {
+		// Install edit policies
+		this.editPolicy = new ExtensibleServiceEditPolicy(SubstanceConstants.DFS__EDITPOLICY_ID, DfsService.class, SubstanceConstants.DFS__SERVICE_NAME);
 		ServiceEditPolicies editPolicies = service.getEditPolicies();
 		editPolicies.uninstall(this.editPolicy.getId());
 		editPolicies.install(this.editPolicy);
 
-		// 2. Start web app
-		this.webApp = new FileContentWSApplication(service, FeatureConstants.METADATA | FeatureConstants.NAME | FeatureConstants.PING | FeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
+		// Start web app
+		this.webApp = new DfsWSApplication(service, FeatureConstants.METADATA | FeatureConstants.NAME | FeatureConstants.PING | FeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
 		this.webApp.start(bundleContext);
 
-		// 3. Start indexing timer
+		// Start indexing timer
 		IndexProvider indexProvider = getIndexProvider();
-		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID);
+
+		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS__INDEXER_ID);
 		if (extension != null) {
 			@SuppressWarnings("unchecked")
-			ServiceIndexTimerFactory<FileContentService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);
+			ServiceIndexTimerFactory<DfsService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);
 			if (indexTimerFactory != null) {
 				this.indexTimer = indexTimerFactory.create(indexProvider, service);
 				if (this.indexTimer != null) {
@@ -135,20 +136,20 @@ public class FileContentServiceAdapter implements LifecycleAware {
 	 * @param bundleContext
 	 * @param service
 	 */
-	protected void doStop(BundleContext bundleContext, FileContentService service) {
-		// 1. Stop indexing timer
+	protected void doStop(BundleContext bundleContext, DfsService service) {
+		// Stop indexing timer
 		if (this.indexTimer != null) {
 			this.indexTimer.stop();
 			this.indexTimer = null;
 		}
 
-		// 2. Stop web app
+		// Stop web app
 		if (this.webApp != null) {
 			this.webApp.stop(bundleContext);
 			this.webApp = null;
 		}
 
-		// 3. Uninstall edit policies
+		// Uninstall edit policies
 		if (this.editPolicy != null) {
 			ServiceEditPolicies editPolicies = service.getEditPolicies();
 			editPolicies.uninstall(this.editPolicy.getId());
@@ -157,3 +158,6 @@ public class FileContentServiceAdapter implements LifecycleAware {
 	}
 
 }
+
+// IExtension extension = ExtensionActivator.getDefault().getExtensionService().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID,
+// SubstanceConstants.DFS_METADATA_INDEXER_ID);

@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.orbit.substance.runtime.SubstanceConstants;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.runtime.model.dfsvolume.FileContentMetadata;
 import org.origin.common.io.IOUtil;
@@ -27,7 +27,7 @@ import org.origin.common.util.PropertyUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class FileContentServiceImpl implements FileContentService, LifecycleAware {
+public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 
 	protected Map<Object, Object> initProperties;
 	protected Map<Object, Object> properties = new HashMap<Object, Object>();
@@ -40,9 +40,9 @@ public class FileContentServiceImpl implements FileContentService, LifecycleAwar
 	 * 
 	 * @param initProperties
 	 */
-	public FileContentServiceImpl(Map<Object, Object> initProperties) {
+	public DfsVolumeServiceImpl(Map<Object, Object> initProperties) {
 		this.initProperties = initProperties;
-		this.wsEditPolicies = new ServiceEditPoliciesImpl(FileContentService.class, this);
+		this.wsEditPolicies = new ServiceEditPoliciesImpl(DfsVolumeService.class, this);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class FileContentServiceImpl implements FileContentService, LifecycleAwar
 		// initialize();
 
 		Hashtable<String, Object> props = new Hashtable<String, Object>();
-		this.serviceRegistry = bundleContext.registerService(FileContentService.class, this, props);
+		this.serviceRegistry = bundleContext.registerService(DfsVolumeService.class, this, props);
 	}
 
 	@Override

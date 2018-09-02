@@ -6,19 +6,20 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.runtime.Messages;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class CreateDataBlockCommand extends AbstractFileContentCommand<FileContentService> implements WSCommand {
+public class CreateDataBlockCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_content.CreateDataBlockCommand";
 
 	public CreateDataBlockCommand() {
-		super(FileContentService.class);
+		super(DfsVolumeService.class);
 	}
 
 	@Override
@@ -47,13 +48,13 @@ public class CreateDataBlockCommand extends AbstractFileContentCommand<FileConte
 		DataBlockMetadataDTO dataBlockDTO = null;
 		boolean accountAndBlockMatch = false;
 
-		FileContentService service = getService();
+		DfsVolumeService service = getService();
 		DataBlockMetadata dataBlock = service.createDataBlock(accountId, capacity);
 		if (dataBlock != null) {
 			String theAccountId = dataBlock.getAccountId();
 			if (accountId.equals(theAccountId)) {
 				accountAndBlockMatch = true;
-				dataBlockDTO = ModelConverter.File_Content.toDTO(dataBlock);
+				dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
 			}
 		}
 

@@ -1,11 +1,12 @@
 package org.orbit.substance.api.dfsvolume;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.ServiceClient;
 
-public interface FileContentClient extends ServiceClient {
+public interface DfsVolumeClient extends ServiceClient {
 
 	// File content service metadata property names
 	public static String PROP__FILE_SYSTEM_ID = "dfs_metadata_id"; // file system service id
@@ -42,7 +43,7 @@ public interface FileContentClient extends ServiceClient {
 	// ----------------------------------------------------------------------
 	// Methods for uploading/downloading file contents
 	// ----------------------------------------------------------------------
-	boolean uploadFile(String accountId, String blockId, String fileId, FileContentMetadata fileContentMetadata) throws ClientException;
+	boolean uploadFile(String accountId, String blockId, String fileId, int partId, String checksum, InputStream inputStream) throws ClientException;
 
 	boolean downloadFile(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ClientException;
 

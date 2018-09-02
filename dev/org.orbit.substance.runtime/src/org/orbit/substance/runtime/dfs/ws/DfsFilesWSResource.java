@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.orbit.platform.sdk.http.OrbitRoles;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
@@ -20,7 +20,7 @@ import org.origin.common.rest.model.Request;
 import org.origin.common.rest.server.AbstractWSApplicationResource;
 
 /*
- * File web service resource.
+ * DFS files web service resource.
  * 
  * {contextRoot} example: /orbit/v1/dfs
  *
@@ -30,14 +30,14 @@ import org.origin.common.rest.server.AbstractWSApplicationResource;
 @Secured(roles = { OrbitRoles.SYSTEM_COMPONENT, OrbitRoles.USER })
 @javax.ws.rs.Path("/")
 @Produces(MediaType.APPLICATION_JSON)
-public class FileSystemWSResource extends AbstractWSApplicationResource {
+public class DfsFilesWSResource extends AbstractWSApplicationResource {
 
 	@Inject
-	public FileSystemService service;
+	public DfsService service;
 
-	public FileSystemService getService() throws RuntimeException {
+	public DfsService getService() throws RuntimeException {
 		if (this.service == null) {
-			throw new RuntimeException("FileSystemService is not available.");
+			throw new RuntimeException("DfsService is not available.");
 		}
 		return this.service;
 	}
@@ -46,7 +46,7 @@ public class FileSystemWSResource extends AbstractWSApplicationResource {
 	@Path("request")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response request(@Context HttpHeaders httpHeaders, Request request) {
-		FileSystemService service = getService();
+		DfsService service = getService();
 
 		WSCommand command = service.getEditPolicies().getCommand(httpHeaders, request);
 		if (command != null) {

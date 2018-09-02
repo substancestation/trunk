@@ -6,7 +6,8 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.orbit.substance.runtime.Messages;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.runtime.model.dfsvolume.FileContentMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
@@ -14,12 +15,12 @@ import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class GetFileContentCommand extends AbstractFileContentCommand<FileContentService> implements WSCommand {
+public class GetFileContentCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_content.GetFileContentCommand";
 
 	public GetFileContentCommand() {
-		super(FileContentService.class);
+		super(DfsVolumeService.class);
 	}
 
 	@Override
@@ -63,7 +64,7 @@ public class GetFileContentCommand extends AbstractFileContentCommand<FileConten
 		FileContentMetadataDTO fileContentDTO = null;
 		boolean accountAndBlockMatch = false;
 
-		FileContentService service = getService();
+		DfsVolumeService service = getService();
 		DataBlockMetadata dataBlock = service.getDataBlock(accountId, blockId);
 		if (dataBlock != null) {
 			String theAccountId = dataBlock.getAccountId();
@@ -72,7 +73,7 @@ public class GetFileContentCommand extends AbstractFileContentCommand<FileConten
 
 				FileContentMetadata fileContent = service.getFileContentMetadata(accountId, blockId, fileId, partId);
 				if (fileContent != null) {
-					fileContentDTO = ModelConverter.File_Content.toDTO(fileContent);
+					fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);
 				}
 			}
 		}

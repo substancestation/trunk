@@ -2,39 +2,143 @@ package org.orbit.substance.connector.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
-import org.orbit.substance.api.dfs.File;
+import org.orbit.substance.api.dfs.FileMetadata;
+import org.orbit.substance.api.dfs.FilePart;
+import org.orbit.substance.api.dfs.DfsClient;
+import org.orbit.substance.api.dfs.Path;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
+import org.orbit.substance.connector.dfs.FileImpl;
 import org.orbit.substance.connector.dfsvolume.DataBlockMetadataImpl;
 import org.orbit.substance.connector.dfsvolume.FileContentMetadataImpl;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
+import org.origin.common.json.JSONUtil;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.util.ResponseUtil;
 
 public class ModelConverter {
 
-	public static FILE_SYSTEM FILE_SYSTEM = new FILE_SYSTEM();
-	public static FILE_CONTENT FILE_CONTENT = new FILE_CONTENT();
+	public static Dfs Dfs = new Dfs();
+	public static DfsVolume DfsVolume = new DfsVolume();
 
-	public static class FILE_SYSTEM {
-
-		public File toFile(FileMetadataDTO fileMetadataDTO) {
-			// FileImpl file = new FileImpl();
-			return null;
+	public static class Dfs {
+		/**
+		 * 
+		 * @param propertiesString
+		 * @return
+		 */
+		public Map<String, Object> toProperties(String propertiesString) {
+			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
+			return properties;
 		}
 
-		public File[] getFiles(Response response) {
-			return null;
+		/**
+		 * 
+		 * @param filePartsString
+		 * @return
+		 */
+		public List<FilePart> toFileParts(String filePartsString) {
+			List<FilePart> fileParts = new ArrayList<FilePart>();
+			if (filePartsString != null) {
+
+			}
+			return fileParts;
 		}
 
-		public File getFile(Response response) {
-			return null;
+		/**
+		 * 
+		 * @param fsClient
+		 * @param fileMetadataDTO
+		 * @return
+		 */
+		public FileMetadata toFile(DfsClient fsClient, FileMetadataDTO fileMetadataDTO) {
+			if (fileMetadataDTO == null) {
+				return null;
+			}
+
+			String accountId = fileMetadataDTO.getAccountId();
+			String fileId = fileMetadataDTO.getFileId();
+			String parentFileId = fileMetadataDTO.getParentFileId();
+			String pathString = fileMetadataDTO.getPath();
+			long size = fileMetadataDTO.getSize();
+			boolean isDirectory = fileMetadataDTO.isDirectory();
+			boolean isHidden = fileMetadataDTO.isHidden();
+			boolean inTrash = fileMetadataDTO.isInTrash();
+			String filePartsString = fileMetadataDTO.getFilePartsString();
+			String propertiesString = fileMetadataDTO.getPropertiesString();
+			long dateCreated = fileMetadataDTO.getDateCreated();
+			long dateModified = fileMetadataDTO.getDateModified();
+
+			Path path = new Path(pathString);
+			Map<String, Object> properties = toProperties(propertiesString);
+			List<FilePart> fileParts = toFileParts(filePartsString);
+
+			FileImpl file = new FileImpl(fsClient);
+			file.setAccountId(accountId);
+			file.setFileId(fileId);
+			file.setParentFileId(parentFileId);
+			file.setPath(path);
+			file.setSize(size);
+			file.setIsDirectory(isDirectory);
+			file.setHidden(isHidden);
+			file.setInTrash(inTrash);
+			file.setProperties(properties);
+			file.setFileParts(fileParts);
+			file.setDateCreated(dateCreated);
+			file.setDateModified(dateModified);
+
+			return file;
+		}
+
+		/**
+		 * 
+		 * @param fsClient
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata[] getFiles(DfsClient fsClient, Response response) throws ClientException {
+			if (!ResponseUtil.isSuccessful(response)) {
+				throw new ClientException(response);
+			}
+
+			List<FileMetadata> files = new ArrayList<FileMetadata>();
+			List<FileMetadataDTO> fileDTOs = response.readEntity(new GenericType<List<FileMetadataDTO>>() {
+			});
+			for (FileMetadataDTO fileDTO : fileDTOs) {
+				FileMetadata file = toFile(fsClient, fileDTO);
+				if (file != null) {
+					files.add(file);
+				}
+			}
+			return files.toArray(new FileMetadata[files.size()]);
+		}
+
+		/**
+		 * 
+		 * @param fsClient
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata getFile(DfsClient fsClient, Response response) throws ClientException {
+			if (!ResponseUtil.isSuccessful(response)) {
+				throw new ClientException(response);
+			}
+
+			FileMetadata file = null;
+			FileMetadataDTO fileDTO = response.readEntity(FileMetadataDTO.class);
+			if (fileDTO != null) {
+				file = toFile(fsClient, fileDTO);
+			}
+			return file;
 		}
 
 		/**
@@ -47,6 +151,7 @@ public class ModelConverter {
 			if (!ResponseUtil.isSuccessful(response)) {
 				throw new ClientException(response);
 			}
+
 			String fileId = null;
 			try {
 				fileId = ResponseUtil.getSimpleValue(response, "file_id", String.class);
@@ -138,7 +243,7 @@ public class ModelConverter {
 		}
 	}
 
-	public static class FILE_CONTENT {
+	public static class DfsVolume {
 		/**
 		 * 
 		 * @param datablockDTO

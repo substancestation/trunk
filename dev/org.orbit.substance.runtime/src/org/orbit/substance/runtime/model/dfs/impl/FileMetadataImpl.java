@@ -272,8 +272,8 @@ public class FileMetadataImpl implements FileMetadata {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		String filePartsString = ModelConverter.File_System.toFilePartsString(this.fileParts);
-		String propertiesString = ModelConverter.File_System.toPropertiesString(this.properties);
+		String filePartsString = ModelConverter.Dfs.toFilePartsString(this.fileParts);
+		String propertiesString = ModelConverter.Dfs.toPropertiesString(this.properties);
 
 		sb.append("FileMetadataImpl (");
 		sb.append("id='").append(this.id).append("'");

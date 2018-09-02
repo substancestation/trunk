@@ -9,19 +9,20 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.model.dfs.FileMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class ListRootsCommand extends AbstractFileSystemCommand<FileSystemService> implements WSCommand {
+public class ListRootsCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_metadata.ListRootsCommand";
 
 	public ListRootsCommand() {
-		super(FileSystemService.class);
+		super(DfsService.class);
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class ListRootsCommand extends AbstractFileSystemCommand<FileSystemServic
 
 		List<FileMetadataDTO> fileMetadataDTOs = new ArrayList<FileMetadataDTO>();
 		for (FileMetadata rootFile : rootFiles) {
-			FileMetadataDTO fileMetadataDTO = ModelConverter.File_System.toDTO(rootFile);
+			FileMetadataDTO fileMetadataDTO = ModelConverter.Dfs.toDTO(rootFile);
 			if (fileMetadataDTO != null) {
 				fileMetadataDTOs.add(fileMetadataDTO);
 			}

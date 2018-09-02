@@ -9,7 +9,8 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.orbit.substance.runtime.Messages;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.runtime.model.dfsvolume.FileContentMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
@@ -17,12 +18,12 @@ import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class ListFileContentsCommand extends AbstractFileContentCommand<FileContentService> implements WSCommand {
+public class ListFileContentsCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_content.ListFileContentsCommand";
 
 	public ListFileContentsCommand() {
-		super(FileContentService.class);
+		super(DfsVolumeService.class);
 	}
 
 	@Override
@@ -51,7 +52,7 @@ public class ListFileContentsCommand extends AbstractFileContentCommand<FileCont
 		List<FileContentMetadataDTO> fileContentDTOs = new ArrayList<FileContentMetadataDTO>();
 		boolean accountAndBlockMatch = false;
 
-		FileContentService service = getService();
+		DfsVolumeService service = getService();
 		DataBlockMetadata dataBlock = service.getDataBlock(accountId, blockId);
 		if (dataBlock != null) {
 			String theAccountId = dataBlock.getAccountId();
@@ -61,7 +62,7 @@ public class ListFileContentsCommand extends AbstractFileContentCommand<FileCont
 				FileContentMetadata[] fileContents = service.getFileContentMetadatas(accountId, blockId);
 				if (fileContents != null) {
 					for (FileContentMetadata fileContent : fileContents) {
-						FileContentMetadataDTO fileContentDTO = ModelConverter.File_Content.toDTO(fileContent);
+						FileContentMetadataDTO fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);
 						if (fileContentDTO != null) {
 							fileContentDTOs.add(fileContentDTO);
 						}

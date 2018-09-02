@@ -39,7 +39,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 	}
 
 	@Override
-	public long size() {
+	public long getSize() {
 		return this.size;
 	}
 

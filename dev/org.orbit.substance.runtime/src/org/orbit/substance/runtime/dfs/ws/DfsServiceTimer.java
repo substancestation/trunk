@@ -9,37 +9,37 @@ import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexProvider;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.substance.runtime.SubstanceConstants;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 
-public class FileSystemServiceTimer extends ServiceIndexTimer<FileSystemService> {
+public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 
-	protected FileSystemService service;
+	protected DfsService service;
 
 	/**
 	 * 
 	 * @param indexProvider
 	 * @param service
 	 */
-	public FileSystemServiceTimer(IndexProvider indexProvider, FileSystemService service) {
+	public DfsServiceTimer(IndexProvider indexProvider, DfsService service) {
 		super("Index Timer [" + service.getName() + "]", indexProvider);
 		this.service = service;
 		setDebug(true);
 	}
 
 	@Override
-	public synchronized FileSystemService getService() {
+	public synchronized DfsService getService() {
 		return this.service;
 	}
 
 	@Override
-	public IndexItem getIndex(IndexProvider indexProvider, FileSystemService service) throws IOException {
+	public IndexItem getIndex(IndexProvider indexProvider, DfsService service) throws IOException {
 		String name = service.getName();
 
 		return indexProvider.getIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE, name);
 	}
 
 	@Override
-	public IndexItem addIndex(IndexProvider indexProvider, FileSystemService service) throws IOException {
+	public IndexItem addIndex(IndexProvider indexProvider, DfsService service) throws IOException {
 		String dfsId = service.getDfsId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();
@@ -58,7 +58,7 @@ public class FileSystemServiceTimer extends ServiceIndexTimer<FileSystemService>
 	}
 
 	@Override
-	public void updateIndex(IndexProvider indexProvider, FileSystemService service, IndexItem indexItem) throws IOException {
+	public void updateIndex(IndexProvider indexProvider, DfsService service, IndexItem indexItem) throws IOException {
 		String dfsId = service.getDfsId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();

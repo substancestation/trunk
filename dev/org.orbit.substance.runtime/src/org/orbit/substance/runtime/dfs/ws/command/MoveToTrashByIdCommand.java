@@ -6,19 +6,20 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.model.dfs.FileMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class MoveToTrashByIdCommand extends AbstractFileSystemCommand<FileSystemService> implements WSCommand {
+public class MoveToTrashByIdCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_metadata.MoveToTrashByIdCommand";
 
 	public MoveToTrashByIdCommand() {
-		super(FileSystemService.class);
+		super(DfsService.class);
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class MoveToTrashByIdCommand extends AbstractFileSystemCommand<FileSystem
 		}
 
 		FileMetadata fileMetadata = fileSystem.moveToTrash(file_id);
-		FileMetadataDTO fileMetadataDTO = ModelConverter.File_System.toDTO(fileMetadata);
+		FileMetadataDTO fileMetadataDTO = ModelConverter.Dfs.toDTO(fileMetadata);
 		return Response.ok().entity(fileMetadataDTO).build();
 	}
 

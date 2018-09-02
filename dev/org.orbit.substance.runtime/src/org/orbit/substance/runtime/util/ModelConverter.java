@@ -17,10 +17,10 @@ import org.origin.common.json.JSONUtil;
 
 public class ModelConverter {
 
-	public static File_System File_System = new File_System();
-	public static File_Content File_Content = new File_Content();
+	public static Dfs Dfs = new Dfs();
+	public static DfsVolume DfsVolume = new DfsVolume();
 
-	public static class File_System {
+	public static class Dfs {
 		/**
 		 * 
 		 * @param path
@@ -92,10 +92,13 @@ public class ModelConverter {
 				return null;
 			}
 
+			// String name = fileMetadata.getName();
+			// dto.setName(name);
+
 			String accountId = fileMetadata.getAccountId();
 			String fileId = fileMetadata.getFileId();
 			String parentFileId = fileMetadata.getParentFileId();
-			String name = fileMetadata.getName();
+			Path path = fileMetadata.getPath();
 			long size = fileMetadata.getSize();
 			boolean isDirectory = fileMetadata.isDirectory();
 			boolean isHidden = fileMetadata.isHidden();
@@ -112,7 +115,7 @@ public class ModelConverter {
 			dto.setAccountId(accountId);
 			dto.setFileId(fileId);
 			dto.setParentFileId(parentFileId);
-			dto.setName(name);
+			dto.setPath(path.getPathString());
 			dto.setSize(size);
 			dto.setDirectory(isDirectory);
 			dto.setHidden(isHidden);
@@ -126,7 +129,7 @@ public class ModelConverter {
 		}
 	}
 
-	public static class File_Content {
+	public static class DfsVolume {
 		/**
 		 * 
 		 * @param dataBlock

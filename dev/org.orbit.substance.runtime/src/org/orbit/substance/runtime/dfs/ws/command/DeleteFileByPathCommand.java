@@ -8,19 +8,20 @@ import javax.ws.rs.core.Response.Status;
 
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.model.dfs.FileMetadata;
 import org.orbit.substance.runtime.model.dfs.Path;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class DeleteFileByPathCommand extends AbstractFileSystemCommand<FileSystemService> implements WSCommand {
+public class DeleteFileByPathCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_metadata.DeleteFileByPathCommand";
 
 	public DeleteFileByPathCommand() {
-		super(FileSystemService.class);
+		super(DfsService.class);
 	}
 
 	@Override

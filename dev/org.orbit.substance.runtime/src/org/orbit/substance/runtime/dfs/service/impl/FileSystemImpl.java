@@ -1,42 +1,53 @@
 package org.orbit.substance.runtime.dfs.service.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
+import org.orbit.substance.runtime.SubstanceConstants;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
 import org.orbit.substance.runtime.model.dfs.FileMetadata;
+import org.orbit.substance.runtime.model.dfs.FilePart;
 import org.orbit.substance.runtime.model.dfs.Path;
+import org.orbit.substance.runtime.util.OrbitClientHelper;
 import org.origin.common.jdbc.DatabaseUtil;
+import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.server.ServerException;
+import org.origin.common.util.UUIDUtil;
 
 public class FileSystemImpl implements FileSystem {
 
 	public static FileMetadata[] EMPTY_FILES = new FileMetadata[0];
 
-	protected FileSystemService fileSystemService;
+	protected DfsService dfsService;
 	protected String accountId;
 
 	/**
 	 * 
-	 * @param fileSystemService
+	 * @param dfsService
 	 * @param accountId
 	 */
-	public FileSystemImpl(FileSystemService fileSystemService, String accountId) {
-		this.fileSystemService = fileSystemService;
+	public FileSystemImpl(DfsService dfsService, String accountId) {
+		this.dfsService = dfsService;
 		this.accountId = accountId;
 	}
 
 	@Override
-	public FileSystemService getFileSystemService() {
-		return this.fileSystemService;
+	public DfsService getFileSystemService() {
+		return this.dfsService;
 	}
 
 	@Override
 	public String getDfsId() {
-		return this.fileSystemService.getDfsId();
+		return this.dfsService.getDfsId();
 	}
 
 	@Override
@@ -50,7 +61,7 @@ public class FileSystemImpl implements FileSystem {
 	 * @throws SQLException
 	 */
 	protected Connection getConnection() throws SQLException {
-		Connection conn = this.fileSystemService.getConnection();
+		Connection conn = this.dfsService.getConnection();
 		if (conn == null) {
 			throw new SQLException("Cannot get JDBC Connection.");
 		}
@@ -132,7 +143,7 @@ public class FileSystemImpl implements FileSystem {
 
 	@Override
 	public FileMetadata[] listFiles(String parentFileId) throws IOException {
-		FileMetadata[] result = null;
+		FileMetadata[] memberFileMetadatas = null;
 		Connection conn = null;
 		try {
 			conn = getConnection();
@@ -140,8 +151,8 @@ public class FileSystemImpl implements FileSystem {
 
 			List<FileMetadata> fileMetadatas = tableHandler.getList(conn, parentFileId, false);
 			if (fileMetadatas != null) {
-				result = fileMetadatas.toArray(new FileMetadata[fileMetadatas.size()]);
-				setPath(result);
+				memberFileMetadatas = fileMetadatas.toArray(new FileMetadata[fileMetadatas.size()]);
+				setPath(memberFileMetadatas);
 			}
 
 		} catch (SQLException e) {
@@ -149,10 +160,10 @@ public class FileSystemImpl implements FileSystem {
 		} finally {
 			DatabaseUtil.closeQuietly(conn, true);
 		}
-		if (result == null) {
-			result = EMPTY_FILES;
+		if (memberFileMetadatas == null) {
+			memberFileMetadatas = EMPTY_FILES;
 		}
-		return result;
+		return memberFileMetadatas;
 	}
 
 	@Override
@@ -350,6 +361,18 @@ public class FileSystemImpl implements FileSystem {
 	}
 
 	@Override
+	public boolean exists(String parentFileId, String fileName) throws IOException {
+		FileMetadata[] memberFileMetadatas = listFiles(parentFileId);
+		for (FileMetadata memberFileMetadata : memberFileMetadatas) {
+			String currFileName = memberFileMetadata.getName();
+			if (currFileName != null && currFileName.equals(fileName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean isDirectory(Path path) throws IOException {
 		boolean isDirectory = false;
 		FileMetadata fileMetadata = getFile(path);
@@ -360,20 +383,178 @@ public class FileSystemImpl implements FileSystem {
 	}
 
 	@Override
-	public FileMetadata createNewFile(Path path) throws IOException {
-		FileMetadata result = null;
-		FileMetadata fileMetadata = getFile(path);
-		if (fileMetadata != null) {
-			if (fileMetadata.isDirectory()) {
+	public FileMetadata createNewFile(Path path, long size) throws IOException {
+		FileMetadata newFileMetadata = null;
+
+		if (path == null || path.isEmpty()) {
+			throw new IOException("Path is empty.");
+		}
+		FileMetadata existingFileMetadata = getFile(path);
+		if (existingFileMetadata != null) {
+			if (existingFileMetadata.isDirectory()) {
 				throw new IOException("Path already exists and is a directory.");
 			} else {
 				throw new IOException("Path already exists and is a file.");
 			}
 		}
-		if (result != null) {
-			result.setPath(path);
+
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
+
+			String parentFileId = null;
+			Path parentPath = path.getParent();
+			if (parentPath == null || parentPath.isRoot()) {
+				parentFileId = "-1";
+
+			} else {
+				FileMetadata parentFileMetadata = getFile(parentPath);
+				if (parentFileMetadata == null) {
+					throw new IOException("Parent directory doesn't exist.");
+				} else {
+					if (!parentFileMetadata.isDirectory()) {
+						throw new IOException("Parent file is not a directory.");
+					}
+				}
+				parentFileId = parentFileMetadata.getFileId();
+			}
+
+			String fileId = generateFileId();
+			String fileName = path.getLastSegment();
+			boolean isDirectory = false;
+			boolean isHidden = false;
+			boolean inTrash = false;
+			List<FilePart> fileParts = new ArrayList<FilePart>();
+			Map<String, Object> properties = new HashMap<String, Object>();
+
+			newFileMetadata = tableHandler.create(conn, fileId, parentFileId, fileName, size, isDirectory, isHidden, inTrash, fileParts, properties);
+			if (newFileMetadata == null) {
+				throw new RuntimeException("New file metadata cannot be created.");
+			}
+
+			updatePath(newFileMetadata);
+
+			if (size > 0) {
+				allocateVolumes(newFileMetadata, size);
+			}
+
+		} catch (SQLException e) {
+			handleSQLException(e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn, true);
 		}
-		return null;
+		return newFileMetadata;
+	}
+
+	@Override
+	public FileMetadata createNewFile(String parentFileId, String fileName, long size) throws IOException {
+		FileMetadata newFileMetadata = null;
+
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
+
+			String fileId = generateFileId();
+			boolean isDirectory = false;
+			boolean isHidden = false;
+			boolean inTrash = false;
+			List<FilePart> fileParts = new ArrayList<FilePart>();
+			Map<String, Object> properties = new HashMap<String, Object>();
+
+			newFileMetadata = tableHandler.create(conn, fileId, parentFileId, fileName, size, isDirectory, isHidden, inTrash, fileParts, properties);
+			if (newFileMetadata == null) {
+				throw new RuntimeException("New file metadata cannot be created.");
+			}
+
+			updatePath(newFileMetadata);
+
+			if (size > 0) {
+				allocateVolumes(newFileMetadata, size);
+			}
+
+		} catch (SQLException e) {
+			handleSQLException(e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn, true);
+		}
+		return newFileMetadata;
+	}
+
+	public String generateFileId() {
+		String fileId = UUIDUtil.generateBase64EncodedUUID();
+		return fileId;
+	}
+
+	/**
+	 * 
+	 * @param fileMetadata
+	 * @throws IOException
+	 */
+	public void updatePath(FileMetadata fileMetadata) throws IOException {
+		if (fileMetadata != null) {
+			String fileId = fileMetadata.getFileId();
+			Path path = getPath(fileId);
+			if (path != null) {
+				fileMetadata.setPath(path);
+			}
+		}
+	}
+
+	@Override
+	public FileMetadata allocateVolumes(String fileId, long size) throws IOException {
+		FileMetadata fileMetadata = getFile(fileId);
+		if (fileMetadata == null) {
+			throw new IOException("File is not found.");
+		}
+		if (size <= 0 && fileMetadata.getSize() <= 0) {
+			throw new IOException("File size is 0.");
+		}
+
+		long fileSize = size > 0 ? size : fileMetadata.getSize();
+		allocateVolumes(fileMetadata, fileSize);
+
+		return fileMetadata;
+	}
+
+	/**
+	 * 
+	 * @param fileMetadata
+	 * @param size
+	 * @throws IOException
+	 */
+	protected void allocateVolumes(FileMetadata fileMetadata, long size) throws IOException {
+		if (fileMetadata == null) {
+			throw new RuntimeException("File is null.");
+		}
+		if (size <= 0) {
+			throw new RuntimeException("File size is 0.");
+		}
+
+		String dfsId = getDfsId();
+		String accountId = fileMetadata.getAccountId();
+		String indexServiceUrl = (String) this.dfsService.getProperties().get(SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
+		String dfsAccessToken = "";
+
+		DfsVolumeClient[] dfsVolumeClients = OrbitClientHelper.INSTANCE.getDfsVolumeClient(indexServiceUrl, dfsAccessToken, dfsId);
+		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
+			try {
+				DataBlockMetadata[] dataBlocks = dfsVolumeClient.getDataBlocks(accountId);
+				for (DataBlockMetadata dataBlock : dataBlocks) {
+					String currAccountId = dataBlock.getAccountId();
+					if (!accountId.equals(currAccountId)) {
+						throw new RuntimeException("Data block's account id doesn't match.");
+					}
+
+					String currBlockId = dataBlock.getBlockId();
+					long currCapacity = dataBlock.getCapacity();
+					long currSize = dataBlock.getSize();
+				}
+			} catch (ClientException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -500,4 +681,21 @@ public class FileSystemImpl implements FileSystem {
 		return false;
 	}
 
+	@Override
+	public boolean setFileContent(String fileId, InputStream contentInputStream) throws IOException {
+		int available = contentInputStream.available();
+		System.out.println("fileId = " + fileId);
+		System.out.println("available = " + available);
+		return false;
+	}
+
+	@Override
+	public InputStream getFileContentInputStream(String fileId) throws IOException {
+		System.out.println("fileId = " + fileId);
+		return null;
+	}
+
 }
+
+// get dfs volumes of the dfs
+// SubstanceClientsUtil.DfsVolume.listDataBlocks(fileContentServiceUrl, accessToken, accountId);

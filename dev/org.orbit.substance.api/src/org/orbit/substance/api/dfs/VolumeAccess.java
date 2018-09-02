@@ -1,6 +1,6 @@
-package org.orbit.substance.runtime.model.dfs;
+package org.orbit.substance.api.dfs;
 
-public interface FileContentAccess {
+public interface VolumeAccess {
 
 	FilePart getFilePart();
 

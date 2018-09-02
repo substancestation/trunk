@@ -1,20 +1,20 @@
-package org.orbit.substance.runtime.model.dfs.impl;
+package org.orbit.substance.connector.dfs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orbit.substance.runtime.model.dfs.VolumeAccess;
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
-import org.orbit.substance.runtime.model.dfs.FilePart;
+import org.orbit.substance.api.dfs.FileMetadata;
+import org.orbit.substance.api.dfs.FilePart;
+import org.orbit.substance.api.dfs.VolumeAccess;
 
 public class FilePartImpl implements FilePart {
 
-	protected FileMetadata fileMetadata;
+	protected FileMetadata file;
 	protected int partId;
 	protected long startIndex;
 	protected long endIndex;
 	protected String checksum;
-	protected List<VolumeAccess> fileContentAccessList = new ArrayList<VolumeAccess>();
+	protected List<VolumeAccess> volumeAccessList = new ArrayList<VolumeAccess>();
 
 	public FilePartImpl() {
 	}
@@ -36,13 +36,13 @@ public class FilePartImpl implements FilePart {
 	}
 
 	@Override
-	public FileMetadata getFileMetadata() {
-		return this.fileMetadata;
+	public FileMetadata getFile() {
+		return this.file;
 	}
 
 	@Override
-	public void setFileMetadata(FileMetadata fileMetadata) {
-		this.fileMetadata = fileMetadata;
+	public void setFile(FileMetadata file) {
+		this.file = file;
 	}
 
 	@Override
@@ -87,14 +87,14 @@ public class FilePartImpl implements FilePart {
 
 	@Override
 	public synchronized List<VolumeAccess> getVolumeAccess() {
-		if (this.fileContentAccessList == null) {
-			this.fileContentAccessList = new ArrayList<VolumeAccess>();
+		if (this.volumeAccessList == null) {
+			this.volumeAccessList = new ArrayList<VolumeAccess>();
 		}
-		return this.fileContentAccessList;
+		return this.volumeAccessList;
 	}
 
 	public synchronized void setFileContentAccess(List<VolumeAccess> fileContentAccessList) {
-		this.fileContentAccessList = fileContentAccessList;
+		this.volumeAccessList = fileContentAccessList;
 	}
 
 	@Override

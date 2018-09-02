@@ -6,8 +6,9 @@ public class SubstanceConstants {
 	// Global
 	// ----------------------------------------------------------------------------------------
 	// Configuration property names
-	public static String ORBIT_HOST_URL = "orbit.host.url";
 	public static String ORBIT_INDEX_SERVICE_URL = "orbit.index_service.url";
+
+	public static String ORBIT_HOST_URL = "orbit.host.url";
 
 	// Index item property names
 	public static String IDX_PROP__LAST_HEARTBEAT_TIME = "last_heartbeat_time";

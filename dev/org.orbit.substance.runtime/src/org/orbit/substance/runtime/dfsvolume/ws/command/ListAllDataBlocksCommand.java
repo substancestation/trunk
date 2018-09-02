@@ -8,18 +8,19 @@ import javax.ws.rs.core.Response.Status;
 
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.Request;
 
-public class ListAllDataBlocksCommand extends AbstractFileContentCommand<FileContentService> implements WSCommand {
+public class ListAllDataBlocksCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_content.ListAllDataBlocksCommand";
 
 	public ListAllDataBlocksCommand() {
-		super(FileContentService.class);
+		super(DfsVolumeService.class);
 	}
 
 	@Override
@@ -34,11 +35,11 @@ public class ListAllDataBlocksCommand extends AbstractFileContentCommand<FileCon
 	@Override
 	public Response execute(Request request) throws Exception {
 		List<DataBlockMetadataDTO> dataBlockDTOs = new ArrayList<DataBlockMetadataDTO>();
-		FileContentService service = getService();
+		DfsVolumeService service = getService();
 		DataBlockMetadata[] dataBlocks = service.getDataBlocks();
 		if (dataBlocks != null) {
 			for (DataBlockMetadata dataBlock : dataBlocks) {
-				DataBlockMetadataDTO dataBlockDTO = ModelConverter.File_Content.toDTO(dataBlock);
+				DataBlockMetadataDTO dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
 				if (dataBlockDTO != null) {
 					dataBlockDTOs.add(dataBlockDTO);
 				}

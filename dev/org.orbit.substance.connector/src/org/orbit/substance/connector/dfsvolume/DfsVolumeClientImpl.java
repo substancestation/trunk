@@ -1,12 +1,13 @@
 package org.orbit.substance.connector.dfsvolume;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
-import org.orbit.substance.api.dfsvolume.FileContentClient;
+import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.connector.util.ModelConverter;
 import org.orbit.substance.model.RequestConstants;
@@ -16,7 +17,7 @@ import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.WSClientConfiguration;
 import org.origin.common.rest.model.Request;
 
-public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, FileContentWSClient> implements FileContentClient {
+public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsVolumeWSClient> implements DfsVolumeClient {
 
 	private static final DataBlockMetadata[] EMPTY_DATA_BLOCKS = new DataBlockMetadata[0];
 	private static final FileContentMetadata[] EMPTY_FILE_CONTENTS = new FileContentMetadata[0];
@@ -26,14 +27,14 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 	 * @param connector
 	 * @param properties
 	 */
-	public FileContentClientImpl(ServiceConnector<FileContentClient> connector, Map<String, Object> properties) {
+	public DfsVolumeClientImpl(ServiceConnector<DfsVolumeClient> connector, Map<String, Object> properties) {
 		super(connector, properties);
 	}
 
 	@Override
-	protected FileContentWSClient createWSClient(Map<String, Object> properties) {
+	protected DfsVolumeWSClient createWSClient(Map<String, Object> properties) {
 		WSClientConfiguration config = WSClientConfiguration.create(properties);
-		return new FileContentWSClient(config);
+		return new DfsVolumeWSClient(config);
 	}
 
 	// ----------------------------------------------------------------------
@@ -47,7 +48,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlocks = ModelConverter.FILE_CONTENT.getDataBlocks(response);
+			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(response);
 		}
 
 		if (dataBlocks == null) {
@@ -65,7 +66,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlocks = ModelConverter.FILE_CONTENT.getDataBlocks(response);
+			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(response);
 		}
 
 		if (dataBlocks == null) {
@@ -84,7 +85,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			succeed = ModelConverter.FILE_CONTENT.exists(response);
+			succeed = ModelConverter.DfsVolume.exists(response);
 		}
 
 		return succeed;
@@ -100,7 +101,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlock = ModelConverter.FILE_CONTENT.getDataBlock(response);
+			dataBlock = ModelConverter.DfsVolume.getDataBlock(response);
 		}
 
 		return dataBlock;
@@ -116,7 +117,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlock = ModelConverter.FILE_CONTENT.getDataBlock(response);
+			dataBlock = ModelConverter.DfsVolume.getDataBlock(response);
 		}
 
 		return dataBlock;
@@ -132,7 +133,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			succeed = ModelConverter.FILE_CONTENT.isDeleted(response);
+			succeed = ModelConverter.DfsVolume.isDeleted(response);
 		}
 
 		return succeed;
@@ -151,7 +152,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			fileContents = ModelConverter.FILE_CONTENT.getFileContents(response);
+			fileContents = ModelConverter.DfsVolume.getFileContents(response);
 		}
 
 		if (fileContents == null) {
@@ -172,7 +173,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			succeed = ModelConverter.FILE_CONTENT.exists(response);
+			succeed = ModelConverter.DfsVolume.exists(response);
 		}
 		return succeed;
 	}
@@ -189,7 +190,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			fileContent = ModelConverter.FILE_CONTENT.getFileContent(response);
+			fileContent = ModelConverter.DfsVolume.getFileContent(response);
 		}
 		return fileContent;
 	}
@@ -206,7 +207,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			succeed = ModelConverter.FILE_CONTENT.isDeleted(response);
+			succeed = ModelConverter.DfsVolume.isDeleted(response);
 		}
 		return succeed;
 	}
@@ -215,7 +216,7 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 	// Methods for uploading/downloading file contents
 	// ----------------------------------------------------------------------
 	@Override
-	public boolean uploadFile(String accountId, String blockId, String fileId, FileContentMetadata fileContentMetadata) throws ClientException {
+	public boolean uploadFile(String accountId, String blockId, String fileId, int partId, String checksuma, InputStream inputStream) throws ClientException {
 		return false;
 	}
 
@@ -225,19 +226,3 @@ public class FileContentClientImpl extends ServiceClientImpl<FileContentClient, 
 	}
 
 }
-
-// @Override
-// public FileContentServiceMetadata getMetadata() {
-// // TODO Auto-generated method stub
-// return null;
-// }
-
-/// **
-// *
-// * @param e
-// * @return
-// * @throws IOException
-// */
-// protected IOException handleException(ClientException e) throws IOException {
-// throw new IOException(e);
-// }

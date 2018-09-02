@@ -12,18 +12,18 @@ public interface FilePart {
 
 	void setPartId(int partId);
 
-	int getStartIndex();
+	long getStartIndex();
 
-	void setStartIndex(int startIndex);
+	void setStartIndex(long startIndex);
 
-	int getEndIndex();
+	long getEndIndex();
 
-	void setEndIndex(int endIndex);
+	void setEndIndex(long endIndex);
 
 	String getChecksum();
 
 	void setChecksum(String checksum);
 
-	List<FileContentAccess> getFileContentAccess();
+	List<VolumeAccess> getVolumeAccess();
 
 }

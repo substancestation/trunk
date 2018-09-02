@@ -5,8 +5,8 @@ import java.util.Map;
 import org.orbit.platform.sdk.IPlatformContext;
 import org.orbit.platform.sdk.IProcess;
 import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
-import org.orbit.substance.runtime.dfs.service.impl.FileSystemServiceImpl;
+import org.orbit.substance.runtime.dfs.service.DfsService;
+import org.orbit.substance.runtime.dfs.service.impl.DfsServiceImpl;
 import org.origin.common.rest.util.LifecycleAware;
 import org.osgi.framework.BundleContext;
 
@@ -20,10 +20,10 @@ public class FileSystemServiceActivator implements ServiceActivator {
 		Map<Object, Object> properties = context.getProperties();
 
 		// Start service
-		FileSystemServiceImpl service = new FileSystemServiceImpl(properties);
+		DfsServiceImpl service = new DfsServiceImpl(properties);
 		service.start(bundleContext);
 
-		process.adapt(FileSystemService.class, service);
+		process.adapt(DfsService.class, service);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class FileSystemServiceActivator implements ServiceActivator {
 		BundleContext bundleContext = context.getBundleContext();
 
 		// Stop service
-		FileSystemService service = process.getAdapter(FileSystemService.class);
+		DfsService service = process.getAdapter(DfsService.class);
 		if (service instanceof LifecycleAware) {
 			((LifecycleAware) service).stop(bundleContext);
 		}

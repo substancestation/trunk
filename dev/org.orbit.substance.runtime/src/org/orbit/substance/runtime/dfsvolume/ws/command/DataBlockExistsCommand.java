@@ -8,18 +8,19 @@ import javax.ws.rs.core.Response.Status;
 
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.runtime.Messages;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class DataBlockExistsCommand extends AbstractFileContentCommand<FileContentService> implements WSCommand {
+public class DataBlockExistsCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
 	public static String ID = "org.orbit.substance.runtime.dfs_content.DataBlockExistsCommand";
 
 	public DataBlockExistsCommand() {
-		super(FileContentService.class);
+		super(DfsVolumeService.class);
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public class DataBlockExistsCommand extends AbstractFileContentCommand<FileConte
 		boolean exists = false;
 		boolean accountAndBlockMatch = false;
 
-		FileContentService service = getService();
+		DfsVolumeService service = getService();
 		DataBlockMetadata dataBlock = service.getDataBlock(accountId, blockId);
 		if (dataBlock != null) {
 			String theAccountId = dataBlock.getAccountId();

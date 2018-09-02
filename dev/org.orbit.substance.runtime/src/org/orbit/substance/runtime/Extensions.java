@@ -2,7 +2,7 @@ package org.orbit.substance.runtime;
 
 import org.orbit.infra.api.indexes.ServiceIndexTimerFactory;
 import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
-import org.orbit.substance.runtime.dfs.ws.FileSystemServiceTimerFactory;
+import org.orbit.substance.runtime.dfs.ws.DfsServiceTimerFactory;
 import org.orbit.substance.runtime.dfs.ws.command.CreateNewFileCommand;
 import org.orbit.substance.runtime.dfs.ws.command.DeleteFileByIdCommand;
 import org.orbit.substance.runtime.dfs.ws.command.DeleteFileByPathCommand;
@@ -23,7 +23,7 @@ import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByIdCommand;
 import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByPathCommand;
 import org.orbit.substance.runtime.dfs.ws.command.UploadFileToDirectoryCommand;
 import org.orbit.substance.runtime.dfs.ws.command.UploadFileToFileCommand;
-import org.orbit.substance.runtime.dfsvolume.ws.FileContentServiceTimerFactory;
+import org.orbit.substance.runtime.dfsvolume.ws.DfsVolumeServiceTimerFactory;
 import org.orbit.substance.runtime.dfsvolume.ws.command.CreateDataBlockCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.DataBlockExistsCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.DeleteDataBlockCommand;
@@ -105,11 +105,11 @@ public class Extensions extends ProgramExtensions {
 		String extensionTypeId = ServiceIndexTimerFactory.EXTENSION_TYPE_ID;
 
 		Extension extension1 = new Extension(extensionTypeId, SubstanceConstants.IDX__DFS__INDEXER_ID, "File system service index provider");
-		extension1.addInterface(ServiceIndexTimerFactory.class, FileSystemServiceTimerFactory.class);
+		extension1.addInterface(ServiceIndexTimerFactory.class, DfsServiceTimerFactory.class);
 		addExtension(extension1);
 
 		Extension extension2 = new Extension(extensionTypeId, SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, "File content service index provider");
-		extension2.addInterface(ServiceIndexTimerFactory.class, FileContentServiceTimerFactory.class);
+		extension2.addInterface(ServiceIndexTimerFactory.class, DfsVolumeServiceTimerFactory.class);
 		addExtension(extension2);
 	}
 

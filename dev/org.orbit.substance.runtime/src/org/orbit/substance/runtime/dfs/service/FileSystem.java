@@ -1,13 +1,14 @@
 package org.orbit.substance.runtime.dfs.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.orbit.substance.runtime.model.dfs.FileMetadata;
 import org.orbit.substance.runtime.model.dfs.Path;
 
 public interface FileSystem {
 
-	FileSystemService getFileSystemService();
+	DfsService getFileSystemService();
 
 	String getDfsId();
 
@@ -31,9 +32,19 @@ public interface FileSystem {
 
 	boolean exists(Path path) throws IOException;
 
+	boolean exists(String parentFileId, String fileName) throws IOException;
+
 	boolean isDirectory(Path path) throws IOException;
 
-	FileMetadata createNewFile(Path path) throws IOException;
+	// FileMetadata createNewFile(Path path) throws IOException;
+
+	FileMetadata createNewFile(Path path, long size) throws IOException;
+
+	// FileMetadata createNewFile(String parentFileId, String fileName) throws IOException;
+
+	FileMetadata createNewFile(String parentFileId, String fileName, long size) throws IOException;
+
+	FileMetadata allocateVolumes(String fileId, long size) throws IOException;
 
 	FileMetadata mkdirs(Path path) throws IOException;
 
@@ -48,5 +59,9 @@ public interface FileSystem {
 	boolean delete(String fileId) throws IOException;
 
 	boolean delete(Path path) throws IOException;
+
+	boolean setFileContent(String fileId, InputStream contentInputStream) throws IOException;
+
+	InputStream getFileContentInputStream(String fileId) throws IOException;
 
 }

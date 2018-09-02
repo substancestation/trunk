@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.orbit.substance.runtime.SubstanceConstants;
+import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.editpolicy.ServiceEditPoliciesImpl;
@@ -19,7 +19,7 @@ import org.origin.common.util.PropertyUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class FileSystemServiceImpl implements FileSystemService, LifecycleAware {
+public class DfsServiceImpl implements DfsService, LifecycleAware {
 
 	protected Map<Object, Object> initProperties;
 	protected Map<Object, Object> properties = new HashMap<Object, Object>();
@@ -32,9 +32,9 @@ public class FileSystemServiceImpl implements FileSystemService, LifecycleAware 
 	 * 
 	 * @param initProperties
 	 */
-	public FileSystemServiceImpl(Map<Object, Object> initProperties) {
+	public DfsServiceImpl(Map<Object, Object> initProperties) {
 		this.initProperties = initProperties;
-		this.wsEditPolicies = new ServiceEditPoliciesImpl(FileSystemService.class, this);
+		this.wsEditPolicies = new ServiceEditPoliciesImpl(DfsService.class, this);
 	}
 
 	@Override
@@ -44,6 +44,7 @@ public class FileSystemServiceImpl implements FileSystemService, LifecycleAware 
 			properties.putAll(this.initProperties);
 		}
 
+		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_HOST_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__ID);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__NAME);
@@ -70,7 +71,7 @@ public class FileSystemServiceImpl implements FileSystemService, LifecycleAware 
 		initialize();
 
 		Hashtable<String, Object> props = new Hashtable<String, Object>();
-		this.serviceRegistry = bundleContext.registerService(FileSystemService.class, this, props);
+		this.serviceRegistry = bundleContext.registerService(DfsService.class, this, props);
 	}
 
 	@Override
@@ -79,6 +80,11 @@ public class FileSystemServiceImpl implements FileSystemService, LifecycleAware 
 			this.serviceRegistry.unregister();
 			this.serviceRegistry = null;
 		}
+	}
+
+	@Override
+	public Map<Object, Object> getProperties() {
+		return this.properties;
 	}
 
 	/**
@@ -90,6 +96,7 @@ public class FileSystemServiceImpl implements FileSystemService, LifecycleAware 
 			configProps = new HashMap<Object, Object>();
 		}
 
+		String indexServiceUrl = (String) configProps.get(SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
 		String globalHostURL = (String) configProps.get(SubstanceConstants.ORBIT_HOST_URL);
 		String id = (String) configProps.get(SubstanceConstants.DFS__ID);
 		String name = (String) configProps.get(SubstanceConstants.DFS__NAME);
@@ -105,6 +112,7 @@ public class FileSystemServiceImpl implements FileSystemService, LifecycleAware 
 			System.out.println();
 			System.out.println("Config properties:");
 			System.out.println("-----------------------------------------------------");
+			System.out.println(SubstanceConstants.ORBIT_INDEX_SERVICE_URL + " = " + indexServiceUrl);
 			System.out.println(SubstanceConstants.ORBIT_HOST_URL + " = " + globalHostURL);
 			System.out.println(SubstanceConstants.DFS__ID + " = " + id);
 			System.out.println(SubstanceConstants.DFS__NAME + " = " + name);

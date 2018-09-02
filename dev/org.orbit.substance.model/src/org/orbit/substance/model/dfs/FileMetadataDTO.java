@@ -13,7 +13,7 @@ public class FileMetadataDTO {
 	@XmlElement
 	protected String parentFileId;
 	@XmlElement
-	protected String name;
+	protected String path;
 	@XmlElement
 	protected boolean isDirectory;
 	@XmlElement
@@ -62,12 +62,12 @@ public class FileMetadataDTO {
 	}
 
 	@XmlElement
-	public String getName() {
-		return this.name;
+	public String getPath() {
+		return this.path;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	@XmlElement

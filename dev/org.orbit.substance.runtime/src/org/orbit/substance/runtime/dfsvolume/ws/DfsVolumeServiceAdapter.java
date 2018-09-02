@@ -1,4 +1,4 @@
-package org.orbit.substance.runtime.dfs.ws;
+package org.orbit.substance.runtime.dfsvolume.ws;
 
 import java.util.Map;
 
@@ -10,7 +10,7 @@ import org.orbit.platform.sdk.PlatformSDKActivator;
 import org.orbit.platform.sdk.util.ExtensibleServiceEditPolicy;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.common.ws.OrbitFeatureConstants;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.origin.common.extensions.core.IExtension;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.server.FeatureConstants;
@@ -34,21 +34,21 @@ import org.slf4j.LoggerFactory;
  * - uninstall edit policy
  * 
  */
-public class FileSystemServiceAdapter implements LifecycleAware {
+public class DfsVolumeServiceAdapter implements LifecycleAware {
 
-	protected static Logger LOG = LoggerFactory.getLogger(FileSystemServiceAdapter.class);
+	protected static Logger LOG = LoggerFactory.getLogger(DfsVolumeServiceAdapter.class);
 
 	protected Map<Object, Object> properties;
-	protected ServiceTracker<FileSystemService, FileSystemService> serviceTracker;
-	protected FileSystemWSApplication webApp;
-	protected ServiceIndexTimer<FileSystemService> indexTimer;
+	protected ServiceTracker<DfsVolumeService, DfsVolumeService> serviceTracker;
+	protected DfsVolumeWSApplication webApp;
+	protected ServiceIndexTimer<DfsVolumeService> indexTimer;
 	protected ExtensibleServiceEditPolicy editPolicy;
 
 	/**
 	 * 
 	 * @param properties
 	 */
-	public FileSystemServiceAdapter(Map<Object, Object> properties) {
+	public DfsVolumeServiceAdapter(Map<Object, Object> properties) {
 		this.properties = properties;
 	}
 
@@ -56,7 +56,7 @@ public class FileSystemServiceAdapter implements LifecycleAware {
 		return InfraClients.getInstance().getIndexProvider(this.properties, true);
 	}
 
-	public FileSystemService getService() {
+	public DfsVolumeService getService() {
 		return (this.serviceTracker != null) ? serviceTracker.getService() : null;
 	}
 
@@ -66,21 +66,21 @@ public class FileSystemServiceAdapter implements LifecycleAware {
 	 */
 	@Override
 	public void start(final BundleContext bundleContext) {
-		this.serviceTracker = new ServiceTracker<FileSystemService, FileSystemService>(bundleContext, FileSystemService.class, new ServiceTrackerCustomizer<FileSystemService, FileSystemService>() {
+		this.serviceTracker = new ServiceTracker<DfsVolumeService, DfsVolumeService>(bundleContext, DfsVolumeService.class, new ServiceTrackerCustomizer<DfsVolumeService, DfsVolumeService>() {
 			@Override
-			public FileSystemService addingService(ServiceReference<FileSystemService> reference) {
-				FileSystemService service = bundleContext.getService(reference);
+			public DfsVolumeService addingService(ServiceReference<DfsVolumeService> reference) {
+				DfsVolumeService service = bundleContext.getService(reference);
 
 				doStart(bundleContext, service);
 				return service;
 			}
 
 			@Override
-			public void modifiedService(ServiceReference<FileSystemService> reference, FileSystemService service) {
+			public void modifiedService(ServiceReference<DfsVolumeService> reference, DfsVolumeService service) {
 			}
 
 			@Override
-			public void removedService(ServiceReference<FileSystemService> reference, FileSystemService service) {
+			public void removedService(ServiceReference<DfsVolumeService> reference, DfsVolumeService service) {
 				doStop(bundleContext, service);
 			}
 		});
@@ -104,24 +104,23 @@ public class FileSystemServiceAdapter implements LifecycleAware {
 	 * @param bundleContext
 	 * @param service
 	 */
-	protected void doStart(BundleContext bundleContext, FileSystemService service) {
-		// Install edit policies
-		this.editPolicy = new ExtensibleServiceEditPolicy(SubstanceConstants.DFS__EDITPOLICY_ID, FileSystemService.class, SubstanceConstants.DFS__SERVICE_NAME);
+	protected void doStart(BundleContext bundleContext, DfsVolumeService service) {
+		// 1. Install edit policies
+		this.editPolicy = new ExtensibleServiceEditPolicy(SubstanceConstants.DFS_VOLUME__EDITPOLICY_ID, DfsVolumeService.class, SubstanceConstants.DFS_VOLUME__SERVICE_NAME);
 		ServiceEditPolicies editPolicies = service.getEditPolicies();
 		editPolicies.uninstall(this.editPolicy.getId());
 		editPolicies.install(this.editPolicy);
 
-		// Start web app
-		this.webApp = new FileSystemWSApplication(service, FeatureConstants.METADATA | FeatureConstants.NAME | FeatureConstants.PING | FeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
+		// 2. Start web app
+		this.webApp = new DfsVolumeWSApplication(service, FeatureConstants.METADATA | FeatureConstants.NAME | FeatureConstants.PING | FeatureConstants.ECHO | OrbitFeatureConstants.AUTH_TOKEN_REQUEST_FILTER);
 		this.webApp.start(bundleContext);
 
-		// Start indexing timer
+		// 3. Start indexing timer
 		IndexProvider indexProvider = getIndexProvider();
-
-		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS__INDEXER_ID);
+		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID);
 		if (extension != null) {
 			@SuppressWarnings("unchecked")
-			ServiceIndexTimerFactory<FileSystemService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);
+			ServiceIndexTimerFactory<DfsVolumeService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);
 			if (indexTimerFactory != null) {
 				this.indexTimer = indexTimerFactory.create(indexProvider, service);
 				if (this.indexTimer != null) {
@@ -136,20 +135,20 @@ public class FileSystemServiceAdapter implements LifecycleAware {
 	 * @param bundleContext
 	 * @param service
 	 */
-	protected void doStop(BundleContext bundleContext, FileSystemService service) {
-		// Stop indexing timer
+	protected void doStop(BundleContext bundleContext, DfsVolumeService service) {
+		// 1. Stop indexing timer
 		if (this.indexTimer != null) {
 			this.indexTimer.stop();
 			this.indexTimer = null;
 		}
 
-		// Stop web app
+		// 2. Stop web app
 		if (this.webApp != null) {
 			this.webApp.stop(bundleContext);
 			this.webApp = null;
 		}
 
-		// Uninstall edit policies
+		// 3. Uninstall edit policies
 		if (this.editPolicy != null) {
 			ServiceEditPolicies editPolicies = service.getEditPolicies();
 			editPolicies.uninstall(this.editPolicy.getId());
@@ -158,6 +157,3 @@ public class FileSystemServiceAdapter implements LifecycleAware {
 	}
 
 }
-
-// IExtension extension = ExtensionActivator.getDefault().getExtensionService().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID,
-// SubstanceConstants.DFS_METADATA_INDEXER_ID);

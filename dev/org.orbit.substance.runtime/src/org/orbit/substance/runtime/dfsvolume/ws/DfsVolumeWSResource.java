@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.orbit.platform.sdk.http.OrbitRoles;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.editpolicy.EditPoliciesAwareService;
 import org.origin.common.rest.editpolicy.WSCommand;
@@ -31,15 +31,15 @@ import org.origin.common.rest.server.AbstractWSApplicationResource;
 @Secured(roles = { OrbitRoles.SYSTEM_COMPONENT, OrbitRoles.USER })
 @javax.ws.rs.Path("/")
 @Produces(MediaType.APPLICATION_JSON)
-public class FileContentWSResource extends AbstractWSApplicationResource {
+public class DfsVolumeWSResource extends AbstractWSApplicationResource {
 
 	@Inject
-	public FileContentService service;
+	public DfsVolumeService service;
 
 	@Override
-	public FileContentService getService() throws RuntimeException {
+	public DfsVolumeService getService() throws RuntimeException {
 		if (this.service == null) {
-			throw new RuntimeException("FileContentService is not available.");
+			throw new RuntimeException("DfsVolumeService is not available.");
 		}
 		return this.service;
 	}

@@ -18,7 +18,7 @@ import org.origin.common.service.WebServiceAware;
  * Block id: 1, 2, 3, 4, ...
  * 
  */
-public interface FileContentService extends WebServiceAware, ConnectionAware, EditPoliciesAwareService {
+public interface DfsVolumeService extends WebServiceAware, ConnectionAware, EditPoliciesAwareService {
 
 	// ----------------------------------------------------------------------
 	// Methods about service

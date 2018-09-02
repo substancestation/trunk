@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.origin.common.rest.server.ServerException;
 
-public interface FileContentServiceMetadata {
+public interface DfsVolumeServiceMetadata {
 
 	String getFileSystemId();
 

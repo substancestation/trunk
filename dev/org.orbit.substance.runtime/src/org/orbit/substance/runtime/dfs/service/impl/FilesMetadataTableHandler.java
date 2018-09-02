@@ -178,8 +178,8 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 		long dateCreated = rs.getLong("dateCreated");
 		long dateModified = rs.getLong("dateModified");
 
-		List<FilePart> fileParts = ModelConverter.File_System.toFileParts(filePartsString);
-		Map<String, Object> properties = ModelConverter.File_System.toProperties(propertiesString);
+		List<FilePart> fileParts = ModelConverter.Dfs.toFileParts(filePartsString);
+		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
 
 		return new FileMetadataImpl(id, this.accountId, fileId, parentFileId, null, name, size, isDirectory, isHidden, inTrash, fileParts, properties, dateCreated, dateModified);
 	}
@@ -376,8 +376,8 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 			throw new IOException("File metadata with same name already exists.");
 		}
 
-		String filePartsString = ModelConverter.File_System.toFilePartsString(fileParts);
-		String propertiesString = ModelConverter.File_System.toPropertiesString(properties);
+		String filePartsString = ModelConverter.Dfs.toFilePartsString(fileParts);
+		String propertiesString = ModelConverter.Dfs.toPropertiesString(properties);
 
 		long dateCreated = getCurrentTime();
 		long dateModified = dateCreated;
@@ -478,7 +478,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public boolean updateFileParts(Connection conn, String fileId, List<FilePart> fileParts) throws SQLException {
-		String filePartsString = ModelConverter.File_System.toFilePartsString(fileParts);
+		String filePartsString = ModelConverter.Dfs.toFilePartsString(fileParts);
 
 		String updateSQL = "UPDATE " + getTableName() + " SET fileParts=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { filePartsString, getCurrentTime(), fileId }, 1);
@@ -493,7 +493,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public boolean updateProperties(Connection conn, String fileId, Map<String, Object> properties) throws SQLException {
-		String propertiesString = ModelConverter.File_System.toPropertiesString(properties);
+		String propertiesString = ModelConverter.Dfs.toPropertiesString(properties);
 
 		String updateSQL = "UPDATE " + getTableName() + " SET properties=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { propertiesString, getCurrentTime(), fileId }, 1);

@@ -9,37 +9,37 @@ import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexProvider;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.substance.runtime.SubstanceConstants;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 
-public class FileContentServiceTimer extends ServiceIndexTimer<FileContentService> {
+public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 
-	protected FileContentService service;
+	protected DfsVolumeService service;
 
 	/**
 	 * 
 	 * @param indexProvider
 	 * @param service
 	 */
-	public FileContentServiceTimer(IndexProvider indexProvider, FileContentService service) {
+	public DfsVolumeServiceTimer(IndexProvider indexProvider, DfsVolumeService service) {
 		super("Index Timer [" + service.getName() + "]", indexProvider);
 		this.service = service;
 		setDebug(true);
 	}
 
 	@Override
-	public synchronized FileContentService getService() {
+	public synchronized DfsVolumeService getService() {
 		return this.service;
 	}
 
 	@Override
-	public IndexItem getIndex(IndexProvider indexProvider, FileContentService service) throws IOException {
+	public IndexItem getIndex(IndexProvider indexProvider, DfsVolumeService service) throws IOException {
 		String name = service.getName();
 
 		return indexProvider.getIndexItem(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE, name);
 	}
 
 	@Override
-	public IndexItem addIndex(IndexProvider indexProvider, FileContentService service) throws IOException {
+	public IndexItem addIndex(IndexProvider indexProvider, DfsVolumeService service) throws IOException {
 		String dfsId = service.getDfsId();
 		String dfsVolumeId = service.getVolumeId();
 		String name = service.getName();
@@ -64,7 +64,7 @@ public class FileContentServiceTimer extends ServiceIndexTimer<FileContentServic
 	}
 
 	@Override
-	public void updateIndex(IndexProvider indexProvider, FileContentService service, IndexItem indexItem) throws IOException {
+	public void updateIndex(IndexProvider indexProvider, DfsVolumeService service, IndexItem indexItem) throws IOException {
 		String dfsId = service.getDfsId();
 		String dfsVolumeId = service.getVolumeId();
 		String name = service.getName();

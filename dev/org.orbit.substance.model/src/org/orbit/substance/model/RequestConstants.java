@@ -15,6 +15,7 @@ public interface RequestConstants {
 	public static String PATH_EXISTS = "path_exists";
 	public static String IS_DIRECTORY = "is_directory";
 	public static String CREATE_NEW_FILE = "create_new_file";
+	public static String ALLOCATE_VOLUMES = "allocate_volumes";
 	public static String MKDIRS = "mkdirs";
 	public static String MOVE_TO_TRASH_BY_ID = "move_to_trash_by_id";
 	public static String MOVE_TO_TRASH_BY_PATH = "move_to_trash_by_path";

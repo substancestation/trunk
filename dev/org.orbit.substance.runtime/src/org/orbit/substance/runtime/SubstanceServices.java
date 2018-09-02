@@ -4,10 +4,10 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexProvider;
-import org.orbit.substance.runtime.dfs.service.FileSystemService;
-import org.orbit.substance.runtime.dfs.ws.FileSystemServiceAdapter;
-import org.orbit.substance.runtime.dfsvolume.service.FileContentService;
-import org.orbit.substance.runtime.dfsvolume.ws.FileContentServiceAdapter;
+import org.orbit.substance.runtime.dfs.service.DfsService;
+import org.orbit.substance.runtime.dfs.ws.DfsServiceAdapter;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
+import org.orbit.substance.runtime.dfsvolume.ws.DfsVolumeServiceAdapter;
 import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.ServiceConnectorAdapter;
 import org.origin.common.util.PropertyUtil;
@@ -28,8 +28,8 @@ public class SubstanceServices {
 	protected Map<Object, Object> properties;
 	protected ServiceConnectorAdapter<IndexProvider> indexProviderConnector;
 
-	protected FileSystemServiceAdapter fileSystemServiceAdapter;
-	protected FileContentServiceAdapter fileContentServiceAdapter;
+	protected DfsServiceAdapter fileSystemServiceAdapter;
+	protected DfsVolumeServiceAdapter fileContentServiceAdapter;
 
 	/**
 	 * 
@@ -67,10 +67,10 @@ public class SubstanceServices {
 	 */
 	public void doStart(BundleContext bundleContext) {
 		// Start service adapters
-		this.fileSystemServiceAdapter = new FileSystemServiceAdapter(this.properties);
+		this.fileSystemServiceAdapter = new DfsServiceAdapter(this.properties);
 		this.fileSystemServiceAdapter.start(bundleContext);
 
-		this.fileContentServiceAdapter = new FileContentServiceAdapter(this.properties);
+		this.fileContentServiceAdapter = new DfsVolumeServiceAdapter(this.properties);
 		this.fileContentServiceAdapter.start(bundleContext);
 	}
 
@@ -91,11 +91,11 @@ public class SubstanceServices {
 		}
 	}
 
-	public FileSystemService getFileSystemService() {
+	public DfsService getFileSystemService() {
 		return (this.fileSystemServiceAdapter != null) ? this.fileSystemServiceAdapter.getService() : null;
 	}
 
-	public FileContentService getFileContentService() {
+	public DfsVolumeService getFileContentService() {
 		return (this.fileContentServiceAdapter != null) ? this.fileContentServiceAdapter.getService() : null;
 	}
 

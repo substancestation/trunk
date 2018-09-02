@@ -8,7 +8,7 @@ public interface DataBlockMetadata {
 
 	long getCapacity();
 
-	long size();
+	long getSize();
 
 	// String[] getFileIds(); // may need to remove in the future for security concern
 
