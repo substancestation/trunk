@@ -1,19 +1,17 @@
 package org.orbit.substance.api.dfsvolume;
 
-import java.util.Date;
+import org.origin.common.rest.model.ServiceMetadata;
 
-import org.origin.common.rest.server.ServerException;
+public interface DfsVolumeServiceMetadata extends ServiceMetadata {
 
-public interface DfsVolumeServiceMetadata {
+	String getDfsId();
 
-	String getFileSystemId();
+	String getDfsVolumeId();
 
-	String getId();
+	long getVolumeCapacity();
 
-	long getTotalCapacity() throws ServerException;
-
-	long totalSize() throws ServerException;
-
-	Date getTime() throws ServerException;
+	long getVolumeSize();
 
 }
+
+// long getDataBlockCapacity();

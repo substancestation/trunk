@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -13,8 +14,8 @@ import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.editpolicy.ServiceEditPoliciesImpl;
-import org.origin.common.rest.server.ServerException;
 import org.origin.common.rest.util.LifecycleAware;
+import org.origin.common.util.DiskSpaceUnit;
 import org.origin.common.util.PropertyUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -26,7 +27,7 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 	protected Properties databaseProperties;
 	protected ServiceRegistration<?> serviceRegistry;
 	protected ServiceEditPolicies wsEditPolicies;
-	protected Map<String, FileSystem> usernameToFileSystemMap = new HashMap<String, FileSystem>();
+	protected Map<String, FileSystem> accountIdToFileSystemMap = new HashMap<String, FileSystem>();
 
 	/**
 	 * 
@@ -54,6 +55,7 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_USERNAME);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_PASSWORD);
+		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
 
 		updateProperties(properties);
 
@@ -80,6 +82,13 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			this.serviceRegistry.unregister();
 			this.serviceRegistry = null;
 		}
+
+		for (Iterator<String> accountIdItor = this.accountIdToFileSystemMap.keySet().iterator(); accountIdItor.hasNext();) {
+			String accountId = accountIdItor.next();
+			FileSystem fileSystem = this.accountIdToFileSystemMap.get(accountId);
+			fileSystem.dispose();
+		}
+		this.accountIdToFileSystemMap.clear();
 	}
 
 	@Override
@@ -106,6 +115,7 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 		String jdbcURL = (String) configProps.get(SubstanceConstants.DFS__JDBC_URL);
 		String jdbcUsername = (String) configProps.get(SubstanceConstants.DFS__JDBC_USERNAME);
 		String jdbcPassword = (String) configProps.get(SubstanceConstants.DFS__JDBC_PASSWORD);
+		String blockCapacityMB = (String) configProps.get(SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
 
 		boolean printProps = false;
 		if (printProps) {
@@ -122,6 +132,7 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			System.out.println(SubstanceConstants.DFS__JDBC_URL + " = " + jdbcURL);
 			System.out.println(SubstanceConstants.DFS__JDBC_USERNAME + " = " + jdbcUsername);
 			System.out.println(SubstanceConstants.DFS__JDBC_PASSWORD + " = " + jdbcPassword);
+			System.out.println(SubstanceConstants.DFS__BLOCK_CAPACITY_MB + " = " + blockCapacityMB);
 			System.out.println("-----------------------------------------------------");
 			System.out.println();
 		}
@@ -206,15 +217,38 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 	}
 
 	@Override
-	public synchronized FileSystem getFileSystem(String accountId) throws ServerException {
+	public long getDefaultBlockCapacity() {
+		long blockCapacityBytes = -1;
+		try {
+			String blockCapacityMBStr = (String) this.properties.get(SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
+			if (blockCapacityMBStr != null && !blockCapacityMBStr.isEmpty()) {
+				int blockCapacityMB = Integer.parseInt(blockCapacityMBStr);
+				if (blockCapacityMB > 0) {
+					// 1MB = 1024KB
+					// 1KB = 1024B
+					// blockCapacityBytes = blockCapacityMB * 1024 * 1024;
+					blockCapacityBytes = DiskSpaceUnit.GB.toBytes(blockCapacityMB);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// if (blockCapacityBytes <= 0) {
+		// blockCapacityBytes = 100 * 1024 * 1024; // 100MB
+		// }
+		return blockCapacityBytes;
+	}
+
+	@Override
+	public synchronized FileSystem getFileSystem(String accountId) {
 		if (accountId == null || accountId.isEmpty()) {
-			throw new ServerException("400", "accountId is empty.");
+			throw new IllegalArgumentException("accountId is null.");
 		}
 
-		FileSystem fileSystem = this.usernameToFileSystemMap.get(accountId);
+		FileSystem fileSystem = this.accountIdToFileSystemMap.get(accountId);
 		if (fileSystem == null) {
 			fileSystem = new FileSystemImpl(this, accountId);
-			this.usernameToFileSystemMap.put(accountId, fileSystem);
+			this.accountIdToFileSystemMap.put(accountId, fileSystem);
 		}
 		return fileSystem;
 	}

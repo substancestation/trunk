@@ -1,9 +1,10 @@
-package org.orbit.substance.runtime.model.dfsvolume.impl;
+package org.orbit.substance.runtime.dfsvolume.service.impl;
 
-import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
+import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 
 public class DataBlockMetadataImpl implements DataBlockMetadata {
 
+	protected String dfsVolumeId;
 	protected int id;
 	protected String blockId;
 	protected String accountId;
@@ -17,6 +18,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 
 	/**
 	 * 
+	 * @param dfsVolumeId
 	 * @param id
 	 * @param blockId
 	 * @param accountId
@@ -25,7 +27,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 	 * @param dateCreated
 	 * @param dateModified
 	 */
-	public DataBlockMetadataImpl(int id, String blockId, String accountId, long capacity, long size, long dateCreated, long dateModified) {
+	public DataBlockMetadataImpl(String dfsVolumeId, int id, String blockId, String accountId, long capacity, long size, long dateCreated, long dateModified) {
 		this.id = id;
 		this.blockId = blockId;
 		this.accountId = accountId;
@@ -33,6 +35,15 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		this.size = size;
 		this.dateCreated = dateCreated;
 		this.dateModified = dateModified;
+	}
+
+	@Override
+	public String getDfsVolumeId() {
+		return this.dfsVolumeId;
+	}
+
+	public void setDfsVolumeId(String dfsVolumeId) {
+		this.dfsVolumeId = dfsVolumeId;
 	}
 
 	@Override

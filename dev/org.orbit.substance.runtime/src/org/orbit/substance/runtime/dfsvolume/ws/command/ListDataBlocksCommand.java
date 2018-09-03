@@ -9,8 +9,8 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
+import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
-import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
@@ -41,14 +41,31 @@ public class ListDataBlocksCommand extends AbstractDfsVolumeWSCommand<DfsVolumeS
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
 
+		long minFreeSpace = 0;
+		Object minFreeSpaceObj = request.getParameter("min_free_space");
+		if (minFreeSpaceObj != null) {
+			if (minFreeSpaceObj instanceof Long) {
+				minFreeSpace = (long) minFreeSpaceObj;
+			}
+		}
+
 		List<DataBlockMetadataDTO> dataBlockDTOs = new ArrayList<DataBlockMetadataDTO>();
 		DfsVolumeService service = getService();
 		DataBlockMetadata[] dataBlocks = service.getDataBlocks(accountId);
 		if (dataBlocks != null) {
 			for (DataBlockMetadata dataBlock : dataBlocks) {
-				DataBlockMetadataDTO dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
-				if (dataBlockDTO != null) {
-					dataBlockDTOs.add(dataBlockDTO);
+				boolean accept = true;
+				if (minFreeSpace > 0) {
+					long currFreeSpace = dataBlock.getCapacity() - dataBlock.getSize();
+					if (currFreeSpace < minFreeSpace) {
+						accept = false;
+					}
+				}
+				if (accept) {
+					DataBlockMetadataDTO dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
+					if (dataBlockDTO != null) {
+						dataBlockDTOs.add(dataBlockDTO);
+					}
 				}
 			}
 		}

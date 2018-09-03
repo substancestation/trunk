@@ -48,7 +48,10 @@ public class DfsWSApplication extends OrbitWSApplication {
 		DfsService service = getAdapter(DfsService.class);
 		if (metadata instanceof ServiceMetadataImpl && service != null) {
 			String dfsId = service.getDfsId();
+			long blockCapacity = service.getDefaultBlockCapacity();
+
 			((ServiceMetadataImpl) metadata).setProperty("dfs_id", dfsId);
+			((ServiceMetadataImpl) metadata).setProperty("block_capacity", blockCapacity);
 		}
 
 		return metadata;

@@ -2,14 +2,14 @@ package org.orbit.substance.api.dfsvolume;
 
 public interface DataBlockMetadata {
 
+	String getDfsVolumeId();
+
 	String getBlockId();
 
-	String getAccountId(); // may need to remove in the future for security concern
+	String getAccountId();
 
 	long getCapacity();
 
 	long getSize();
-
-	// String[] getFileIds(); // may need to remove in the future for security concern
 
 }

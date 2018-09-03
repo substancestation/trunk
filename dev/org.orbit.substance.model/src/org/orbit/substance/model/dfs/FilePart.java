@@ -1,12 +1,8 @@
-package org.orbit.substance.api.dfs;
+package org.orbit.substance.model.dfs;
 
 import java.util.List;
 
 public interface FilePart {
-
-	FileMetadata getFile();
-
-	void setFile(FileMetadata file);
 
 	int getPartId();
 
@@ -24,6 +20,6 @@ public interface FilePart {
 
 	void setChecksum(String checksum);
 
-	List<VolumeAccess> getVolumeAccess();
+	List<FileContentAccess> getFileContentAccess();
 
 }

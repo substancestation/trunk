@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbit.substance.model.dfs.FileMetadataDTO;
+import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.model.dfs.PathDTO;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
-import org.orbit.substance.runtime.model.dfs.FilePart;
-import org.orbit.substance.runtime.model.dfs.Path;
-import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
-import org.orbit.substance.runtime.model.dfsvolume.FileContentMetadata;
+import org.orbit.substance.runtime.dfs.service.FileMetadata;
+import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
+import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
 import org.origin.common.json.JSONUtil;
 
 public class ModelConverter {
@@ -140,6 +140,7 @@ public class ModelConverter {
 				return null;
 			}
 
+			String dfsVolumeId = dataBlock.getDfsVolumeId();
 			String blockId = dataBlock.getBlockId();
 			String accountId = dataBlock.getAccountId();
 			long capacity = dataBlock.getCapacity();
@@ -147,6 +148,7 @@ public class ModelConverter {
 			// String[] fileIds = dataBlock.getFileIds();
 
 			DataBlockMetadataDTO dto = new DataBlockMetadataDTO();
+			dto.setDfsVolumeId(dfsVolumeId);
 			dto.setBlockId(blockId);
 			dto.setAccountId(accountId);
 			dto.setCapacity(capacity);

@@ -1,6 +1,8 @@
-package org.orbit.substance.runtime.model.dfsvolume;
+package org.orbit.substance.runtime.dfsvolume.service;
 
 public interface DataBlockMetadata {
+
+	String getDfsVolumeId();
 
 	int getId();
 

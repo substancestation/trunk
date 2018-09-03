@@ -47,6 +47,8 @@ public class OrbitClientHelper {
 			}
 		}
 
+		Comparators.sort(dfsVolumesIndexItems, Comparators.DfsVolumeIndexItemComparatorByVolumeId_ASC);
+
 		for (IndexItem dfsVolumesIndexItem : dfsVolumesIndexItems) {
 			boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumesIndexItem);
 			if (isOnline) {

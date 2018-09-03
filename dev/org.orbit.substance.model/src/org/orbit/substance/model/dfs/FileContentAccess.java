@@ -1,14 +1,6 @@
-package org.orbit.substance.api.dfs;
+package org.orbit.substance.model.dfs;
 
-public interface VolumeAccess {
-
-	FilePart getFilePart();
-
-	void setFilePart(FilePart filePart);
-
-	int getId();
-
-	void setId(int id);
+public interface FileContentAccess {
 
 	String getDfsId();
 

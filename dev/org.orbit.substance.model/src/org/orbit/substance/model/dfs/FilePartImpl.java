@@ -1,20 +1,15 @@
-package org.orbit.substance.runtime.model.dfs.impl;
+package org.orbit.substance.model.dfs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orbit.substance.runtime.model.dfs.VolumeAccess;
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
-import org.orbit.substance.runtime.model.dfs.FilePart;
-
 public class FilePartImpl implements FilePart {
 
-	protected FileMetadata fileMetadata;
 	protected int partId;
 	protected long startIndex;
 	protected long endIndex;
 	protected String checksum;
-	protected List<VolumeAccess> fileContentAccessList = new ArrayList<VolumeAccess>();
+	protected List<FileContentAccess> fileContentAccessList = new ArrayList<FileContentAccess>();
 
 	public FilePartImpl() {
 	}
@@ -28,21 +23,11 @@ public class FilePartImpl implements FilePart {
 	 * @param endIndex
 	 * @param checksum
 	 */
-	public FilePartImpl(int partId, int startIndex, int endIndex, String checksum) {
+	public FilePartImpl(int partId, long startIndex, long endIndex, String checksum) {
 		this.partId = partId;
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
 		this.checksum = checksum;
-	}
-
-	@Override
-	public FileMetadata getFileMetadata() {
-		return this.fileMetadata;
-	}
-
-	@Override
-	public void setFileMetadata(FileMetadata fileMetadata) {
-		this.fileMetadata = fileMetadata;
 	}
 
 	@Override
@@ -86,20 +71,32 @@ public class FilePartImpl implements FilePart {
 	}
 
 	@Override
-	public synchronized List<VolumeAccess> getVolumeAccess() {
+	public synchronized List<FileContentAccess> getFileContentAccess() {
 		if (this.fileContentAccessList == null) {
-			this.fileContentAccessList = new ArrayList<VolumeAccess>();
+			this.fileContentAccessList = new ArrayList<FileContentAccess>();
 		}
 		return this.fileContentAccessList;
 	}
 
-	public synchronized void setFileContentAccess(List<VolumeAccess> fileContentAccessList) {
-		this.fileContentAccessList = fileContentAccessList;
-	}
+	// public synchronized void setFileContentAccess(List<FileContentAccess> fileContentAccessList) {
+	// this.fileContentAccessList = fileContentAccessList;
+	// }
 
 	@Override
 	public String toString() {
-		return "FilePartMetadataImpl [partId=" + this.partId + ", startIndex=" + this.startIndex + ", endIndex=" + this.endIndex + ", checksum=" + this.checksum + "]";
+		return "FilePartImpl [partId=" + this.partId + ", startIndex=" + this.startIndex + ", endIndex=" + this.endIndex + ", checksum=" + this.checksum + "]";
 	}
 
 }
+
+// FileMetadata getFileMetadata();
+// void setFileMetadata(FileMetadata fileMetadata);
+// protected FileMetadata fileMetadata;
+// @Override
+// public FileMetadata getFileMetadata() {
+// return this.fileMetadata;
+// }
+// @Override
+// public void setFileMetadata(FileMetadata fileMetadata) {
+// this.fileMetadata = fileMetadata;
+// }

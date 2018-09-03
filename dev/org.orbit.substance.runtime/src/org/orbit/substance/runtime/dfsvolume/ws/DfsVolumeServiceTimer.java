@@ -46,7 +46,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();
 		long volumeCapacityBytes = service.getVolumeCapacity();
-		long blockCapacityBytes = service.getDefaultBlockCapacity();
+		// long blockCapacityBytes = service.getDefaultBlockCapacity();
 
 		Date now = new Date();
 
@@ -58,7 +58,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT, contextRoot);
 		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__VOLUME_CAPACITY, volumeCapacityBytes);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY, blockCapacityBytes);
+		// props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY, blockCapacityBytes);
 
 		return indexProvider.addIndexItem(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE, name, props);
 	}
@@ -71,7 +71,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();
 		long volumeCapacityBytes = service.getVolumeCapacity();
-		long blockCapacityBytes = service.getDefaultBlockCapacity();
+		// long blockCapacityBytes = service.getDefaultBlockCapacity();
 
 		Date now = new Date();
 
@@ -84,7 +84,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT, contextRoot);
 		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__VOLUME_CAPACITY, volumeCapacityBytes);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY, blockCapacityBytes);
+		// props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY, blockCapacityBytes);
 
 		indexProvider.setProperties(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, indexItemId, props);
 	}

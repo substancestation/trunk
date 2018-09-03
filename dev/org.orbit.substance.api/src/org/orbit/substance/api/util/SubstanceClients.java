@@ -20,28 +20,28 @@ public class SubstanceClients implements LifecycleAware {
 		return INSTANCE;
 	}
 
-	protected ServiceConnectorAdapter<DfsClient> fileSystemServiceConnector;
-	protected ServiceConnectorAdapter<DfsVolumeClient> fileContentServiceConnector;
+	protected ServiceConnectorAdapter<DfsClient> dfsServiceConnector;
+	protected ServiceConnectorAdapter<DfsVolumeClient> dfsVolumeServiceConnector;
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		this.fileSystemServiceConnector = new ServiceConnectorAdapter<DfsClient>(DfsClient.class);
-		this.fileSystemServiceConnector.start(bundleContext);
+		this.dfsServiceConnector = new ServiceConnectorAdapter<DfsClient>(DfsClient.class);
+		this.dfsServiceConnector.start(bundleContext);
 
-		this.fileContentServiceConnector = new ServiceConnectorAdapter<DfsVolumeClient>(DfsVolumeClient.class);
-		this.fileContentServiceConnector.start(bundleContext);
+		this.dfsVolumeServiceConnector = new ServiceConnectorAdapter<DfsVolumeClient>(DfsVolumeClient.class);
+		this.dfsVolumeServiceConnector.start(bundleContext);
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		if (this.fileSystemServiceConnector != null) {
-			this.fileSystemServiceConnector.stop(bundleContext);
-			this.fileSystemServiceConnector = null;
+		if (this.dfsServiceConnector != null) {
+			this.dfsServiceConnector.stop(bundleContext);
+			this.dfsServiceConnector = null;
 		}
 
-		if (this.fileContentServiceConnector != null) {
-			this.fileContentServiceConnector.stop(bundleContext);
-			this.fileContentServiceConnector = null;
+		if (this.dfsVolumeServiceConnector != null) {
+			this.dfsVolumeServiceConnector.stop(bundleContext);
+			this.dfsVolumeServiceConnector = null;
 		}
 	}
 
@@ -51,7 +51,7 @@ public class SubstanceClients implements LifecycleAware {
 	 * @return
 	 */
 	public DfsClient getDfsClient(Map<String, Object> properties) {
-		DfsClient client = this.fileSystemServiceConnector.getService(properties);
+		DfsClient client = this.dfsServiceConnector.getService(properties);
 		if (client == null) {
 			throw new RuntimeException("DfsClient is not available.");
 		}
@@ -64,7 +64,7 @@ public class SubstanceClients implements LifecycleAware {
 	 * @return
 	 */
 	public DfsVolumeClient getDfsVolumeClient(Map<String, Object> properties) {
-		DfsVolumeClient client = this.fileContentServiceConnector.getService(properties);
+		DfsVolumeClient client = this.dfsVolumeServiceConnector.getService(properties);
 		if (client == null) {
 			throw new RuntimeException("DfsVolumeClient is not available.");
 		}

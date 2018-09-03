@@ -4,12 +4,22 @@ import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 
 public class DataBlockMetadataImpl implements DataBlockMetadata {
 
+	protected String dfsVolumeId;
 	protected String blockId;
 	protected String accountId;
 	protected long capacity;
 	protected long size;
 
 	public DataBlockMetadataImpl() {
+	}
+
+	@Override
+	public String getDfsVolumeId() {
+		return this.dfsVolumeId;
+	}
+
+	public void setDfsVolumeId(String dfsVolumeId) {
+		this.dfsVolumeId = dfsVolumeId;
 	}
 
 	@Override
@@ -21,8 +31,9 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		this.blockId = blockId;
 	}
 
+	@Override
 	public String getAccountId() {
-		return accountId;
+		return this.accountId;
 	}
 
 	public void setAccountId(String accountId) {
@@ -48,40 +59,3 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 	}
 
 }
-
-// String getAccountId();
-// String[] getFileIds();
-
-// protected String accountId;
-// protected String[] fileIds;
-
-// @Override
-// public String getAccountId() {
-// return this.accountId;
-// }
-//
-// public void setAccountId(String accountId) {
-// this.accountId = accountId;
-// }
-
-// @Override
-// public String[] getFileIds() {
-// return this.fileIds;
-// }
-//
-// public void setFileIds(String[] fileIds) {
-// this.fileIds = fileIds;
-// }
-
-// protected String[] fileIds;
-//
-// public synchronized String[] getFileIds() {
-// if (this.fileIds == null) {
-// this.fileIds = new String[0];
-// }
-// return this.fileIds;
-// }
-//
-// public synchronized void setFileIds(String[] fileIds) {
-// this.fileIds = fileIds;
-// }

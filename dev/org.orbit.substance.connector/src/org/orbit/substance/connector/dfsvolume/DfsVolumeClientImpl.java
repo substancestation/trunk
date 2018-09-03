@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
+import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.connector.util.ModelConverter;
 import org.orbit.substance.model.RequestConstants;
@@ -16,6 +17,7 @@ import org.origin.common.rest.client.ServiceClientImpl;
 import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.WSClientConfiguration;
 import org.origin.common.rest.model.Request;
+import org.origin.common.rest.model.ServiceMetadataDTO;
 
 public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsVolumeWSClient> implements DfsVolumeClient {
 
@@ -35,6 +37,19 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	protected DfsVolumeWSClient createWSClient(Map<String, Object> properties) {
 		WSClientConfiguration config = WSClientConfiguration.create(properties);
 		return new DfsVolumeWSClient(config);
+	}
+
+	@Override
+	public DfsVolumeServiceMetadata getMetadata() throws ClientException {
+		DfsVolumeServiceMetadataImpl metadata = new DfsVolumeServiceMetadataImpl();
+		ServiceMetadataDTO metadataDTO = getWSClient().getMetadata();
+		if (metadataDTO != null) {
+			Map<String, Object> properties = metadataDTO.getProperties();
+			if (properties != null && !properties.isEmpty()) {
+				metadata.getProperties().putAll(properties);
+			}
+		}
+		return metadata;
 	}
 
 	// ----------------------------------------------------------------------
@@ -63,6 +78,27 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Request request = new Request(RequestConstants.LIST_DATA_BLOCKS);
 		request.setParameter("account_id", accountId);
+
+		Response response = sendRequest(request);
+		if (response != null) {
+			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(response);
+		}
+
+		if (dataBlocks == null) {
+			dataBlocks = EMPTY_DATA_BLOCKS;
+		}
+		return dataBlocks;
+	}
+
+	@Override
+	public DataBlockMetadata[] getDataBlocks(String accountId, long minFreeSpace) throws ClientException {
+		DataBlockMetadata[] dataBlocks = null;
+
+		Request request = new Request(RequestConstants.LIST_DATA_BLOCKS);
+		request.setParameter("account_id", accountId);
+		if (minFreeSpace > 0) {
+			request.setParameter("min_free_space", minFreeSpace);
+		}
 
 		Response response = sendRequest(request);
 		if (response != null) {

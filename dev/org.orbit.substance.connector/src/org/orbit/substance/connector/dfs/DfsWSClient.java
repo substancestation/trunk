@@ -18,8 +18,8 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
-import org.orbit.substance.api.dfs.Path;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
+import org.orbit.substance.model.dfs.Path;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.WSClient;
@@ -38,13 +38,13 @@ import org.origin.common.rest.client.WSClientConfiguration;
  * 
  * @see AppStoreWSClient
  */
-public class FileSystemWSClient extends WSClient {
+public class DfsWSClient extends WSClient {
 
 	/**
 	 * 
 	 * @param config
 	 */
-	public FileSystemWSClient(WSClientConfiguration config) {
+	public DfsWSClient(WSClientConfiguration config) {
 		super(config);
 	}
 

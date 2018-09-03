@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.orbit.substance.runtime.SubstanceConstants;
+import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
-import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
-import org.orbit.substance.runtime.model.dfsvolume.FileContentMetadata;
+import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
 import org.origin.common.io.IOUtil;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
@@ -55,8 +55,6 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_HOST_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__DFS_ID);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__ID);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__NAME);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__HOST_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
@@ -64,6 +62,8 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
+		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
+		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
 
 		updateProperties(properties);
 
@@ -91,6 +91,11 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 		}
 	}
 
+	@Override
+	public Map<Object, Object> getProperties() {
+		return this.properties;
+	}
+
 	/**
 	 * 
 	 * @param configProps
@@ -103,8 +108,6 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 		String globalHostURL = (String) configProps.get(SubstanceConstants.ORBIT_HOST_URL);
 		String dfsId = (String) configProps.get(SubstanceConstants.DFS_VOLUME__DFS_ID);
 		String volumeId = (String) configProps.get(SubstanceConstants.DFS_VOLUME__ID);
-		String volumeCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
-		String blockCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
 		String name = (String) configProps.get(SubstanceConstants.DFS_VOLUME__NAME);
 		String hostURL = (String) configProps.get(SubstanceConstants.DFS_VOLUME__HOST_URL);
 		String contextRoot = (String) configProps.get(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
@@ -112,6 +115,8 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 		String jdbcURL = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_URL);
 		String jdbcUsername = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
 		String jdbcPassword = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
+		String volumeCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
+		String blockCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
 
 		boolean printProps = false;
 		if (printProps) {
@@ -121,8 +126,6 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			System.out.println(SubstanceConstants.ORBIT_HOST_URL + " = " + globalHostURL);
 			System.out.println(SubstanceConstants.DFS_VOLUME__DFS_ID + " = " + dfsId);
 			System.out.println(SubstanceConstants.DFS_VOLUME__ID + " = " + volumeId);
-			System.out.println(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB + " = " + volumeCapacity);
-			System.out.println(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB + " = " + blockCapacity);
 			System.out.println(SubstanceConstants.DFS_VOLUME__NAME + " = " + name);
 			System.out.println(SubstanceConstants.DFS_VOLUME__HOST_URL + " = " + hostURL);
 			System.out.println(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT + " = " + contextRoot);
@@ -130,6 +133,8 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_URL + " = " + jdbcURL);
 			System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME + " = " + jdbcUsername);
 			System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD + " = " + jdbcPassword);
+			System.out.println(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB + " = " + volumeCapacity);
+			System.out.println(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB + " = " + blockCapacity);
 			System.out.println("-----------------------------------------------------");
 			System.out.println();
 		}
@@ -273,27 +278,26 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 		return volumeSizeBytes;
 	}
 
-	@Override
-	public long getDefaultBlockCapacity() {
-		long blockCapacityBytes = 0;
-		try {
-			String blockCapacityMBStr = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
-			if (blockCapacityMBStr != null && !blockCapacityMBStr.isEmpty()) {
-				int blockCapacityMB = Integer.parseInt(blockCapacityMBStr);
-				if (blockCapacityMB > 0) {
-					// 1MB = 1024KB
-					// 1KB = 1024B
-					blockCapacityBytes = blockCapacityMB * 1024 * 1024;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (blockCapacityBytes <= 0) {
-			blockCapacityBytes = 100 * 1024 * 1024; // 100MB
-		}
-		return blockCapacityBytes;
-	}
+	// @Override
+	// public long getDefaultBlockCapacity() {
+	// long blockCapacityBytes = -1;
+	// try {
+	// String blockCapacityMBStr = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
+	// if (blockCapacityMBStr != null && !blockCapacityMBStr.isEmpty()) {
+	// int blockCapacityMB = Integer.parseInt(blockCapacityMBStr);
+	// if (blockCapacityMB > 0) {
+	// // blockCapacityBytes = blockCapacityMB * 1024 * 1024;
+	// blockCapacityBytes = DiskSpaceUnit.GB.toBytes(blockCapacityMB);
+	// }
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// // if (blockCapacityBytes <= 0) {
+	// // blockCapacityBytes = 100 * 1024 * 1024; // 100MB
+	// // }
+	// return blockCapacityBytes;
+	// }
 
 	// ----------------------------------------------------------------------
 	// Methods for accessing data blocks
@@ -373,9 +377,11 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			String dfsVolumeId = getVolumeId();
 
 			VolumeBlocksTableHandler tableHandler = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId);
-
+			// if (capacity <= 0) {
+			// capacity = getDefaultBlockCapacity();
+			// }
 			if (capacity <= 0) {
-				capacity = getDefaultBlockCapacity();
+				capacity = DiskSpaceUnit.MB.toBytes(100);
 			}
 
 			boolean isValid = false;

@@ -6,10 +6,10 @@ import java.util.Map;
 
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.dfs.FilePart;
-import org.orbit.substance.api.dfs.Path;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
+import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.model.dfs.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.WSClientConstants;
 import org.origin.common.rest.model.ServiceMetadata;
@@ -120,8 +120,7 @@ public class SubstanceClientsUtil {
 					for (FilePart filePart : fileParts) {
 						long startIndex = filePart.getStartIndex();
 						long endIndex = filePart.getEndIndex();
-						
-						
+
 					}
 				}
 			}

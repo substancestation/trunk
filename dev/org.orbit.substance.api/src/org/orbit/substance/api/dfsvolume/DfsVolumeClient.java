@@ -8,11 +8,8 @@ import org.origin.common.rest.client.ServiceClient;
 
 public interface DfsVolumeClient extends ServiceClient {
 
-	// File content service metadata property names
-	public static String PROP__FILE_SYSTEM_ID = "dfs_metadata_id"; // file system service id
-	public static String PROP__FILE_CONTENT_ID = "dfs_content_id"; // file content servece id
-	public static String PROP__TOTAL_CAPACITY = "total_capacity";
-	public static String PROP__TOTAL_SIZE = "total_size";
+	@Override
+	DfsVolumeServiceMetadata getMetadata() throws ClientException;
 
 	// ----------------------------------------------------------------------
 	// Methods for accessing data blocks
@@ -20,6 +17,8 @@ public interface DfsVolumeClient extends ServiceClient {
 	DataBlockMetadata[] getDataBlocks() throws ClientException;
 
 	DataBlockMetadata[] getDataBlocks(String accountId) throws ClientException;
+
+	DataBlockMetadata[] getDataBlocks(String accountId, long minFreeSpace) throws ClientException;
 
 	boolean dataBlockExists(String accountId, String blockId) throws ClientException;
 

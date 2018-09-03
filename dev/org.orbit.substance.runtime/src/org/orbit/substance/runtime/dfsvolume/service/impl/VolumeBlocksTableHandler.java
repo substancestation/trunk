@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
-import org.orbit.substance.runtime.model.dfsvolume.impl.DataBlockMetadataImpl;
+import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.origin.common.jdbc.DatabaseTableAware;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.jdbc.ResultSetListHandler;
@@ -146,7 +145,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	protected static DataBlockMetadata toDataBlock(ResultSet rs) throws SQLException {
+	protected DataBlockMetadata toDataBlock(ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		String blockId = rs.getString("blockId");
 		String accountId = rs.getString("accountId");
@@ -155,7 +154,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		long dateCreated = rs.getLong("dateCreated");
 		long dateModified = rs.getLong("dateModified");
 
-		return new DataBlockMetadataImpl(id, blockId, accountId, capacity, size, dateCreated, dateModified);
+		return new DataBlockMetadataImpl(this.dfsVolumeId, id, blockId, accountId, capacity, size, dateCreated, dateModified);
 	}
 
 	/**

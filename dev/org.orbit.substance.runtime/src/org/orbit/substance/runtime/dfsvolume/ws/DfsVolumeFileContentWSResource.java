@@ -23,15 +23,14 @@ import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.runtime.dfs.service.DfsService;
+import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.StatusDTO;
 import org.origin.common.rest.server.AbstractWSApplicationResource;
-import org.origin.common.rest.server.ServerException;
 
 /*
  * DFS file web service resource.
@@ -110,11 +109,11 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 			FileSystem fileSystem = getService().getFileSystem(accountId);
 
 			String parentFileId = null;
-			org.orbit.substance.runtime.model.dfs.Path parentPath = null;
+			org.orbit.substance.model.dfs.Path parentPath = null;
 			if ("fileId".equals(parentType)) {
 				parentFileId = parentValue;
 			} else if ("path".equals(parentType)) {
-				parentPath = new org.orbit.substance.runtime.model.dfs.Path(parentValue);
+				parentPath = new org.orbit.substance.model.dfs.Path(parentValue);
 			}
 
 			boolean isRootDir = ("-1".equals(parentFileId)) ? true : false;
@@ -161,8 +160,8 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 				index++;
 			}
 
-			org.orbit.substance.runtime.model.dfs.Path theParentPath = isRootDir ? org.orbit.substance.runtime.model.dfs.Path.ROOT : parentFile.getPath();
-			org.orbit.substance.runtime.model.dfs.Path newFilePath = new org.orbit.substance.runtime.model.dfs.Path(theParentPath, newFileName);
+			org.orbit.substance.model.dfs.Path theParentPath = isRootDir ? org.orbit.substance.model.dfs.Path.ROOT : parentFile.getPath();
+			org.orbit.substance.model.dfs.Path newFilePath = new org.orbit.substance.model.dfs.Path(theParentPath, newFileName);
 
 			newFile = fileSystem.createNewFile(newFilePath, 0);
 			if (newFile == null) {
@@ -176,10 +175,6 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 				StatusDTO statusDTO = new StatusDTO(StatusDTO.RESP_304, StatusDTO.FAILED, "File content is not set.");
 				return Response.status(Status.NOT_MODIFIED).entity(statusDTO).build();
 			}
-
-		} catch (ServerException e) {
-			ErrorDTO error = handleError(e, e.getCode(), true);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
 
 		} catch (IOException e) {
 			ErrorDTO error = handleError(e, "500", true);
@@ -237,12 +232,12 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 			FileSystem fileSystem = getService().getFileSystem(accountId);
 
 			FileMetadata file = null;
-			org.orbit.substance.runtime.model.dfs.Path path = null;
+			org.orbit.substance.model.dfs.Path path = null;
 			if ("fileId".equals(type)) {
 				String fileId = value;
 				file = fileSystem.getFile(fileId);
 			} else if ("path".equals(type)) {
-				path = new org.orbit.substance.runtime.model.dfs.Path(value);
+				path = new org.orbit.substance.model.dfs.Path(value);
 				file = fileSystem.getFile(path);
 			}
 
@@ -261,10 +256,6 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 
 		} catch (IOException e) {
 			ErrorDTO error = handleError(e, StatusDTO.RESP_500, true);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
-
-		} catch (ServerException e) {
-			ErrorDTO error = handleError(e, e.getCode(), true);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
 
 		} finally {

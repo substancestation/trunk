@@ -21,8 +21,8 @@ Require-Bundle: org.origin.common;bundle-version="[1.0.0,2.0.0)",
  org.origin.common.extensions;bundle-version="[1.0.0,2.0.0)",
  org.orbit.infra.api;bundle-version="[1.0.0,2.0.0)",
  org.orbit.platform.sdk;bundle-version="[1.0.0,2.0.0)",
- org.orbit.substance.model;bundle-version="[1.0.0,2.0.0)",
- org.orbit.substance.api
+ org.orbit.substance.api;bundle-version="[1.0.0,2.0.0)",
+ org.orbit.substance.model;bundle-version="[1.0.0,2.0.0)"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.orbit.substance.runtime;version="1.0.0",
  org.orbit.substance.runtime.common.ws;version="1.0.0",
@@ -33,6 +33,4 @@ Export-Package: org.orbit.substance.runtime;version="1.0.0",
  org.orbit.substance.runtime.dfsvolume.ws;version="1.0.0",
  org.orbit.substance.runtime.dfsvolume.ws.command;version="1.0.0",
  org.orbit.substance.runtime.extension;version="1.0.0",
- org.orbit.substance.runtime.model.dfs;version="1.0.0",
- org.orbit.substance.runtime.model.dfsvolume;version="1.0.0",
  org.orbit.substance.runtime.util;version="1.0.0"

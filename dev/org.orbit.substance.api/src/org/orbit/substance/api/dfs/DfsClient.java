@@ -1,9 +1,13 @@
 package org.orbit.substance.api.dfs;
 
+import org.orbit.substance.model.dfs.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.ServiceClient;
 
 public interface DfsClient extends ServiceClient {
+
+	@Override
+	DfsServiceMetadata getMetadata() throws ClientException;
 
 	FileMetadata[] listRoots() throws ClientException;
 

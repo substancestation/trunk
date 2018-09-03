@@ -3,22 +3,27 @@ package org.orbit.substance.runtime.dfsvolume.service;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.orbit.substance.runtime.model.dfsvolume.DataBlockMetadata;
-import org.orbit.substance.runtime.model.dfsvolume.FileContentMetadata;
 import org.origin.common.jdbc.ConnectionAware;
 import org.origin.common.rest.editpolicy.EditPoliciesAwareService;
 import org.origin.common.rest.server.ServerException;
+import org.origin.common.service.PropertiesAware;
 import org.origin.common.service.WebServiceAware;
 
-/**
- * File system id: dfs_metadata_1
+/*
+ * File system id: 
+ *     dfs_metadata_1
  * 
- * File content id: dfs_content_1_1, dfs_content_1_2, dfs_content_1_3, ...
+ * File content id: 
+ *     dfs_content_1_1, 
+ *     dfs_content_1_2, 
+ *     dfs_content_1_3, 
+ *     ...
  * 
- * Block id: 1, 2, 3, 4, ...
+ * Block id: 
+ *     1, 2, 3, 4, ...
  * 
  */
-public interface DfsVolumeService extends WebServiceAware, ConnectionAware, EditPoliciesAwareService {
+public interface DfsVolumeService extends WebServiceAware, PropertiesAware, ConnectionAware, EditPoliciesAwareService {
 
 	// ----------------------------------------------------------------------
 	// Methods about service
@@ -31,7 +36,7 @@ public interface DfsVolumeService extends WebServiceAware, ConnectionAware, Edit
 
 	long getVolumeSize();
 
-	long getDefaultBlockCapacity();
+	// long getDefaultBlockCapacity();
 
 	// ----------------------------------------------------------------------
 	// Methods for accessing data blocks

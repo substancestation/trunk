@@ -1,7 +1,7 @@
 package org.orbit.substance.connector;
 
 import org.orbit.platform.sdk.connector.ConnectorActivator;
-import org.orbit.substance.connector.dfs.FileSystemConnector;
+import org.orbit.substance.connector.dfs.DfsConnector;
 import org.orbit.substance.connector.dfsvolume.FileContentConnector;
 import org.origin.common.extensions.Extension;
 import org.origin.common.extensions.InterfaceDescription;
@@ -29,8 +29,8 @@ public class Extensions extends ProgramExtensions {
 	protected void createConnectorExtensions() {
 		String extensionTypeId = ConnectorActivator.EXTENSION_TYPE_ID;
 
-		Extension extension1 = new Extension(extensionTypeId, FileSystemConnector.ID, "File System Service Connector", "Connect to file system service");
-		InterfaceDescription desc1 = new InterfaceDescription(ConnectorActivator.class, FileSystemConnector.class);
+		Extension extension1 = new Extension(extensionTypeId, DfsConnector.ID, "File System Service Connector", "Connect to file system service");
+		InterfaceDescription desc1 = new InterfaceDescription(ConnectorActivator.class, DfsConnector.class);
 		extension1.addInterface(desc1);
 		addExtension(extension1);
 

@@ -9,9 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
-import org.orbit.substance.runtime.model.dfs.FilePart;
-import org.orbit.substance.runtime.model.dfs.impl.FileMetadataImpl;
+import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.jdbc.AbstractResultSetHandler;
 import org.origin.common.jdbc.DatabaseTableAware;
@@ -180,6 +179,11 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 
 		List<FilePart> fileParts = ModelConverter.Dfs.toFileParts(filePartsString);
 		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
+
+		// this should not happen
+		if (parentFileId == null || parentFileId.isEmpty()) {
+			parentFileId = "-1";
+		}
 
 		return new FileMetadataImpl(id, this.accountId, fileId, parentFileId, null, name, size, isDirectory, isHidden, inTrash, fileParts, properties, dateCreated, dateModified);
 	}

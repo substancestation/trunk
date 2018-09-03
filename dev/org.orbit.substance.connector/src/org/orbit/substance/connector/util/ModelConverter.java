@@ -7,16 +7,16 @@ import java.util.Map;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
-import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.dfs.FilePart;
 import org.orbit.substance.api.dfs.DfsClient;
-import org.orbit.substance.api.dfs.Path;
+import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
-import org.orbit.substance.connector.dfs.FileImpl;
+import org.orbit.substance.connector.dfs.FileMetadataImpl;
 import org.orbit.substance.connector.dfsvolume.DataBlockMetadataImpl;
 import org.orbit.substance.connector.dfsvolume.FileContentMetadataImpl;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
+import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.origin.common.json.JSONUtil;
@@ -80,7 +80,7 @@ public class ModelConverter {
 			Map<String, Object> properties = toProperties(propertiesString);
 			List<FilePart> fileParts = toFileParts(filePartsString);
 
-			FileImpl file = new FileImpl(fsClient);
+			FileMetadataImpl file = new FileMetadataImpl(fsClient);
 			file.setAccountId(accountId);
 			file.setFileId(fileId);
 			file.setParentFileId(parentFileId);
@@ -256,17 +256,17 @@ public class ModelConverter {
 
 			DataBlockMetadataImpl dataBlock = new DataBlockMetadataImpl();
 			if (datablockDTO != null) {
+				String dfsVolumeId = datablockDTO.getDfsVolumeId();
 				String blockId = datablockDTO.getBlockId();
 				String accountId = datablockDTO.getAccountId();
 				long capacity = datablockDTO.getCapacity();
 				long size = datablockDTO.getSize();
-				// String[] fileIds = datablockDTO.getFileIds();
 
+				dataBlock.setDfsVolumeId(dfsVolumeId);
 				dataBlock.setBlockId(blockId);
 				dataBlock.setAccountId(accountId);
 				dataBlock.setCapacity(capacity);
 				dataBlock.setSize(size);
-				// dataBlock.setFileIds(fileIds);
 			}
 			return dataBlock;
 		}

@@ -5,11 +5,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
+import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
-import org.orbit.substance.runtime.model.dfs.Path;
+import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;

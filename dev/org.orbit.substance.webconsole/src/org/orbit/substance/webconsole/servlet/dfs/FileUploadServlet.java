@@ -17,7 +17,6 @@ import org.orbit.platform.sdk.PlatformSDKActivator;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.dfs.FilePart;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.MessageHelper;

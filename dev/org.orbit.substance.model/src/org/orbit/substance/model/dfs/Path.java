@@ -1,14 +1,15 @@
-package org.orbit.substance.api.dfs;
+package org.orbit.substance.model.dfs;
 
 import org.origin.common.util.StringUtil;
 
 public class Path implements Comparable<Path> {
 
+	public static final Path ROOT = new Path("/");
+
 	// path separator
 	public static final String SEPARATOR = "/";
 	public static final char SEPARATOR_CHAR = '/';
 
-	public static final Path ROOT = new Path("/");
 	private static final String[] EMPTY_STRINGS = new String[] {};
 
 	protected String pathString;

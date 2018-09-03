@@ -8,11 +8,11 @@ import java.util.Map;
 
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.dfs.FilePart;
-import org.orbit.substance.api.dfs.Path;
+import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.model.dfs.Path;
 import org.origin.common.rest.client.ClientException;
 
-public class FileImpl implements FileMetadata {
+public class FileMetadataImpl implements FileMetadata {
 
 	protected DfsClient fsClient;
 
@@ -33,7 +33,7 @@ public class FileImpl implements FileMetadata {
 	 * 
 	 * @param fsClient
 	 */
-	public FileImpl(DfsClient fsClient) {
+	public FileMetadataImpl(DfsClient fsClient) {
 		this.fsClient = fsClient;
 	}
 

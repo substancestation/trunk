@@ -50,25 +50,28 @@ public class DfsVolumeWSApplication extends OrbitWSApplication {
 			String dfsId = service.getDfsId();
 			String dfsVolumeId = service.getVolumeId();
 			long volumeCapacity = service.getVolumeCapacity();
-			long volumeSize = volumeSize = service.getVolumeSize();
-			// try {
-			// volumeCapacity = service.getVolumeCapacity();
-			// } catch (ServerException e) {
-			// e.printStackTrace();
-			// }
-			// try {
-			// volumeSize = service.getVolumeSize();
-			// } catch (ServerException e) {
-			// e.printStackTrace();
-			// }
+			long volumeSize = service.getVolumeSize();
+			// long blockCapacity = service.getDefaultBlockCapacity();
 
 			((ServiceMetadataImpl) metadata).setProperty("dfs_id", dfsId);
 			((ServiceMetadataImpl) metadata).setProperty("dfs_volume_id", dfsVolumeId);
 			((ServiceMetadataImpl) metadata).setProperty("volume_capacity", volumeCapacity);
 			((ServiceMetadataImpl) metadata).setProperty("volume_size", volumeSize);
+			// ((ServiceMetadataImpl) metadata).setProperty("block_capacity", blockCapacity);
 		}
 
 		return metadata;
 	}
 
 }
+
+// try {
+// volumeCapacity = service.getVolumeCapacity();
+// } catch (ServerException e) {
+// e.printStackTrace();
+// }
+// try {
+// volumeSize = service.getVolumeSize();
+// } catch (ServerException e) {
+// e.printStackTrace();
+// }

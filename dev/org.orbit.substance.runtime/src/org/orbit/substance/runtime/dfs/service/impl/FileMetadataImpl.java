@@ -1,13 +1,13 @@
-package org.orbit.substance.runtime.model.dfs.impl;
+package org.orbit.substance.runtime.dfs.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
-import org.orbit.substance.runtime.model.dfs.FilePart;
-import org.orbit.substance.runtime.model.dfs.Path;
+import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.model.dfs.Path;
+import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 
 public class FileMetadataImpl implements FileMetadata {

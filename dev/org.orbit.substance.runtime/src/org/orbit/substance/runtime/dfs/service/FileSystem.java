@@ -3,8 +3,7 @@ package org.orbit.substance.runtime.dfs.service;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.orbit.substance.runtime.model.dfs.FileMetadata;
-import org.orbit.substance.runtime.model.dfs.Path;
+import org.orbit.substance.model.dfs.Path;
 
 public interface FileSystem {
 
@@ -36,11 +35,7 @@ public interface FileSystem {
 
 	boolean isDirectory(Path path) throws IOException;
 
-	// FileMetadata createNewFile(Path path) throws IOException;
-
 	FileMetadata createNewFile(Path path, long size) throws IOException;
-
-	// FileMetadata createNewFile(String parentFileId, String fileName) throws IOException;
 
 	FileMetadata createNewFile(String parentFileId, String fileName, long size) throws IOException;
 
@@ -64,4 +59,9 @@ public interface FileSystem {
 
 	InputStream getFileContentInputStream(String fileId) throws IOException;
 
+	void dispose();
+
 }
+
+// FileMetadata createNewFile(Path path) throws IOException;
+// FileMetadata createNewFile(String parentFileId, String fileName) throws IOException;

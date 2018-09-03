@@ -26,6 +26,7 @@ public class SubstanceConstants {
 	public static String DFS__JDBC_URL = "substance.dfs.jdbc.url";
 	public static String DFS__JDBC_USERNAME = "substance.dfs.jdbc.username";
 	public static String DFS__JDBC_PASSWORD = "substance.dfs.jdbc.password";
+	public static String DFS__BLOCK_CAPACITY_MB = "substance.dfs.block_capacity_mb";
 
 	// EditPolicy values
 	public static String DFS__EDITPOLICY_ID = "substance.dfs.editpolicy";

@@ -5,17 +5,19 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.orbit.substance.api.dfs.DfsClient;
+import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.dfs.Path;
 import org.orbit.substance.connector.util.ModelConverter;
 import org.orbit.substance.model.RequestConstants;
+import org.orbit.substance.model.dfs.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.ServiceClientImpl;
 import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.WSClientConfiguration;
 import org.origin.common.rest.model.Request;
+import org.origin.common.rest.model.ServiceMetadataDTO;
 
-public class FileSystemClientImpl extends ServiceClientImpl<DfsClient, FileSystemWSClient> implements DfsClient {
+public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> implements DfsClient {
 
 	private static final FileMetadata[] EMPTY_FILES = new FileMetadata[0];
 
@@ -24,14 +26,14 @@ public class FileSystemClientImpl extends ServiceClientImpl<DfsClient, FileSyste
 	 * @param connector
 	 * @param properties
 	 */
-	public FileSystemClientImpl(ServiceConnector<DfsClient> connector, Map<String, Object> properties) {
+	public DfsClientImpl(ServiceConnector<DfsClient> connector, Map<String, Object> properties) {
 		super(connector, properties);
 	}
 
 	@Override
-	protected FileSystemWSClient createWSClient(Map<String, Object> properties) {
+	protected DfsWSClient createWSClient(Map<String, Object> properties) {
 		WSClientConfiguration config = WSClientConfiguration.create(properties);
-		return new FileSystemWSClient(config);
+		return new DfsWSClient(config);
 	}
 
 	protected void checkFileId(String fileId) {
@@ -56,6 +58,19 @@ public class FileSystemClientImpl extends ServiceClientImpl<DfsClient, FileSyste
 		if (fileName == null) {
 			throw new IllegalArgumentException("File name is null.");
 		}
+	}
+
+	@Override
+	public DfsServiceMetadata getMetadata() throws ClientException {
+		DfsServiceMetadataImpl metadata = new DfsServiceMetadataImpl();
+		ServiceMetadataDTO metadataDTO = getWSClient().getMetadata();
+		if (metadataDTO != null) {
+			Map<String, Object> properties = metadataDTO.getProperties();
+			if (properties != null && !properties.isEmpty()) {
+				metadata.getProperties().putAll(properties);
+			}
+		}
+		return metadata;
 	}
 
 	@Override

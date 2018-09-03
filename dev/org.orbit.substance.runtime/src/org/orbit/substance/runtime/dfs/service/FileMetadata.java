@@ -1,7 +1,10 @@
-package org.orbit.substance.runtime.model.dfs;
+package org.orbit.substance.runtime.dfs.service;
 
 import java.util.List;
 import java.util.Map;
+
+import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.model.dfs.Path;
 
 public interface FileMetadata {
 

@@ -6,17 +6,17 @@ import org.orbit.platform.sdk.connector.ConnectorActivator;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.origin.common.rest.client.ServiceConnector;
 
-public class FileSystemConnector extends ServiceConnector<DfsClient> implements ConnectorActivator {
+public class DfsConnector extends ServiceConnector<DfsClient> implements ConnectorActivator {
 
-	public static final String ID = "org.orbit.substance.connector.FileSystemConnector";
+	public static final String ID = "org.orbit.substance.connector.DfsConnector";
 
-	public FileSystemConnector() {
+	public DfsConnector() {
 		super(DfsClient.class);
 	}
 
 	@Override
 	protected DfsClient create(Map<String, Object> properties) {
-		return new FileSystemClientImpl(this, properties);
+		return new DfsClientImpl(this, properties);
 	}
 
 }

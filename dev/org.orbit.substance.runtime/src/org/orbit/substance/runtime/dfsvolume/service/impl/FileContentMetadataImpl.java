@@ -1,6 +1,6 @@
-package org.orbit.substance.runtime.model.dfsvolume.impl;
+package org.orbit.substance.runtime.dfsvolume.service.impl;
 
-import org.orbit.substance.runtime.model.dfsvolume.FileContentMetadata;
+import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
 
 public class FileContentMetadataImpl implements FileContentMetadata {
 
