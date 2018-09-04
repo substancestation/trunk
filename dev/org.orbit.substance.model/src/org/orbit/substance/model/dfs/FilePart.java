@@ -20,6 +20,6 @@ public interface FilePart {
 
 	void setChecksum(String checksum);
 
-	List<FileContentAccess> getFileContentAccess();
+	List<FileContentAccess> getContentAccess();
 
 }

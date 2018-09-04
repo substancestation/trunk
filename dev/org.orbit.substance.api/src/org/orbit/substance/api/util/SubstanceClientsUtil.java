@@ -8,6 +8,7 @@ import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
+import org.orbit.substance.model.dfs.FileContentAccess;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.Path;
 import org.origin.common.rest.client.ClientException;
@@ -106,7 +107,7 @@ public class SubstanceClientsUtil {
 		 * @return
 		 * @throws ClientException
 		 */
-		public FileMetadata createNewFile(String dfsServiceUrl, String accessToken, String parentFileId, java.io.File localFile) throws ClientException {
+		public FileMetadata createNewFileAndUpload(String dfsServiceUrl, String accessToken, String parentFileId, java.io.File localFile) throws ClientException {
 			FileMetadata file = null;
 			DfsClient dfsClient = getDfsClient(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
@@ -121,6 +122,12 @@ public class SubstanceClientsUtil {
 						long startIndex = filePart.getStartIndex();
 						long endIndex = filePart.getEndIndex();
 
+						List<FileContentAccess> fileContentAccessList = filePart.getContentAccess();
+						for (FileContentAccess fileContentAccess : fileContentAccessList) {
+							String dfsId = fileContentAccess.getDfsId();
+							String dfsVolumeId = fileContentAccess.getDfsVolumeId();
+							String blockId = fileContentAccess.getDataBlockId();
+						}
 					}
 				}
 			}

@@ -39,6 +39,7 @@ public interface RequestConstants {
 	public static String DATA_BLOCK_EXISTS = "data_block_exists";
 	public static String GET_DATA_BLOCK = "get_data_block";
 	public static String CREATE_DATA_BLOCK = "create_data_block";
+	public static String UPDATE_DATA_BLOCK_SIZE_BY_DELTA = "update_data_block_size_by_delta";
 	public static String DELETE_DATA_BLOCK = "delete_data_block";
 
 	public static String LIST_FILE_CONTENTS = "list_file_contents";

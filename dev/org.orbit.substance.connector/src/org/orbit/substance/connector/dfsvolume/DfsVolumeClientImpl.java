@@ -160,6 +160,23 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	}
 
 	@Override
+	public boolean updateDataBlockSizeByDelta(String accountId, String blockId, long sizeDelta) throws ClientException {
+		boolean succeed = false;
+
+		Request request = new Request(RequestConstants.UPDATE_DATA_BLOCK_SIZE_BY_DELTA);
+		request.setParameter("account_id", accountId);
+		request.setParameter("block_id", blockId);
+		request.setParameter("size_delta", sizeDelta);
+
+		Response response = sendRequest(request);
+		if (response != null) {
+			succeed = ModelConverter.DfsVolume.isUpdated(response);
+		}
+
+		return succeed;
+	}
+
+	@Override
 	public boolean deleteDataBlock(String accountId, String blockId) throws ClientException {
 		boolean succeed = false;
 

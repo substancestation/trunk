@@ -13,6 +13,8 @@ public class SubstanceConstants {
 	// Index item property names
 	public static String IDX_PROP__LAST_HEARTBEAT_TIME = "last_heartbeat_time";
 
+	public static String TOKEN_PROVIDER__ORBIT = "orbit";
+
 	// ----------------------------------------------------------------------------------------
 	// Distributed file system service
 	// ----------------------------------------------------------------------------------------

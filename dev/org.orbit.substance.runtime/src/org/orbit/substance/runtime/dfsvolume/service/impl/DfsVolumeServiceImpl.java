@@ -461,7 +461,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public boolean updateDataBlock(String accountId, DataBlockMetadata datablockMetadata) throws ServerException {
+	public boolean updateDataBlockSizeByDelta(String accountId, String blockId, long sizeDelta) throws ServerException {
 		boolean isUpdated = false;
 		Connection conn = null;
 		try {
@@ -470,13 +470,15 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			String dfsVolumeId = getVolumeId();
 			VolumeBlocksTableHandler tableHandler = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId);
 
-			String blockId = datablockMetadata.getBlockId();
 			DataBlockMetadata existingDataBlock = tableHandler.get(conn, blockId, accountId);
 			if (existingDataBlock == null) {
 				throw new ServerException(StatusDTO.RESP_500, "Data block is not found.");
 			}
 
-			isUpdated = tableHandler.update(conn, datablockMetadata);
+			int id = existingDataBlock.getId();
+			long newSize = existingDataBlock.getSize() + sizeDelta;
+
+			isUpdated = tableHandler.updateSize(conn, id, accountId, blockId, newSize);
 
 		} catch (SQLException e) {
 			handleSQLException(e);

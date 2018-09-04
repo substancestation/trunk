@@ -113,7 +113,7 @@ public class FileUploadServlet extends HttpServlet {
 
 				List<FileMetadata> files = new ArrayList<FileMetadata>();
 				for (java.io.File localFile : localFiles) {
-					FileMetadata file = SubstanceClientsUtil.Dfs.createNewFile(dfsServiceUrl, accessToken, parentFileId, localFile);
+					FileMetadata file = SubstanceClientsUtil.Dfs.createNewFileAndUpload(dfsServiceUrl, accessToken, parentFileId, localFile);
 					if (file != null) {
 						message = MessageHelper.INSTANCE.add(message, "File metadata is created in DFS successfully!");
 						files.add(file);

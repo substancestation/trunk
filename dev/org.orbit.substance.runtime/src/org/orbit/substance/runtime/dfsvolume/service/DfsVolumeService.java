@@ -49,7 +49,7 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 
 	DataBlockMetadata createDataBlock(String accountId, long capacity) throws ServerException;
 
-	boolean updateDataBlock(String accountId, DataBlockMetadata datablockMetadata) throws ServerException;
+	boolean updateDataBlockSizeByDelta(String accountId, String blockId, long sizeDelta) throws ServerException;
 
 	boolean deleteDataBlock(String accountId, String blockId) throws ServerException;
 

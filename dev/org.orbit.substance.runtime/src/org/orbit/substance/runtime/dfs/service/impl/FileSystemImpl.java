@@ -6,9 +6,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.orbit.platform.sdk.http.JWTTokenHandler;
+import org.orbit.platform.sdk.http.OrbitRoles;
+import org.orbit.platform.sdk.util.ExtensionUtil;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
@@ -24,6 +28,7 @@ import org.orbit.substance.runtime.util.Comparators;
 import org.orbit.substance.runtime.util.Comparators.DfsVolumeClientComparatorByFreeSpace;
 import org.orbit.substance.runtime.util.OrbitClientHelper;
 import org.origin.common.jdbc.DatabaseUtil;
+import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.server.ServerException;
 import org.origin.common.util.DiskSpaceUnit;
@@ -547,51 +552,55 @@ public class FileSystemImpl implements FileSystem {
 			throw new RuntimeException("File size is 0.");
 		}
 
+		// Note:
+		// - Access token for the dfs service to access the dfs volume service.
+		String dfsAccessToken = getDfsServiceToken();
+
 		String dfsId = getDfsId();
 		String accountId = fileMetadata.getAccountId();
 		String indexServiceUrl = (String) this.dfsService.getProperties().get(SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
-		// TODO:
-		// Need to get access token for the dfs to access the dfs volume.
-		String dfsAccessToken = "";
 
-		List<FilePart> fileParts = new ArrayList<FilePart>();
-
-		// dfs volumes are sorted by volume id
+		// 1. Get a dfs volumes of the dfs.
+		// Note:
+		// - Dfs volumes are sorted by volume id (asc)
 		DfsVolumeClient[] dfsVolumeClients = OrbitClientHelper.INSTANCE.getDfsVolumeClient(indexServiceUrl, dfsAccessToken, dfsId);
-
-		// 1. Find an existing datablock with enough space to hold the file content alone.
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
 			try {
+				// Find an existing datablock with enough space to hold the file content alone.
 				DataBlockMetadata[] dataBlocksWithEnoughFreeSpace = dfsVolumeClient.getDataBlocks(accountId, size);
 				for (DataBlockMetadata dataBlock : dataBlocksWithEnoughFreeSpace) {
-					String currDfsVolumeId = dataBlock.getDfsVolumeId();
-					String currDataBlockId = dataBlock.getBlockId();
+					String dfsVolumeId = dataBlock.getDfsVolumeId();
+					String blockId = dataBlock.getBlockId();
 
-					// a datablock with enough space is found, which can be used to store the file content alone.
+					// Note:
+					// - May need to allocate the pending size in the block for the file.
+					// - If file content upload failed, need to clear the allocated size in the block.
+					// long newSize = dataBlock.getSize() + size;
+					// dfsVolumeClient.updateDataBlockSize(accountId, blockId, newSize);
+
 					int partId = 0;
 					long startIndex = 0;
-					long endIndex = -1; // means to the end of the file
-					String checksum = null; // checksum cannot be calculated now
+					long endIndex = -1; // to the end of the file
+					String partChecksum = null;
 
-					FilePartImpl filePart = new FilePartImpl(partId, startIndex, endIndex, checksum);
-					FileContentAccessImpl contentAccess = new FileContentAccessImpl(dfsId, currDfsVolumeId, currDataBlockId);
-					filePart.getFileContentAccess().add(contentAccess);
+					FilePartImpl filePart = new FilePartImpl(partId, startIndex, endIndex, partChecksum);
+					FileContentAccessImpl contentAccess = new FileContentAccessImpl(dfsId, dfsVolumeId, blockId);
+					filePart.getContentAccess().add(contentAccess);
 
+					List<FilePart> fileParts = new ArrayList<FilePart>();
 					fileParts.add(filePart);
+					fileMetadata.getFileParts().clear();
+					fileMetadata.getFileParts().addAll(fileParts);
+
+					return;
 				}
 			} catch (ClientException e) {
 				e.printStackTrace();
 			}
 		}
 
-		if (!fileParts.isEmpty()) {
-			fileMetadata.getFileParts().clear();
-			fileMetadata.getFileParts().addAll(fileParts);
-			return;
-		}
-
-		// 2. There is no one existing datablock, which is big enough to hold the file content alone.
-		// - Create new datablocks in dfs volumes.
+		// 2. There is no existing datablock, which is big enough to hold the whole file content alone.
+		// - New data block(s) are needed for the file content.
 		Map<DfsVolumeClient, DfsVolumeServiceMetadata> serviceMetadataMap = new HashMap<DfsVolumeClient, DfsVolumeServiceMetadata>();
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
 			try {
@@ -601,64 +610,113 @@ public class FileSystemImpl implements FileSystem {
 				e.printStackTrace();
 			}
 		}
-		// volumes with larger free space first.
+		// Sort dfs volumes by free space (desc).
 		DfsVolumeClientComparatorByFreeSpace freeSpaceComparator = new DfsVolumeClientComparatorByFreeSpace(serviceMetadataMap);
 		Comparators.sort(dfsVolumeClients, freeSpaceComparator);
 
-		long defaultDataBlockCapacity = this.dfsService.getDefaultBlockCapacity();
-		if (defaultDataBlockCapacity <= 0) {
-			defaultDataBlockCapacity = DiskSpaceUnit.MB.toBytes(100);
-		}
-
-		int partId = 0;
 		long sizeLeft = size;
+		int partId = 0;
 		long startIndex = 0;
 		long endIndex = -1;
-		String checksum = null;
+		long defaultDataBlockCapacity = this.dfsService.getDefaultBlockCapacity();
 
-		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
-			DfsVolumeServiceMetadata serviceMetadata = serviceMetadataMap.get(dfsVolumeClient);
-			String dfsVolumeId = serviceMetadata.getDfsVolumeId();
+		List<FilePart> fileParts = new ArrayList<FilePart>();
 
-			// get block capacity
-			long dataBlockCapacity = defaultDataBlockCapacity;
-			if (dataBlockCapacity <= 0) {
-				dataBlockCapacity = DiskSpaceUnit.MB.toBytes(100);
+		while (sizeLeft > 0) {
+			for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
+				DfsVolumeServiceMetadata serviceMetadata = serviceMetadataMap.get(dfsVolumeClient);
+				String dfsVolumeId = serviceMetadata.getDfsVolumeId();
+
+				long volumeCapacity = serviceMetadata.getVolumeCapacity();
+				long volumeSize = serviceMetadata.getVolumeSize();
+				long volumeFreeSpace = volumeCapacity - volumeSize;
+
+				// Note:
+				// - Dfs determines default data block capacity, for now.
+				// - If dfs volumes can determine its own default data block capacity, the problem is for large file with multiple data blocks, creating backup
+				// of the data blocks in other dfs volumes will cause other dfs voluems to have data blocks with varies capacity.
+				long dataBlockCapacity = defaultDataBlockCapacity;
+				if (dataBlockCapacity <= 0) {
+					dataBlockCapacity = DiskSpaceUnit.MB.toBytes(100);
+				}
+
+				if (volumeFreeSpace < dataBlockCapacity) {
+					// The dfs volume doesn't have enough space for creating a new data block, try next dfs volume.
+					// Can break the loop here as well, since dfs volumes are sorted by free space (desc). following dfs volumes in the loop already all have
+					// smaller free space.
+					continue;
+				}
+
+				// Note:
+				// - Data block id can be created when client uploads file contents to a dfs volume.
+				// - A data block newly created for a file (or file segment) should be locked until file content have been uploaded.
+				// - If a data block is for a full file segment, the data block is exclusive for the file segment. No other files should be uploaded to the data
+				// block. The data block matadata can have attribute to keep this information.
+				// - If a data blick is for a file (or a ending file segment), the data block should be locked for uploading other files until the file (or
+				// ending file segment) is uploaded to the dfs volume.
+				// - No need to allocate pending data block size, since the data block doesn't exist. The data block size can be set when the new data block is
+				// created.
+				String dataBlockId = "-1";
+				FileContentAccessImpl contentAccess = new FileContentAccessImpl(dfsId, dfsVolumeId, dataBlockId);
+
+				// Checksum of file content segment is not available until file segment content is uploaded.
+				// Or maybe there is no need to keep it in dfs volume.
+				String partChecksum = null;
+
+				if (sizeLeft <= dataBlockCapacity) {
+					// The data block is the last one (or the only one) for holding the content of the file.
+					FilePartImpl filePart = new FilePartImpl(partId, startIndex, -1, partChecksum);
+					filePart.getContentAccess().add(contentAccess);
+					fileParts.add(filePart);
+
+					sizeLeft = 0;
+					partId++;
+
+					// Enough data blocks are created. No need to continue the dfs volumes loop.
+					break;
+
+				} else {
+					// The data block is not the last one.
+					endIndex = startIndex + dataBlockCapacity;
+
+					FilePartImpl filePart = new FilePartImpl(partId, startIndex, endIndex, partChecksum);
+					filePart.getContentAccess().add(contentAccess);
+					fileParts.add(filePart);
+
+					startIndex = endIndex;
+
+					sizeLeft -= dataBlockCapacity;
+					partId++;
+
+					// More data block is needed. Continue the dfs volumes loop.
+				}
 			}
-
-			DataBlockMetadata dataBlock = null;
-			try {
-				dataBlock = dfsVolumeClient.createDataBlock(accountId, dataBlockCapacity);
-			} catch (ClientException e) {
-				handleClientException(e);
-			}
-			if (dataBlock == null) {
-				throw new RuntimeException("Data block cannot be created.");
-			}
-			String dataBlockId = dataBlock.getBlockId();
-			FileContentAccessImpl contentAccess = new FileContentAccessImpl(dfsId, dfsVolumeId, dataBlockId);
-
-			if (sizeLeft <= dataBlockCapacity) {
-				// The data block is the last one (or the only one) for holding the content of the file.
-				FilePartImpl filePart = new FilePartImpl(partId, startIndex, -1, checksum);
-				filePart.getFileContentAccess().add(contentAccess);
-				fileParts.add(filePart);
-				break;
-
-			} else {
-				// The data block is not the last one. More data block is needed.
-				endIndex = startIndex + dataBlockCapacity;
-
-				FilePartImpl filePart = new FilePartImpl(partId, startIndex, endIndex, checksum);
-				filePart.getFileContentAccess().add(contentAccess);
-				fileParts.add(filePart);
-
-				startIndex = endIndex;
-			}
-
-			sizeLeft -= dataBlockCapacity;
-			partId++;
 		}
+
+		fileMetadata.getFileParts().clear();
+		fileMetadata.getFileParts().addAll(fileParts);
+	}
+
+	protected String getDfsServiceToken() {
+		String tokenValue = null;
+		try {
+			JWTTokenHandler tokenHandler = ExtensionUtil.JWT.getTokenHandler(SubstanceConstants.TOKEN_PROVIDER__ORBIT);
+			if (tokenHandler != null) {
+				String roles = OrbitRoles.DFS_ADMIN;
+				int securityLevel = Secured.SecurityLevels.LEVEL_1;
+				String classificationLevels = Secured.ClassificationLevels.TOP_SECRET + "," + Secured.ClassificationLevels.SECRET + "," + Secured.ClassificationLevels.CONFIDENTIAL;
+
+				Map<String, String> payload = new LinkedHashMap<String, String>();
+				payload.put(JWTTokenHandler.PAYLOAD__ROLES, roles);
+				payload.put(JWTTokenHandler.PAYLOAD__SECURITY_LEVEL, String.valueOf(securityLevel));
+				payload.put(JWTTokenHandler.PAYLOAD__CLASSIFICATION_LEVELS, classificationLevels);
+
+				tokenValue = tokenHandler.createToken(payload);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tokenValue;
 	}
 
 	@Override

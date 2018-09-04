@@ -26,6 +26,8 @@ public interface DfsVolumeClient extends ServiceClient {
 
 	DataBlockMetadata createDataBlock(String accountId, long capacity) throws ClientException;
 
+	boolean updateDataBlockSizeByDelta(String accountId, String blockId, long sizeDelta) throws ClientException;
+
 	boolean deleteDataBlock(String accountId, String blockId) throws ClientException;
 
 	// ----------------------------------------------------------------------

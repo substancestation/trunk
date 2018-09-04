@@ -297,6 +297,58 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * 
 	 * @param conn
 	 * @param id
+	 * @param accountId
+	 * @param blockId
+	 * @param newSize
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean updateSize(Connection conn, int id, String accountId, String blockId, long newSize) throws SQLException {
+		long dateModified = new Date().getTime();
+
+		if (id > 0) {
+			String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE id=?";
+			return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, id }, 1);
+
+		} else {
+			String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE blockId=? AND accountId=?";
+			return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, blockId, accountId }, 1);
+		}
+	}
+
+	/**
+	 * 
+	 * @param conn
+	 * @param id
+	 * @param accountId
+	 * @param blockId
+	 * @param sizeDelta
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean updateBySizeDelta(Connection conn, int id, String accountId, String blockId, long sizeDelta) throws SQLException {
+		long dateModified = new Date().getTime();
+
+		DataBlockMetadata dataBlock = get(conn, blockId, accountId);
+		if (dataBlock == null) {
+			return false;
+		}
+
+		long newSize = dataBlock.getSize() + sizeDelta;
+		if (id > 0) {
+			String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE id=?";
+			return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, id }, 1);
+
+		} else {
+			String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE blockId=? AND accountId=?";
+			return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, blockId, accountId }, 1);
+		}
+	}
+
+	/**
+	 * 
+	 * @param conn
+	 * @param id
 	 * @return
 	 * @throws SQLException
 	 */

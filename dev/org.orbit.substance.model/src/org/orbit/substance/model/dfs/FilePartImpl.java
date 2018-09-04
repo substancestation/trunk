@@ -71,16 +71,12 @@ public class FilePartImpl implements FilePart {
 	}
 
 	@Override
-	public synchronized List<FileContentAccess> getFileContentAccess() {
+	public synchronized List<FileContentAccess> getContentAccess() {
 		if (this.fileContentAccessList == null) {
 			this.fileContentAccessList = new ArrayList<FileContentAccess>();
 		}
 		return this.fileContentAccessList;
 	}
-
-	// public synchronized void setFileContentAccess(List<FileContentAccess> fileContentAccessList) {
-	// this.fileContentAccessList = fileContentAccessList;
-	// }
 
 	@Override
 	public String toString() {
@@ -99,4 +95,7 @@ public class FilePartImpl implements FilePart {
 // @Override
 // public void setFileMetadata(FileMetadata fileMetadata) {
 // this.fileMetadata = fileMetadata;
+// }
+// public synchronized void setContentAccess(List<FileContentAccess> fileContentAccessList) {
+// this.fileContentAccessList = fileContentAccessList;
 // }

@@ -34,6 +34,7 @@ import org.orbit.substance.runtime.dfsvolume.ws.command.GetFileContentCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.ListAllDataBlocksCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.ListDataBlocksCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.ListFileContentsCommand;
+import org.orbit.substance.runtime.dfsvolume.ws.command.UpdateDataBlockSizeByDeltaCommand;
 import org.orbit.substance.runtime.extension.FileContentServiceActivator;
 import org.orbit.substance.runtime.extension.FileContentServicePropertyTester;
 import org.orbit.substance.runtime.extension.FileSystemServiceActivator;
@@ -300,12 +301,19 @@ public class Extensions extends ProgramExtensions {
 		extension15.addInterface(desc15);
 		addExtension(extension15);
 
-		Extension extension16 = new Extension(extensionTypeId, DeleteDataBlockCommand.ID);
+		Extension extension16 = new Extension(extensionTypeId, UpdateDataBlockSizeByDeltaCommand.ID);
 		extension16.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc16 = new InterfaceDescription(WSCommand.class, DeleteDataBlockCommand.class);
+		InterfaceDescription desc16 = new InterfaceDescription(WSCommand.class, UpdateDataBlockSizeByDeltaCommand.class);
 		desc16.setSingleton(false);
 		extension16.addInterface(desc16);
 		addExtension(extension16);
+
+		Extension extension17 = new Extension(extensionTypeId, DeleteDataBlockCommand.ID);
+		extension17.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc17 = new InterfaceDescription(WSCommand.class, DeleteDataBlockCommand.class);
+		desc17.setSingleton(false);
+		extension17.addInterface(desc17);
+		addExtension(extension17);
 
 		// ----------------------------------------------------------------------
 		// Commands for accessing file contents of a data block
