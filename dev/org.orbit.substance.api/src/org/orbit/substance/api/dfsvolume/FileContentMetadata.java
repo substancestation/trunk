@@ -2,14 +2,18 @@ package org.orbit.substance.api.dfsvolume;
 
 public interface FileContentMetadata {
 
+	DfsVolumeClient getDfsVolumeClient();
+
 	String getFileId();
 
 	int getPartId();
 
-	String getChecksum();
+	long getSize();
+
+	long getChecksum();
+
+	long getDateCreated();
+
+	long getDateModified();
 
 }
-
-// long getSize();
-// int getStartIndex();
-// int getEndIndex();

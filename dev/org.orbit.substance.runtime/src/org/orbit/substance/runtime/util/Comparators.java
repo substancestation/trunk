@@ -1,9 +1,5 @@
 package org.orbit.substance.runtime.util;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexItem;
@@ -16,28 +12,6 @@ public class Comparators {
 
 	public static DfsVolumeIndexItemComparatorByVolumeId DfsVolumeIndexItemComparatorByVolumeId_ASC = new DfsVolumeIndexItemComparatorByVolumeId(BaseComparator.SORT_ASC);
 	public static DfsVolumeIndexItemComparatorByVolumeId DfsVolumeIndexItemComparatorByVolumeId_DESC = new DfsVolumeIndexItemComparatorByVolumeId(BaseComparator.SORT_DESC);
-
-	/**
-	 * 
-	 * @param list
-	 * @param comparator
-	 */
-	public static void sort(List<IndexItem> list, Comparator<IndexItem> comparator) {
-		if (list != null && list.size() > 1 && comparator != null) {
-			Collections.sort(list, comparator);
-		}
-	}
-
-	/**
-	 * 
-	 * @param dfsVolumeClients
-	 * @param comparator
-	 */
-	public static void sort(DfsVolumeClient[] dfsVolumeClients, Comparator<DfsVolumeClient> comparator) {
-		if (dfsVolumeClients != null && dfsVolumeClients.length > 1 && comparator != null) {
-			Arrays.sort(dfsVolumeClients, comparator);
-		}
-	}
 
 	public static class DfsVolumeClientComparatorByFreeSpace extends BaseComparator<DfsVolumeClient> {
 		protected Map<DfsVolumeClient, DfsVolumeServiceMetadata> serviceMetadataMap;
@@ -121,3 +95,25 @@ public class Comparators {
 	}
 
 }
+
+// /**
+// *
+// * @param list
+// * @param comparator
+// */
+// public static void sort(List<IndexItem> list, Comparator<IndexItem> comparator) {
+// if (list != null && list.size() > 1 && comparator != null) {
+// Collections.sort(list, comparator);
+// }
+// }
+
+// /**
+// *
+// * @param dfsVolumeClients
+// * @param comparator
+// */
+// public static void sort(DfsVolumeClient[] dfsVolumeClients, Comparator<DfsVolumeClient> comparator) {
+// if (dfsVolumeClients != null && dfsVolumeClients.length > 1 && comparator != null) {
+// Arrays.sort(dfsVolumeClients, comparator);
+// }
+// }

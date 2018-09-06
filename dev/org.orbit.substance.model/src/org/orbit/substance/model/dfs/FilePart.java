@@ -16,9 +16,9 @@ public interface FilePart {
 
 	void setEndIndex(long endIndex);
 
-	String getChecksum();
+	long getChecksum();
 
-	void setChecksum(String checksum);
+	void setChecksum(long checksum);
 
 	List<FileContentAccess> getContentAccess();
 

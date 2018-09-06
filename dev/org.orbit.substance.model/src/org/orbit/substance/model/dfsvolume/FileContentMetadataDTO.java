@@ -10,14 +10,14 @@ public class FileContentMetadataDTO {
 	protected String fileId;
 	@XmlElement
 	protected int partId;
-	// @XmlElement
-	// protected long size;
-	// @XmlElement
-	// protected int startIndex;
-	// @XmlElement
-	// protected int endIndex;
 	@XmlElement
-	protected String checksum;
+	protected long size;
+	@XmlElement
+	protected long checksum;
+	@XmlElement
+	protected long dateCreated;
+	@XmlElement
+	protected long dateModified;
 
 	@XmlElement
 	public String getFileId() {
@@ -37,40 +37,74 @@ public class FileContentMetadataDTO {
 		this.partId = partId;
 	}
 
-	// @XmlElement
-	// public long getSize() {
-	// return this.size;
-	// }
-	//
-	// public void setSize(long size) {
-	// this.size = size;
-	// }
-	//
-	// @XmlElement
-	// public int getStartIndex() {
-	// return this.startIndex;
-	// }
-	//
-	// public void setStartIndex(int startIndex) {
-	// this.startIndex = startIndex;
-	// }
-	//
-	// @XmlElement
-	// public int getEndIndex() {
-	// return this.endIndex;
-	// }
-	//
-	// public void setEndIndex(int endIndex) {
-	// this.endIndex = endIndex;
-	// }
+	@XmlElement
+	public long getSize() {
+		return this.size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
 
 	@XmlElement
-	public String getChecksum() {
+	public long getChecksum() {
 		return this.checksum;
 	}
 
-	public void setChecksum(String checksum) {
+	public void setChecksum(long checksum) {
 		this.checksum = checksum;
 	}
 
+	@XmlElement
+	public long getDateCreated() {
+		return this.dateCreated;
+	}
+
+	public void setDateCreated(long dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	@XmlElement
+	public long getDateModified() {
+		return this.dateModified;
+	}
+
+	public void setDateModified(long dateModified) {
+		this.dateModified = dateModified;
+	}
+
 }
+
+// @XmlElement
+// protected long size;
+// @XmlElement
+// protected int startIndex;
+// @XmlElement
+// protected int endIndex;
+
+// @XmlElement
+// public long getSize() {
+// return this.size;
+// }
+//
+// public void setSize(long size) {
+// this.size = size;
+// }
+//
+// @XmlElement
+// public int getStartIndex() {
+// return this.startIndex;
+// }
+//
+// public void setStartIndex(int startIndex) {
+// this.startIndex = startIndex;
+// }
+//
+// @XmlElement
+// public int getEndIndex() {
+// return this.endIndex;
+// }
+//
+// public void setEndIndex(int endIndex) {
+// this.endIndex = endIndex;
+// }

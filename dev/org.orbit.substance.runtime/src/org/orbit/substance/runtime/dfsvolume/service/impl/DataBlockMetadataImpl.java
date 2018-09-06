@@ -1,5 +1,11 @@
 package org.orbit.substance.runtime.dfsvolume.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 
 public class DataBlockMetadataImpl implements DataBlockMetadata {
@@ -10,6 +16,8 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 	protected String accountId;
 	protected long capacity;
 	protected long size;
+	protected List<PendingFile> pendingFiles;
+	protected Map<String, Object> properties;
 	protected long dateCreated;
 	protected long dateModified;
 
@@ -24,15 +32,20 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 	 * @param accountId
 	 * @param capacity
 	 * @param size
+	 * @param pendingFiles
+	 * @param properties
 	 * @param dateCreated
 	 * @param dateModified
 	 */
-	public DataBlockMetadataImpl(String dfsVolumeId, int id, String blockId, String accountId, long capacity, long size, long dateCreated, long dateModified) {
+	public DataBlockMetadataImpl(String dfsVolumeId, int id, String blockId, String accountId, long capacity, long size, List<PendingFile> pendingFiles, Map<String, Object> properties, long dateCreated, long dateModified) {
+		this.dfsVolumeId = dfsVolumeId;
 		this.id = id;
 		this.blockId = blockId;
 		this.accountId = accountId;
 		this.capacity = capacity;
 		this.size = size;
+		this.pendingFiles = pendingFiles;
+		this.properties = properties;
 		this.dateCreated = dateCreated;
 		this.dateModified = dateModified;
 	}
@@ -89,6 +102,30 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 
 	public void setSize(long size) {
 		this.size = size;
+	}
+
+	@Override
+	public synchronized List<PendingFile> getPendingFiles() {
+		if (this.pendingFiles == null) {
+			this.pendingFiles = new ArrayList<PendingFile>();
+		}
+		return this.pendingFiles;
+	}
+
+	public synchronized void setPendingFiles(List<PendingFile> pendingFiles) {
+		this.pendingFiles = pendingFiles;
+	}
+
+	@Override
+	public synchronized Map<String, Object> getProperties() {
+		if (this.properties == null) {
+			this.properties = new HashMap<String, Object>();
+		}
+		return this.properties;
+	}
+
+	public synchronized void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
 	}
 
 	@Override

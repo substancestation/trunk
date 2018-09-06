@@ -1,5 +1,6 @@
 package org.orbit.substance.api.dfsvolume;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -44,7 +45,9 @@ public interface DfsVolumeClient extends ServiceClient {
 	// ----------------------------------------------------------------------
 	// Methods for uploading/downloading file contents
 	// ----------------------------------------------------------------------
-	boolean uploadFile(String accountId, String blockId, String fileId, int partId, String checksum, InputStream inputStream) throws ClientException;
+	boolean uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException;
+
+	boolean uploadFile(String accountId, String blockId, String fileId, int partId, long size, long checksum, InputStream inputStream) throws ClientException;
 
 	boolean downloadFile(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ClientException;
 

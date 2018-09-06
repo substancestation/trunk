@@ -31,7 +31,6 @@ import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.StatusDTO;
 import org.origin.common.rest.server.AbstractWSApplicationResource;
-import org.origin.common.rest.server.ServerException;
 
 /*
  * DFS file web service resource.

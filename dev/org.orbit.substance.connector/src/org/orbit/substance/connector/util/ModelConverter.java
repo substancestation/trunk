@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.connector.dfs.FileMetadataImpl;
 import org.orbit.substance.connector.dfsvolume.DataBlockMetadataImpl;
@@ -19,6 +20,9 @@ import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
+import org.orbit.substance.model.dfsvolume.PendingFile;
+import org.orbit.substance.model.util.FilePartsReader;
+import org.orbit.substance.model.util.PendingFilesReader;
 import org.origin.common.json.JSONUtil;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.util.ResponseUtil;
@@ -31,54 +35,31 @@ public class ModelConverter {
 	public static class Dfs {
 		/**
 		 * 
-		 * @param propertiesString
-		 * @return
-		 */
-		public Map<String, Object> toProperties(String propertiesString) {
-			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
-			return properties;
-		}
-
-		/**
-		 * 
-		 * @param filePartsString
-		 * @return
-		 */
-		public List<FilePart> toFileParts(String filePartsString) {
-			List<FilePart> fileParts = new ArrayList<FilePart>();
-			if (filePartsString != null) {
-
-			}
-			return fileParts;
-		}
-
-		/**
-		 * 
 		 * @param fsClient
-		 * @param fileMetadataDTO
+		 * @param fileDTO
 		 * @return
 		 */
-		public FileMetadata toFile(DfsClient fsClient, FileMetadataDTO fileMetadataDTO) {
-			if (fileMetadataDTO == null) {
+		public FileMetadata toFileMetadata(DfsClient fsClient, FileMetadataDTO fileDTO) {
+			if (fileDTO == null) {
 				return null;
 			}
 
-			String accountId = fileMetadataDTO.getAccountId();
-			String fileId = fileMetadataDTO.getFileId();
-			String parentFileId = fileMetadataDTO.getParentFileId();
-			String pathString = fileMetadataDTO.getPath();
-			long size = fileMetadataDTO.getSize();
-			boolean isDirectory = fileMetadataDTO.isDirectory();
-			boolean isHidden = fileMetadataDTO.isHidden();
-			boolean inTrash = fileMetadataDTO.isInTrash();
-			String filePartsString = fileMetadataDTO.getFilePartsString();
-			String propertiesString = fileMetadataDTO.getPropertiesString();
-			long dateCreated = fileMetadataDTO.getDateCreated();
-			long dateModified = fileMetadataDTO.getDateModified();
+			String accountId = fileDTO.getAccountId();
+			String fileId = fileDTO.getFileId();
+			String parentFileId = fileDTO.getParentFileId();
+			String pathString = fileDTO.getPath();
+			long size = fileDTO.getSize();
+			boolean isDirectory = fileDTO.isDirectory();
+			boolean isHidden = fileDTO.isHidden();
+			boolean inTrash = fileDTO.isInTrash();
+			String filePartsString = fileDTO.getFilePartsString();
+			String propertiesString = fileDTO.getPropertiesString();
+			long dateCreated = fileDTO.getDateCreated();
+			long dateModified = fileDTO.getDateModified();
 
 			Path path = new Path(pathString);
-			Map<String, Object> properties = toProperties(propertiesString);
 			List<FilePart> fileParts = toFileParts(filePartsString);
+			Map<String, Object> properties = toProperties(propertiesString);
 
 			FileMetadataImpl file = new FileMetadataImpl(fsClient);
 			file.setAccountId(accountId);
@@ -89,8 +70,8 @@ public class ModelConverter {
 			file.setIsDirectory(isDirectory);
 			file.setHidden(isHidden);
 			file.setInTrash(inTrash);
-			file.setProperties(properties);
 			file.setFileParts(fileParts);
+			file.setProperties(properties);
 			file.setDateCreated(dateCreated);
 			file.setDateModified(dateModified);
 
@@ -113,7 +94,7 @@ public class ModelConverter {
 			List<FileMetadataDTO> fileDTOs = response.readEntity(new GenericType<List<FileMetadataDTO>>() {
 			});
 			for (FileMetadataDTO fileDTO : fileDTOs) {
-				FileMetadata file = toFile(fsClient, fileDTO);
+				FileMetadata file = toFileMetadata(fsClient, fileDTO);
 				if (file != null) {
 					files.add(file);
 				}
@@ -136,7 +117,7 @@ public class ModelConverter {
 			FileMetadata file = null;
 			FileMetadataDTO fileDTO = response.readEntity(FileMetadataDTO.class);
 			if (fileDTO != null) {
-				file = toFile(fsClient, fileDTO);
+				file = toFileMetadata(fsClient, fileDTO);
 			}
 			return file;
 		}
@@ -241,43 +222,109 @@ public class ModelConverter {
 			}
 			return succeed;
 		}
+
+		/**
+		 * 
+		 * @param propertiesString
+		 * @return
+		 */
+		public Map<String, Object> toProperties(String propertiesString) {
+			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
+			return properties;
+		}
+
+		/**
+		 * 
+		 * @param filePartsString
+		 * @return
+		 */
+		public List<FilePart> toFileParts(String filePartsString) {
+			FilePartsReader reader = new FilePartsReader();
+			List<FilePart> fileParts = reader.read(filePartsString);
+			if (fileParts == null) {
+				fileParts = new ArrayList<FilePart>();
+			}
+			return fileParts;
+		}
 	}
 
 	public static class DfsVolume {
 		/**
 		 * 
-		 * @param datablockDTO
+		 * @param dfsVolumeClient
+		 * @param dataBlockDTO
 		 * @return
 		 */
-		public DataBlockMetadata toDataBlock(DataBlockMetadataDTO datablockDTO) {
-			if (datablockDTO == null) {
+		public DataBlockMetadata toDataBlock(DfsVolumeClient dfsVolumeClient, DataBlockMetadataDTO dataBlockDTO) {
+			if (dataBlockDTO == null) {
 				return null;
 			}
 
-			DataBlockMetadataImpl dataBlock = new DataBlockMetadataImpl();
-			if (datablockDTO != null) {
-				String dfsVolumeId = datablockDTO.getDfsVolumeId();
-				String blockId = datablockDTO.getBlockId();
-				String accountId = datablockDTO.getAccountId();
-				long capacity = datablockDTO.getCapacity();
-				long size = datablockDTO.getSize();
+			DataBlockMetadataImpl dataBlock = new DataBlockMetadataImpl(dfsVolumeClient);
+			if (dataBlockDTO != null) {
+				String dfsVolumeId = dataBlockDTO.getDfsVolumeId();
+				String blockId = dataBlockDTO.getBlockId();
+				String accountId = dataBlockDTO.getAccountId();
+				long capacity = dataBlockDTO.getCapacity();
+				long size = dataBlockDTO.getSize();
+				String pendingFilesString = dataBlockDTO.getPendingFilesString();
+				String propertiesString = dataBlockDTO.getPropertiesString();
+				long dateCreated = dataBlockDTO.getDateCreated();
+				long dateModified = dataBlockDTO.getDateModified();
+
+				List<PendingFile> pendingFiles = toPendingFiles(pendingFilesString);
+				Map<String, Object> properties = toProperties(propertiesString);
 
 				dataBlock.setDfsVolumeId(dfsVolumeId);
 				dataBlock.setBlockId(blockId);
 				dataBlock.setAccountId(accountId);
 				dataBlock.setCapacity(capacity);
 				dataBlock.setSize(size);
+				dataBlock.setPendingFiles(pendingFiles);
+				dataBlock.setProperties(properties);
+				dataBlock.setDateCreated(dateCreated);
+				dataBlock.setDateModified(dateModified);
 			}
 			return dataBlock;
 		}
 
 		/**
 		 * 
+		 * @param dfsVolumeClient
+		 * @param fileContentDTO
+		 * @return
+		 */
+		public FileContentMetadata toFileContent(DfsVolumeClient dfsVolumeClient, FileContentMetadataDTO fileContentDTO) {
+			if (fileContentDTO == null) {
+				return null;
+			}
+
+			String fileId = fileContentDTO.getFileId();
+			int partId = fileContentDTO.getPartId();
+			long size = fileContentDTO.getSize();
+			long checksum = fileContentDTO.getChecksum();
+			long dateCreated = fileContentDTO.getDateCreated();
+			long dateModified = fileContentDTO.getDateModified();
+
+			FileContentMetadataImpl fileContent = new FileContentMetadataImpl(dfsVolumeClient);
+			fileContent.setFileId(fileId);
+			fileContent.setPartId(partId);
+			fileContent.setSize(size);
+			fileContent.setChecksum(checksum);
+			fileContent.setDateCreated(dateCreated);
+			fileContent.setDateModified(dateModified);
+
+			return fileContent;
+		}
+
+		/**
+		 * 
+		 * @param dfsVolumeClient
 		 * @param response
 		 * @return
 		 * @throws ClientException
 		 */
-		public DataBlockMetadata[] getDataBlocks(Response response) throws ClientException {
+		public DataBlockMetadata[] getDataBlocks(DfsVolumeClient dfsVolumeClient, Response response) throws ClientException {
 			if (!ResponseUtil.isSuccessful(response)) {
 				throw new ClientException(response);
 			}
@@ -285,7 +332,7 @@ public class ModelConverter {
 			List<DataBlockMetadataDTO> datablockDTOs = response.readEntity(new GenericType<List<DataBlockMetadataDTO>>() {
 			});
 			for (DataBlockMetadataDTO datablockDTO : datablockDTOs) {
-				DataBlockMetadata datablock = toDataBlock(datablockDTO);
+				DataBlockMetadata datablock = toDataBlock(dfsVolumeClient, datablockDTO);
 				if (datablock != null) {
 					datablocks.add(datablock);
 				}
@@ -295,18 +342,19 @@ public class ModelConverter {
 
 		/**
 		 * 
+		 * @param dfsVolumeClient
 		 * @param response
 		 * @return
 		 * @throws ClientException
 		 */
-		public DataBlockMetadata getDataBlock(Response response) throws ClientException {
+		public DataBlockMetadata getDataBlock(DfsVolumeClient dfsVolumeClient, Response response) throws ClientException {
 			if (!ResponseUtil.isSuccessful(response)) {
 				throw new ClientException(response);
 			}
 			DataBlockMetadata datablock = null;
 			DataBlockMetadataDTO datablockDTO = response.readEntity(DataBlockMetadataDTO.class);
 			if (datablockDTO != null) {
-				datablock = toDataBlock(datablockDTO);
+				datablock = toDataBlock(dfsVolumeClient, datablockDTO);
 			}
 			return datablock;
 		}
@@ -357,6 +405,35 @@ public class ModelConverter {
 		 * @return
 		 * @throws ClientException
 		 */
+		public boolean isUploaded(Response response) throws ClientException {
+			return isSucceed(response);
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileContentMetadata getUpdatedFileContent(DfsVolumeClient dfsVolumeClient, Response response) throws ClientException {
+			if (!ResponseUtil.isSuccessful(response)) {
+				throw new ClientException(response);
+			}
+
+			FileContentMetadata fileContent = null;
+			FileContentMetadataDTO fileContentDTO = response.readEntity(FileContentMetadataDTO.class);
+			if (fileContentDTO != null) {
+				fileContent = toFileContent(dfsVolumeClient, fileContentDTO);
+			}
+			return fileContent;
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
 		public boolean isSucceed(Response response) throws ClientException {
 			if (!ResponseUtil.isSuccessful(response)) {
 				throw new ClientException(response);
@@ -373,39 +450,12 @@ public class ModelConverter {
 
 		/**
 		 * 
-		 * @param dto
-		 * @return
-		 */
-		public FileContentMetadata toFileContentMetadata(FileContentMetadataDTO dto) {
-			if (dto == null) {
-				return null;
-			}
-
-			String fileId = dto.getFileId();
-			int partId = dto.getPartId();
-			// long size = dto.getSize();
-			// int startIndex = dto.getStartIndex();
-			// int endIndex = dto.getEndIndex();
-			String checksum = dto.getChecksum();
-
-			FileContentMetadataImpl metadata = new FileContentMetadataImpl();
-			metadata.setFileId(fileId);
-			metadata.setPartId(partId);
-			// metadata.setSize(size);
-			// metadata.setStartIndex(startIndex);
-			// metadata.setEndIndex(endIndex);
-			metadata.setChecksum(checksum);
-
-			return metadata;
-		}
-
-		/**
-		 * 
+		 * @param dfsVolumeClient
 		 * @param response
 		 * @return
 		 * @throws ClientException
 		 */
-		public FileContentMetadata[] getFileContents(Response response) throws ClientException {
+		public FileContentMetadata[] getFileContents(DfsVolumeClient dfsVolumeClient, Response response) throws ClientException {
 			if (!ResponseUtil.isSuccessful(response)) {
 				throw new ClientException(response);
 			}
@@ -413,7 +463,7 @@ public class ModelConverter {
 			List<FileContentMetadataDTO> fileContentDTOs = response.readEntity(new GenericType<List<FileContentMetadataDTO>>() {
 			});
 			for (FileContentMetadataDTO fileContentDTO : fileContentDTOs) {
-				FileContentMetadata fileContent = toFileContentMetadata(fileContentDTO);
+				FileContentMetadata fileContent = toFileContent(dfsVolumeClient, fileContentDTO);
 				if (fileContent != null) {
 					fileContents.add(fileContent);
 				}
@@ -423,21 +473,54 @@ public class ModelConverter {
 
 		/**
 		 * 
+		 * @param dfsVolumeClient
 		 * @param response
 		 * @return
 		 * @throws ClientException
 		 */
-		public FileContentMetadata getFileContent(Response response) throws ClientException {
+		public FileContentMetadata getFileContent(DfsVolumeClient dfsVolumeClient, Response response) throws ClientException {
 			if (!ResponseUtil.isSuccessful(response)) {
 				throw new ClientException(response);
 			}
 			FileContentMetadata fileContent = null;
 			FileContentMetadataDTO fileContentDTO = response.readEntity(FileContentMetadataDTO.class);
 			if (fileContentDTO != null) {
-				fileContent = toFileContentMetadata(fileContentDTO);
+				fileContent = toFileContent(dfsVolumeClient, fileContentDTO);
 			}
 			return fileContent;
+		}
+
+		/**
+		 * Convert json string to PendingFile objects
+		 * 
+		 * @param pendingFilesString
+		 * @return
+		 */
+		public List<PendingFile> toPendingFiles(String pendingFilesString) {
+			PendingFilesReader reader = new PendingFilesReader();
+			List<PendingFile> pendingFiles = reader.read(pendingFilesString);
+			if (pendingFiles == null) {
+				pendingFiles = new ArrayList<PendingFile>();
+			}
+			return pendingFiles;
+		}
+
+		/**
+		 * 
+		 * @param propertiesString
+		 * @return
+		 */
+		public Map<String, Object> toProperties(String propertiesString) {
+			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
+			return properties;
 		}
 	}
 
 }
+
+// long size = dto.getSize();
+// int startIndex = dto.getStartIndex();
+// int endIndex = dto.getEndIndex();
+// metadata.setSize(size);
+// metadata.setStartIndex(startIndex);
+// metadata.setEndIndex(endIndex);

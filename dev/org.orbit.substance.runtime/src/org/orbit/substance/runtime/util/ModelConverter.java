@@ -7,9 +7,13 @@ import java.util.Map;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.Path;
-import org.orbit.substance.model.dfs.PathDTO;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
+import org.orbit.substance.model.dfsvolume.PendingFile;
+import org.orbit.substance.model.util.FilePartsReader;
+import org.orbit.substance.model.util.FilePartsWriter;
+import org.orbit.substance.model.util.PendingFilesReader;
+import org.orbit.substance.model.util.PendingFilesWriter;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
@@ -23,15 +27,75 @@ public class ModelConverter {
 	public static class Dfs {
 		/**
 		 * 
-		 * @param path
+		 * @param file
 		 * @return
 		 */
-		public PathDTO toDTO(Path path) {
-			String pathString = path.getPathString();
+		public FileMetadataDTO toDTO(FileMetadata file) {
+			if (file == null) {
+				return null;
+			}
 
-			PathDTO dto = new PathDTO();
-			dto.setPathString(pathString);
-			return dto;
+			String accountId = file.getAccountId();
+			String fileId = file.getFileId();
+			String parentFileId = file.getParentFileId();
+			Path path = file.getPath();
+			long size = file.getSize();
+			boolean isDirectory = file.isDirectory();
+			boolean isHidden = file.isHidden();
+			boolean inTrash = file.isInTrash();
+			List<FilePart> fileParts = file.getFileParts();
+			Map<String, Object> properties = file.getProperties();
+			long dateCreated = file.getDateCreated();
+			long dateModified = file.getDateModified();
+
+			String filePartsString = toFilePartsString(fileParts);
+			String propertiesString = toPropertiesString(properties);
+
+			FileMetadataDTO fileDTO = new FileMetadataDTO();
+			fileDTO.setAccountId(accountId);
+			fileDTO.setFileId(fileId);
+			fileDTO.setParentFileId(parentFileId);
+			fileDTO.setPath(path.getPathString());
+			fileDTO.setSize(size);
+			fileDTO.setDirectory(isDirectory);
+			fileDTO.setHidden(isHidden);
+			fileDTO.setInTrash(inTrash);
+			fileDTO.setFilePartsString(filePartsString);
+			fileDTO.setPropertiesString(propertiesString);
+			fileDTO.setDateCreated(dateCreated);
+			fileDTO.setDateModified(dateModified);
+
+			return fileDTO;
+		}
+
+		/**
+		 * Convert FilePart objects to json string
+		 * 
+		 * @param fileParts
+		 * @return
+		 */
+		public String toFilePartsString(List<FilePart> fileParts) {
+			FilePartsWriter writer = new FilePartsWriter();
+			String filePartsString = writer.write(fileParts);
+			if (filePartsString == null) {
+				filePartsString = "";
+			}
+			return filePartsString;
+		}
+
+		/**
+		 * Convert json string to FilePart objects
+		 * 
+		 * @param filePartsString
+		 * @return
+		 */
+		public List<FilePart> toFileParts(String filePartsString) {
+			FilePartsReader reader = new FilePartsReader();
+			List<FilePart> fileParts = reader.read(filePartsString);
+			if (fileParts == null) {
+				fileParts = new ArrayList<FilePart>();
+			}
+			return fileParts;
 		}
 
 		/**
@@ -53,80 +117,6 @@ public class ModelConverter {
 			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
 			return properties;
 		}
-
-		/**
-		 * TODO: Convert list of FilePart objects to json string
-		 * 
-		 * @param fileParts
-		 * @return
-		 */
-		public String toFilePartsString(List<FilePart> fileParts) {
-			String filePartsString = "";
-			if (fileParts != null) {
-
-			}
-			return filePartsString;
-		}
-
-		/**
-		 * TODO: Convert json string to list of FilePart objects
-		 * 
-		 * @param filePartsString
-		 * @return
-		 */
-		public List<FilePart> toFileParts(String filePartsString) {
-			List<FilePart> fileParts = new ArrayList<FilePart>();
-			if (filePartsString != null) {
-
-			}
-			return fileParts;
-		}
-
-		/**
-		 * 
-		 * @param fileMetadata
-		 * @return
-		 */
-		public FileMetadataDTO toDTO(FileMetadata fileMetadata) {
-			if (fileMetadata == null) {
-				return null;
-			}
-
-			// String name = fileMetadata.getName();
-			// dto.setName(name);
-
-			String accountId = fileMetadata.getAccountId();
-			String fileId = fileMetadata.getFileId();
-			String parentFileId = fileMetadata.getParentFileId();
-			Path path = fileMetadata.getPath();
-			long size = fileMetadata.getSize();
-			boolean isDirectory = fileMetadata.isDirectory();
-			boolean isHidden = fileMetadata.isHidden();
-			boolean inTrash = fileMetadata.isInTrash();
-			List<FilePart> fileParts = fileMetadata.getFileParts();
-			Map<String, Object> properties = fileMetadata.getProperties();
-			long dateCreated = fileMetadata.getDateCreated();
-			long dateModified = fileMetadata.getDateModified();
-
-			String filePartsString = toFilePartsString(fileParts);
-			String propertiesString = toPropertiesString(properties);
-
-			FileMetadataDTO dto = new FileMetadataDTO();
-			dto.setAccountId(accountId);
-			dto.setFileId(fileId);
-			dto.setParentFileId(parentFileId);
-			dto.setPath(path.getPathString());
-			dto.setSize(size);
-			dto.setDirectory(isDirectory);
-			dto.setHidden(isHidden);
-			dto.setInTrash(inTrash);
-			dto.setFilePartsString(filePartsString);
-			dto.setPropertiesString(propertiesString);
-			dto.setDateCreated(dateCreated);
-			dto.setDateModified(dateModified);
-
-			return dto;
-		}
 	}
 
 	public static class DfsVolume {
@@ -145,19 +135,33 @@ public class ModelConverter {
 			String accountId = dataBlock.getAccountId();
 			long capacity = dataBlock.getCapacity();
 			long size = dataBlock.getSize();
-			// String[] fileIds = dataBlock.getFileIds();
+			List<PendingFile> pendingFiles = dataBlock.getPendingFiles();
+			Map<String, Object> properties = dataBlock.getProperties();
+			long dateCreated = dataBlock.getDateCreated();
+			long dateModified = dataBlock.getDateModified();
 
-			DataBlockMetadataDTO dto = new DataBlockMetadataDTO();
-			dto.setDfsVolumeId(dfsVolumeId);
-			dto.setBlockId(blockId);
-			dto.setAccountId(accountId);
-			dto.setCapacity(capacity);
-			dto.setSize(size);
-			// dto.setFileIds(fileIds);
+			String pendingFilesString = toPendingFilesString(pendingFiles);
+			String propertiesString = toPropertiesString(properties);
 
-			return dto;
+			DataBlockMetadataDTO dataBlockDTO = new DataBlockMetadataDTO();
+			dataBlockDTO.setDfsVolumeId(dfsVolumeId);
+			dataBlockDTO.setBlockId(blockId);
+			dataBlockDTO.setAccountId(accountId);
+			dataBlockDTO.setCapacity(capacity);
+			dataBlockDTO.setSize(size);
+			dataBlockDTO.setPendingFilesString(pendingFilesString);
+			dataBlockDTO.setPropertiesString(propertiesString);
+			dataBlockDTO.setDateCreated(dateCreated);
+			dataBlockDTO.setDateModified(dateModified);
+
+			return dataBlockDTO;
 		}
 
+		/**
+		 * 
+		 * @param fileContent
+		 * @return
+		 */
 		public FileContentMetadataDTO toDTO(FileContentMetadata fileContent) {
 			if (fileContent == null) {
 				return null;
@@ -165,21 +169,97 @@ public class ModelConverter {
 
 			String fileId = fileContent.getFileId();
 			int partId = fileContent.getPartId();
-			// long size = fileContent.getSize();
-			// int startIndex = fileContent.getStartIndex();
-			// int endIndex = fileContent.getEndIndex();
-			String checksum = fileContent.getChecksum();
+			long size = fileContent.getSize();
+			long checksum = fileContent.getChecksum();
+			long dateCreated = fileContent.getDateCreated();
+			long dateModified = fileContent.getDateModified();
 
-			FileContentMetadataDTO dto = new FileContentMetadataDTO();
-			dto.setFileId(fileId);
-			dto.setPartId(partId);
-			// dto.setSize(size);
-			// dto.setStartIndex(startIndex);
-			// dto.setEndIndex(endIndex);
-			dto.setChecksum(checksum);
+			FileContentMetadataDTO fileContentDTO = new FileContentMetadataDTO();
+			fileContentDTO.setFileId(fileId);
+			fileContentDTO.setPartId(partId);
+			fileContentDTO.setSize(size);
+			fileContentDTO.setChecksum(checksum);
+			fileContentDTO.setDateCreated(dateCreated);
+			fileContentDTO.setDateModified(dateModified);
 
-			return dto;
+			return fileContentDTO;
+		}
+
+		/**
+		 * Convert PendingFile objects to json string
+		 * 
+		 * @param pendingFiles
+		 * @return
+		 */
+		public String toPendingFilesString(List<PendingFile> pendingFiles) {
+			PendingFilesWriter writer = new PendingFilesWriter();
+			String pendingFilesString = writer.write(pendingFiles);
+			if (pendingFilesString == null) {
+				pendingFilesString = "";
+			}
+			return pendingFilesString;
+		}
+
+		/**
+		 * Convert json string to PendingFile objects
+		 * 
+		 * @param pendingFilesString
+		 * @return
+		 */
+		public List<PendingFile> toPendingFiles(String pendingFilesString) {
+			PendingFilesReader reader = new PendingFilesReader();
+			List<PendingFile> pendingFiles = reader.read(pendingFilesString);
+			if (pendingFiles == null) {
+				pendingFiles = new ArrayList<PendingFile>();
+			}
+			return pendingFiles;
+		}
+
+		/**
+		 * 
+		 * @param properties
+		 * @return
+		 */
+		public String toPropertiesString(Map<String, Object> properties) {
+			String propertiesString = JSONUtil.toJsonString(properties);
+			return propertiesString;
+		}
+
+		/**
+		 * 
+		 * @param propertiesString
+		 * @return
+		 */
+		public Map<String, Object> toProperties(String propertiesString) {
+			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
+			return properties;
 		}
 	}
 
 }
+
+// /**
+// *
+// * @param path
+// * @return
+// */
+// public PathDTO toDTO(Path path) {
+// String pathString = path.getPathString();
+//
+// PathDTO dto = new PathDTO();
+// dto.setPathString(pathString);
+// return dto;
+// }
+
+// String name = fileMetadata.getName();
+// dto.setName(name);
+
+// long size = fileContent.getSize();
+// int startIndex = fileContent.getStartIndex();
+// int endIndex = fileContent.getEndIndex();
+// dto.setSize(size);
+// dto.setStartIndex(startIndex);
+// dto.setEndIndex(endIndex);
+
+// String[] fileIds = dataBlock.getFileIds();
+// dto.setFileIds(fileIds);

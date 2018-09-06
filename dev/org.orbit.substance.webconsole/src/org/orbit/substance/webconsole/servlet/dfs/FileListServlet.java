@@ -10,9 +10,11 @@ import javax.servlet.http.HttpSession;
 
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
+import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.webconsole.WebConstants;
+import org.orbit.substance.webconsole.util.DefaultDfsClientResolver;
 import org.orbit.substance.webconsole.util.MessageHelper;
 
 public class FileListServlet extends HttpServlet {
@@ -43,7 +45,8 @@ public class FileListServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			files = SubstanceClientsUtil.Dfs.listRoots(dfsServiceUrl, accessToken);
+			DfsClientResolver dfsResolver = new DefaultDfsClientResolver();
+			files = SubstanceClientsUtil.Dfs.listRoots(dfsResolver, dfsServiceUrl, accessToken);
 
 		} catch (Exception e) {
 			message = MessageHelper.INSTANCE.add(message, "Exception occurs: '" + e.getMessage() + "'.");

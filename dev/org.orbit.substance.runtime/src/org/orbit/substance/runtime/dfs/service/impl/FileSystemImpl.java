@@ -5,16 +5,19 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.platform.sdk.http.JWTTokenHandler;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.platform.sdk.util.ExtensionUtil;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
+import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.model.dfs.FileContentAccessImpl;
 import org.orbit.substance.model.dfs.FilePart;
@@ -24,8 +27,8 @@ import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.util.Comparators;
 import org.orbit.substance.runtime.util.Comparators.DfsVolumeClientComparatorByFreeSpace;
+import org.orbit.substance.runtime.util.DefaultDfsVolumeClientResolver;
 import org.orbit.substance.runtime.util.OrbitClientHelper;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.annotation.Secured;
@@ -492,6 +495,8 @@ public class FileSystemImpl implements FileSystem {
 
 			if (size > 0) {
 				allocateVolumes(newFileMetadata, size);
+
+				tableHandler.updateFileParts(conn, fileId, newFileMetadata.getFileParts());
 			}
 
 		} catch (SQLException e) {
@@ -558,12 +563,14 @@ public class FileSystemImpl implements FileSystem {
 
 		String dfsId = getDfsId();
 		String accountId = fileMetadata.getAccountId();
-		String indexServiceUrl = (String) this.dfsService.getProperties().get(SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
+		String indexServiceUrl = (String) this.dfsService.getProperties().get(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 
 		// 1. Get a dfs volumes of the dfs.
 		// Note:
 		// - Dfs volumes are sorted by volume id (asc)
-		DfsVolumeClient[] dfsVolumeClients = OrbitClientHelper.INSTANCE.getDfsVolumeClient(indexServiceUrl, dfsAccessToken, dfsId);
+		DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
+
+		DfsVolumeClient[] dfsVolumeClients = OrbitClientHelper.INSTANCE.getDfsVolumeClient(dfsVolumeClientResolver, dfsAccessToken, dfsId);
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
 			try {
 				// Find an existing datablock with enough space to hold the file content alone.
@@ -581,7 +588,7 @@ public class FileSystemImpl implements FileSystem {
 					int partId = 0;
 					long startIndex = 0;
 					long endIndex = -1; // to the end of the file
-					String partChecksum = null;
+					long partChecksum = -1; // FilePart's checksum will be updated after file content is uploaded
 
 					FilePartImpl filePart = new FilePartImpl(partId, startIndex, endIndex, partChecksum);
 					FileContentAccessImpl contentAccess = new FileContentAccessImpl(dfsId, dfsVolumeId, blockId);
@@ -612,7 +619,7 @@ public class FileSystemImpl implements FileSystem {
 		}
 		// Sort dfs volumes by free space (desc).
 		DfsVolumeClientComparatorByFreeSpace freeSpaceComparator = new DfsVolumeClientComparatorByFreeSpace(serviceMetadataMap);
-		Comparators.sort(dfsVolumeClients, freeSpaceComparator);
+		Arrays.sort(dfsVolumeClients, freeSpaceComparator);
 
 		long sizeLeft = size;
 		int partId = 0;
@@ -661,7 +668,7 @@ public class FileSystemImpl implements FileSystem {
 
 				// Checksum of file content segment is not available until file segment content is uploaded.
 				// Or maybe there is no need to keep it in dfs volume.
-				String partChecksum = null;
+				long partChecksum = -1;
 
 				if (sizeLeft <= dataBlockCapacity) {
 					// The data block is the last one (or the only one) for holding the content of the file.

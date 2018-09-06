@@ -1,5 +1,6 @@
 package org.orbit.substance.connector.dfsvolume;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(response);
+			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
 		}
 
 		if (dataBlocks == null) {
@@ -81,7 +82,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(response);
+			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
 		}
 
 		if (dataBlocks == null) {
@@ -102,7 +103,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(response);
+			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
 		}
 
 		if (dataBlocks == null) {
@@ -137,7 +138,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlock = ModelConverter.DfsVolume.getDataBlock(response);
+			dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
 		}
 
 		return dataBlock;
@@ -153,7 +154,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			dataBlock = ModelConverter.DfsVolume.getDataBlock(response);
+			dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
 		}
 
 		return dataBlock;
@@ -205,7 +206,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			fileContents = ModelConverter.DfsVolume.getFileContents(response);
+			fileContents = ModelConverter.DfsVolume.getFileContents(this, response);
 		}
 
 		if (fileContents == null) {
@@ -243,7 +244,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Response response = sendRequest(request);
 		if (response != null) {
-			fileContent = ModelConverter.DfsVolume.getFileContent(response);
+			fileContent = ModelConverter.DfsVolume.getFileContent(this, response);
 		}
 		return fileContent;
 	}
@@ -269,8 +270,31 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	// Methods for uploading/downloading file contents
 	// ----------------------------------------------------------------------
 	@Override
-	public boolean uploadFile(String accountId, String blockId, String fileId, int partId, String checksuma, InputStream inputStream) throws ClientException {
-		return false;
+	public boolean uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException {
+		boolean succeed = false;
+		Response response = getWSClient().upload(accountId, blockId, fileId, checksum, file);
+		if (response != null) {
+			// succeed = ModelConverter.DfsVolume.isUploaded(response);
+			FileContentMetadata fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
+			if (fileContent != null) {
+				succeed = true;
+			}
+		}
+		return succeed;
+	}
+
+	@Override
+	public boolean uploadFile(String accountId, String blockId, String fileId, int partId, long size, long checksum, InputStream inputStream) throws ClientException {
+		boolean succeed = false;
+		Response response = getWSClient().upload(accountId, blockId, fileId, partId, size, checksum, inputStream);
+		if (response != null) {
+			// succeed = ModelConverter.DfsVolume.isUploaded(response);
+			FileContentMetadata fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
+			if (fileContent != null) {
+				succeed = true;
+			}
+		}
+		return succeed;
 	}
 
 	@Override

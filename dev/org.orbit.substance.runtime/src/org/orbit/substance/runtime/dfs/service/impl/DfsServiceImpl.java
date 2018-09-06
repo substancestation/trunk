@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
@@ -45,7 +46,7 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			properties.putAll(this.initProperties);
 		}
 
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
+		PropertyUtil.loadProperty(bundleContext, properties, InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_HOST_URL);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__ID);
 		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__NAME);
@@ -105,7 +106,7 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			configProps = new HashMap<Object, Object>();
 		}
 
-		String indexServiceUrl = (String) configProps.get(SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
+		String indexServiceUrl = (String) configProps.get(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String globalHostURL = (String) configProps.get(SubstanceConstants.ORBIT_HOST_URL);
 		String id = (String) configProps.get(SubstanceConstants.DFS__ID);
 		String name = (String) configProps.get(SubstanceConstants.DFS__NAME);
@@ -122,7 +123,7 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			System.out.println();
 			System.out.println("Config properties:");
 			System.out.println("-----------------------------------------------------");
-			System.out.println(SubstanceConstants.ORBIT_INDEX_SERVICE_URL + " = " + indexServiceUrl);
+			System.out.println(InfraConstants.ORBIT_INDEX_SERVICE_URL + " = " + indexServiceUrl);
 			System.out.println(SubstanceConstants.ORBIT_HOST_URL + " = " + globalHostURL);
 			System.out.println(SubstanceConstants.DFS__ID + " = " + id);
 			System.out.println(SubstanceConstants.DFS__NAME + " = " + name);

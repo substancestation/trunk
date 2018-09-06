@@ -38,11 +38,11 @@ public class FileMetadataImpl implements FileMetadata {
 	}
 
 	@Override
-	public DfsClient getFileSystemClient() {
+	public DfsClient getDfsClient() {
 		return this.fsClient;
 	}
 
-	public void setFileSystemClient(DfsClient fsClient) {
+	public void setDfsClient(DfsClient fsClient) {
 		this.fsClient = fsClient;
 	}
 

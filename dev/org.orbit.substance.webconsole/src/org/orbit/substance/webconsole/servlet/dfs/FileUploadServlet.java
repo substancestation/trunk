@@ -1,5 +1,6 @@
 package org.orbit.substance.webconsole.servlet.dfs;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,17 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.platform.sdk.PlatformSDKActivator;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
+import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.webconsole.WebConstants;
+import org.orbit.substance.webconsole.util.DefaultDfsClientResolver;
+import org.orbit.substance.webconsole.util.DefaultDfsVolumeClientResolver;
 import org.orbit.substance.webconsole.util.MessageHelper;
 
 /**
@@ -41,62 +47,62 @@ public class FileUploadServlet extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = "";
-
 		String parentFileId = (String) request.getParameter("parentFileId");
 		if (parentFileId == null || parentFileId.isEmpty()) {
 			parentFileId = "-1";
 		}
 
-		// 1. Check multipart form
+		// 1. Check http request with multipart form
 		boolean isMultipartForm = ServletFileUpload.isMultipartContent(request);
 		if (!isMultipartForm) {
 			message = MessageHelper.INSTANCE.add(message, "Error: Form must has enctype=multipart/form-data.");
 		}
 
 		if (isMultipartForm) {
-			java.io.File dfsUploadDir = null;
+			File dfsUploadDir = null;
 			try {
-				// 2. Prepare upload directory
+				// 2. Prepare common upload directory
 				String platformHome = PlatformSDKActivator.getInstance().getPlatform().getHome();
-				String uploadPath = platformHome + java.io.File.separator + UPLOAD_DIRECTORY;
+				String uploadPath = platformHome + File.separator + UPLOAD_DIRECTORY;
 
-				java.io.File uploadDir = new java.io.File(uploadPath);
+				File uploadDir = new File(uploadPath);
 				if (!uploadDir.exists()) {
 					uploadDir.mkdirs();
 				}
 
-				// 3. Configure upload settings
+				// 3. Prepare dfs file upload directory
+				dfsUploadDir = new File(uploadDir, "dfs");
+				if (!dfsUploadDir.exists()) {
+					dfsUploadDir.mkdirs();
+				}
+
+				// 4. Configure upload settings
 				DiskFileItemFactory factory = new DiskFileItemFactory();
 				factory.setSizeThreshold(MEMORY_THRESHOLD); // sets memory threshold - beyond which files are stored in disk
-				factory.setRepository(new java.io.File(System.getProperty("java.io.tmpdir"))); // sets temporary location to store files
+				factory.setRepository(new File(System.getProperty("java.io.tmpdir"))); // sets temporary location to store files
 
 				ServletFileUpload upload = new ServletFileUpload(factory);
 				upload.setFileSizeMax(MAX_FILE_SIZE);
 				upload.setSizeMax(MAX_REQUEST_SIZE);
 
-				// 4. Parse request
+				// 5. Parse request
 				List<FileItem> fileItems = upload.parseRequest(request);
 				if (fileItems == null) {
 					fileItems = new ArrayList<FileItem>();
 				}
 
-				// 6. Prepare file upload directory
-				dfsUploadDir = new java.io.File(uploadDir, "dfs");
-				if (!dfsUploadDir.exists()) {
-					dfsUploadDir.mkdirs();
-				}
-
-				// 7. Upload file to local folder (of the web server)
-				List<java.io.File> localFiles = new ArrayList<java.io.File>();
+				// 6. Upload file to local folder of the web server
+				List<File> localFiles = new ArrayList<File>();
 				for (FileItem fileItem : fileItems) {
 					if (!fileItem.isFormField()) {
 						String fileName = fileItem.getName();
 						try {
-							java.io.File localFile = new java.io.File(dfsUploadDir, fileName);
+							File localFile = new File(dfsUploadDir, fileName);
 							fileItem.write(localFile);
 							localFiles.add(localFile);
 
@@ -108,26 +114,35 @@ public class FileUploadServlet extends HttpServlet {
 					}
 				}
 
-				// 8. Upload file to dfs server
+				// 7. Create file metadata in dfs and upload file content to dfs volume.
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				List<FileMetadata> files = new ArrayList<FileMetadata>();
-				for (java.io.File localFile : localFiles) {
-					FileMetadata file = SubstanceClientsUtil.Dfs.createNewFileAndUpload(dfsServiceUrl, accessToken, parentFileId, localFile);
-					if (file != null) {
-						message = MessageHelper.INSTANCE.add(message, "File metadata is created in DFS successfully!");
-						files.add(file);
+				DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
+				DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
+
+				for (File localFile : localFiles) {
+					FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, localFile);
+					if (fileMetadata == null) {
+						message = MessageHelper.INSTANCE.add(message, "File metadata cannot be created in DFS.");
+						break;
 					} else {
-						message = MessageHelper.INSTANCE.add(message, "File metadata is not created to DFS.");
+						message = MessageHelper.INSTANCE.add(message, "File metadata is created in DFS.");
+					}
+
+					boolean isUploaded = SubstanceClientsUtil.DfsVolume.uploadFileContent(dfsVolumeClientResolver, accessToken, fileMetadata, localFile);
+					if (isUploaded) {
+						message = MessageHelper.INSTANCE.add(message, "File '" + localFile.getName() + "' is uploaded to DFS volume.");
+					} else {
+						message = MessageHelper.INSTANCE.add(message, "File '" + localFile.getName() + "' is not uploaded to DFS volume.");
 					}
 				}
 
 			} catch (Exception e) {
-				message = MessageHelper.INSTANCE.add(message, "Exception occurs: '" + e.getMessage() + "'.");
+				message = MessageHelper.INSTANCE.add(message, e.getMessage());
 				e.printStackTrace();
 
 			} finally {
-				// 9. Clean up
+				// 8. Clean up
 				if (dfsUploadDir != null && dfsUploadDir.exists()) {
 					try {
 						// dfsUploadDir.delete();
@@ -145,10 +160,3 @@ public class FileUploadServlet extends HttpServlet {
 	}
 
 }
-
-// org.orbit.substance.api.dfs.File file = SubstanceClientsUtil.Dfs.uploadFile(dfsServiceUrl, accessToken, parentFileId, localFiles);
-// if (file != null) {
-// message = MessageHelper.INSTANCE.add(message, "File is uploaded to DFS successfully!");
-// } else {
-// message = MessageHelper.INSTANCE.add(message, "File is not uploaded to DFS.");
-// }

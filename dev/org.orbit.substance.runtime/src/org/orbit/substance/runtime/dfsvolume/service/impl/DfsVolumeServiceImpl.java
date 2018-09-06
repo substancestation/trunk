@@ -5,12 +5,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
+import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
@@ -24,6 +28,7 @@ import org.origin.common.rest.server.ServerException;
 import org.origin.common.rest.util.LifecycleAware;
 import org.origin.common.util.DiskSpaceUnit;
 import org.origin.common.util.PropertyUtil;
+import org.origin.common.util.TimeUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
@@ -278,26 +283,22 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 		return volumeSizeBytes;
 	}
 
-	// @Override
-	// public long getDefaultBlockCapacity() {
-	// long blockCapacityBytes = -1;
-	// try {
-	// String blockCapacityMBStr = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
-	// if (blockCapacityMBStr != null && !blockCapacityMBStr.isEmpty()) {
-	// int blockCapacityMB = Integer.parseInt(blockCapacityMBStr);
-	// if (blockCapacityMB > 0) {
-	// // blockCapacityBytes = blockCapacityMB * 1024 * 1024;
-	// blockCapacityBytes = DiskSpaceUnit.GB.toBytes(blockCapacityMB);
-	// }
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// // if (blockCapacityBytes <= 0) {
-	// // blockCapacityBytes = 100 * 1024 * 1024; // 100MB
-	// // }
-	// return blockCapacityBytes;
-	// }
+	@Override
+	public long getDefaultBlockCapacity() {
+		long capacityBytes = -1;
+		try {
+			String capacityMBStr = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
+			if (capacityMBStr != null && !capacityMBStr.isEmpty()) {
+				int capacityMB = Integer.parseInt(capacityMBStr);
+				if (capacityMB > 0) {
+					capacityBytes = DiskSpaceUnit.GB.toBytes(capacityMB);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return capacityBytes;
+	}
 
 	// ----------------------------------------------------------------------
 	// Methods for accessing data blocks
@@ -339,6 +340,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			if (dataBlocks != null) {
 				result = dataBlocks.toArray(new DataBlockMetadata[dataBlocks.size()]);
 			}
+
 		} catch (SQLException e) {
 			handleSQLException(e);
 		} finally {
@@ -369,17 +371,17 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public synchronized DataBlockMetadata createDataBlock(String accountId, long capacity) throws ServerException {
-		DataBlockMetadata result = null;
+	public synchronized DataBlockMetadata createDataBlock(String accountId, long capacity, List<PendingFile> pendingFiles) throws ServerException {
+		DataBlockMetadata newDataBlock = null;
 		Connection conn = null;
 		try {
 			conn = getConnection();
 			String dfsVolumeId = getVolumeId();
 
 			VolumeBlocksTableHandler tableHandler = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId);
-			// if (capacity <= 0) {
-			// capacity = getDefaultBlockCapacity();
-			// }
+			if (capacity <= 0) {
+				capacity = getDefaultBlockCapacity();
+			}
 			if (capacity <= 0) {
 				capacity = DiskSpaceUnit.MB.toBytes(100);
 			}
@@ -409,22 +411,22 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 				throw new ServerException(StatusDTO.RESP_500, "Cannot get new block id.");
 			}
 
-			DataBlockMetadata existingDataBlock = tableHandler.get(conn, newBlockId, accountId);
-			if (existingDataBlock != null) {
+			DataBlockMetadata dataBlock = tableHandler.get(conn, newBlockId, accountId);
+			if (dataBlock != null) {
 				throw new ServerException(StatusDTO.RESP_500, "Data block metadata already exists.");
 			}
 
 			long dateCreated = System.currentTimeMillis();
 			long dateModified = dateCreated;
 
-			result = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId).insert(conn, newBlockId, accountId, capacity, 0, dateCreated, dateModified);
+			newDataBlock = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId).insert(conn, newBlockId, accountId, capacity, 0, pendingFiles, dateCreated, dateModified);
 
 		} catch (SQLException e) {
 			handleSQLException(e);
 		} finally {
 			DatabaseUtil.closeQuietly(conn, true);
 		}
-		return result;
+		return newDataBlock;
 	}
 
 	/**
@@ -470,19 +472,74 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			String dfsVolumeId = getVolumeId();
 			VolumeBlocksTableHandler tableHandler = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId);
 
-			DataBlockMetadata existingDataBlock = tableHandler.get(conn, blockId, accountId);
-			if (existingDataBlock == null) {
+			DataBlockMetadata dataBlock = tableHandler.get(conn, blockId, accountId);
+			if (dataBlock == null) {
 				throw new ServerException(StatusDTO.RESP_500, "Data block is not found.");
 			}
 
-			int id = existingDataBlock.getId();
-			long newSize = existingDataBlock.getSize() + sizeDelta;
+			int id = dataBlock.getId();
+			long newSize = dataBlock.getSize() + sizeDelta;
 
 			isUpdated = tableHandler.updateSize(conn, id, accountId, blockId, newSize);
 
 		} catch (SQLException e) {
 			handleSQLException(e);
 
+		} finally {
+			DatabaseUtil.closeQuietly(conn, true);
+		}
+		return isUpdated;
+	}
+
+	@Override
+	public boolean updatePendingFiles(String accountId, String blockId, String fileId, boolean cleanExpiredPendingFiles) throws ServerException {
+		boolean isUpdated = false;
+		Connection conn = null;
+		try {
+			conn = getConnection();
+
+			String dfsVolumeId = getVolumeId();
+			VolumeBlocksTableHandler tableHandler = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId);
+
+			DataBlockMetadata dataBlock = tableHandler.get(conn, blockId, accountId);
+			if (dataBlock == null) {
+				throw new ServerException(StatusDTO.RESP_500, "Data block is not found.");
+			}
+
+			List<PendingFile> pendingFilesToRemove = new ArrayList<PendingFile>();
+			List<PendingFile> pendingFiles = dataBlock.getPendingFiles();
+			for (PendingFile pendingFile : pendingFiles) {
+				long dateCreated = pendingFile.getDateCreated();
+				String currFileId = pendingFile.getFileId();
+				if (fileId.equals(currFileId)) {
+					pendingFilesToRemove.add(pendingFile);
+				} else {
+					if (cleanExpiredPendingFiles) {
+						// Note:
+						// - PendingFile item expires in 120 seconds.
+						// - After certain space is reserved in a data block, it is expected that the file content can be uploaded within 120 seconds.long
+						// dateCreated = pendingFile.getDateCreated();
+						boolean isExpired = false;
+						Date expireTime = TimeUtil.addTimeToDate(new Date(dateCreated), 120, TimeUnit.SECONDS);
+						Date timeNow = new Date();
+						if (timeNow.after(expireTime)) {
+							isExpired = true;
+						}
+						if (isExpired) {
+							pendingFilesToRemove.add(pendingFile);
+						}
+					}
+				}
+			}
+			if (!pendingFilesToRemove.isEmpty()) {
+				dataBlock.getPendingFiles().removeAll(pendingFilesToRemove);
+			}
+
+			int id = dataBlock.getId();
+			isUpdated = VolumeBlocksTableHandler.getInstance(conn, dfsVolumeId).updatePendingFiles(conn, id, blockId, accountId, pendingFiles);
+
+		} catch (SQLException e) {
+			handleSQLException(e);
 		} finally {
 			DatabaseUtil.closeQuietly(conn, true);
 		}
@@ -524,7 +581,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			List<FileContentMetadata> fileContents = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId).getList(conn);
+			List<FileContentMetadata> fileContents = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId).getList(conn);
 			if (fileContents != null) {
 				result = fileContents.toArray(new FileContentMetadata[fileContents.size()]);
 			}
@@ -548,7 +605,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			result = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId).get(conn, fileId, partId);
+			result = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId).get(conn, fileId, partId);
 
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -559,14 +616,14 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public FileContentMetadata createFileContentMetadata(String accountId, String blockId, String fileId, int partId, long size, int startIndex, int endIndex, String checksum) throws ServerException {
+	public FileContentMetadata createFileContentMetadata(String accountId, String blockId, String fileId, int partId, long size, long checksum) throws ServerException {
 		FileContentMetadata result = null;
 		Connection conn = null;
 		try {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			FileContentMetadata existingFileContent = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId).get(conn, fileId, partId);
+			FileContentMetadata existingFileContent = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId).get(conn, fileId, partId);
 			if (existingFileContent != null) {
 				throw new ServerException(StatusDTO.RESP_500, "File content metadata already exists.");
 			}
@@ -574,7 +631,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			long dateCreated = System.currentTimeMillis();
 			long dateModified = dateCreated;
 
-			result = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId).insert(conn, fileId, partId, size, startIndex, endIndex, checksum, dateCreated, dateModified);
+			result = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId).insert(conn, fileId, partId, size, checksum, dateCreated, dateModified);
 
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -592,7 +649,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			VolumeBlockTableHandler tableHandler = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId);
+			VolumeFileContentTableHandler tableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId);
 
 			String fileId = fileContentMetadata.getFileId();
 			int partId = fileContentMetadata.getPartId();
@@ -621,10 +678,10 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			FileContentMetadata fileContent = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId).get(conn, fileId, partId);
+			FileContentMetadata fileContent = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId).get(conn, fileId, partId);
 			if (fileContent != null) {
 				int id = fileContent.getId();
-				isDeleted = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId).delete(conn, id);
+				isDeleted = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId).delete(conn, id);
 			}
 
 		} catch (SQLException e) {
@@ -639,14 +696,14 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	// Methods for getting/setting file contents
 	// ----------------------------------------------------------------------
 	@Override
-	public InputStream getContentInputStream(String accountId, String blockId, String fileId, int partId) throws ServerException {
+	public InputStream getFileContentInputStream(String accountId, String blockId, String fileId, int partId) throws ServerException {
 		InputStream input = null;
 		Connection conn = null;
 		try {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			VolumeBlockTableHandler tableHandler = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId);
+			VolumeFileContentTableHandler tableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId);
 			tableHandler.setDatabase(this.database);
 
 			input = tableHandler.getContentInputStream(conn, fileId, partId);
@@ -660,14 +717,14 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public void getContent(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ServerException {
+	public void getFileContent(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ServerException {
 		InputStream input = null;
 		Connection conn = null;
 		try {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			VolumeBlockTableHandler tableHandler = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId);
+			VolumeFileContentTableHandler tableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId);
 			tableHandler.setDatabase(this.database);
 
 			input = tableHandler.getContentInputStream(conn, fileId, partId);
@@ -688,22 +745,22 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public boolean setContent(String accountId, String blockId, String fileId, int partId, InputStream input) throws ServerException {
+	public boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream inputStream) throws ServerException {
 		boolean isUpdated = false;
 		Connection conn = null;
 		try {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			VolumeBlockTableHandler tableHandler = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId);
+			VolumeFileContentTableHandler tableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId);
 			tableHandler.setDatabase(this.database);
 
-			FileContentMetadata existingFileContent = tableHandler.get(conn, fileId, partId);
-			if (existingFileContent == null) {
+			FileContentMetadata fileContent = tableHandler.get(conn, fileId, partId);
+			if (fileContent == null) {
 				throw new ServerException(StatusDTO.RESP_500, "File content metadata is not found.");
 			}
 
-			isUpdated = tableHandler.setContent(conn, fileId, partId, input);
+			isUpdated = tableHandler.setContent(conn, fileId, partId, inputStream);
 
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -715,25 +772,25 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public boolean setContent(String accountId, String blockId, String fileId, int partId, InputStream input, FileContentMetadata fileContentMetadata) throws ServerException {
+	public boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream inputStream, FileContentMetadata fileContentToUpdate) throws ServerException {
 		boolean isUpdated = false;
 		Connection conn = null;
 		try {
 			conn = getConnection();
 
 			String dfsVolumeId = getVolumeId();
-			VolumeBlockTableHandler tableHandler = VolumeBlockTableHandler.getInstance(conn, dfsVolumeId, blockId);
+			VolumeFileContentTableHandler tableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId);
 			tableHandler.setDatabase(this.database);
 
-			FileContentMetadata existingFileContent = tableHandler.get(conn, fileId, partId);
-			if (existingFileContent == null) {
+			FileContentMetadata fileContent = tableHandler.get(conn, fileId, partId);
+			if (fileContent == null) {
 				throw new ServerException(StatusDTO.RESP_500, "File content metadata is not found.");
 			}
 
-			boolean isContentUpdated = tableHandler.setContent(conn, fileId, partId, input);
+			boolean isContentUpdated = tableHandler.setContent(conn, fileId, partId, inputStream);
 			boolean isMetadataUpdated = false;
 			if (isContentUpdated) {
-				isMetadataUpdated = tableHandler.update(conn, fileContentMetadata);
+				isMetadataUpdated = tableHandler.update(conn, fileContentToUpdate);
 			}
 
 			if (isContentUpdated && isMetadataUpdated) {

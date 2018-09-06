@@ -476,8 +476,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * 
 	 * @param conn
 	 * @param fileId
-	 * @param properties
-	 * @param dateModified
+	 * @param fileParts
 	 * @return
 	 * @throws SQLException
 	 */
@@ -518,14 +517,6 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 
 	/**
 	 * 
-	 * @return
-	 */
-	protected long getCurrentTime() {
-		return new Date().getTime();
-	}
-
-	/**
-	 * 
 	 * @param conn
 	 * @param fileId
 	 * @return
@@ -547,6 +538,14 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	public boolean deleteByName(Connection conn, String parentFileId, String name) throws SQLException {
 		String deleteSQL = "DELETE FROM " + getTableName() + " WHERE parentFileId=? AND name=?";
 		return DatabaseUtil.update(conn, deleteSQL, new Object[] { parentFileId, name }, 1);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	protected long getCurrentTime() {
+		return new Date().getTime();
 	}
 
 }

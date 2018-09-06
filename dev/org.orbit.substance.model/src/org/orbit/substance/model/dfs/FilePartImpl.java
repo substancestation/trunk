@@ -8,7 +8,7 @@ public class FilePartImpl implements FilePart {
 	protected int partId;
 	protected long startIndex;
 	protected long endIndex;
-	protected String checksum;
+	protected long checksum;
 	protected List<FileContentAccess> fileContentAccessList = new ArrayList<FileContentAccess>();
 
 	public FilePartImpl() {
@@ -23,7 +23,7 @@ public class FilePartImpl implements FilePart {
 	 * @param endIndex
 	 * @param checksum
 	 */
-	public FilePartImpl(int partId, long startIndex, long endIndex, String checksum) {
+	public FilePartImpl(int partId, long startIndex, long endIndex, long checksum) {
 		this.partId = partId;
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
@@ -61,12 +61,12 @@ public class FilePartImpl implements FilePart {
 	}
 
 	@Override
-	public String getChecksum() {
+	public long getChecksum() {
 		return this.checksum;
 	}
 
 	@Override
-	public void setChecksum(String checksum) {
+	public void setChecksum(long checksum) {
 		this.checksum = checksum;
 	}
 
@@ -76,6 +76,10 @@ public class FilePartImpl implements FilePart {
 			this.fileContentAccessList = new ArrayList<FileContentAccess>();
 		}
 		return this.fileContentAccessList;
+	}
+
+	public synchronized void setContentAccess(List<FileContentAccess> fileContentAccessList) {
+		this.fileContentAccessList = fileContentAccessList;
 	}
 
 	@Override

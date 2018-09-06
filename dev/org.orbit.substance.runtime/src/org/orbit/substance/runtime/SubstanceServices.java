@@ -3,6 +3,7 @@ package org.orbit.substance.runtime;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexProvider;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.ws.DfsServiceAdapter;
@@ -37,7 +38,7 @@ public class SubstanceServices {
 	 */
 	public void start(final BundleContext bundleContext) {
 		Map<Object, Object> properties = new Hashtable<Object, Object>();
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_INDEX_SERVICE_URL);
+		PropertyUtil.loadProperty(bundleContext, properties, InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		this.properties = properties;
 
 		this.indexProviderConnector = new ServiceConnectorAdapter<IndexProvider>(IndexProvider.class) {

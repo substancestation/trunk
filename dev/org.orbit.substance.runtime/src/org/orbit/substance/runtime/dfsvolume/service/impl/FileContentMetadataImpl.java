@@ -7,7 +7,8 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 	protected int id;
 	protected String fileId;
 	protected int partId;
-	protected String checksum;
+	protected long size;
+	protected long checksum;
 	protected long dateCreated;
 	protected long dateModified;
 
@@ -19,14 +20,16 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 	 * @param id
 	 * @param fileId
 	 * @param partId
+	 * @param size
 	 * @param checksum
 	 * @param dateCreated
 	 * @param dateModified
 	 */
-	public FileContentMetadataImpl(int id, String fileId, int partId, String checksum, long dateCreated, long dateModified) {
+	public FileContentMetadataImpl(int id, String fileId, int partId, long size, long checksum, long dateCreated, long dateModified) {
 		this.id = id;
 		this.fileId = fileId;
 		this.partId = partId;
+		this.size = size;
 		this.checksum = checksum;
 		this.dateCreated = dateCreated;
 		this.dateModified = dateModified;
@@ -60,12 +63,21 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 	}
 
 	@Override
-	public String getChecksum() {
+	public long getSize() {
+		return this.size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
+	@Override
+	public long getChecksum() {
 		return this.checksum;
 	}
 
 	@Override
-	public void setChecksum(String checksum) {
+	public void setChecksum(long checksum) {
 		this.checksum = checksum;
 	}
 

@@ -16,8 +16,14 @@ public class DataBlockMetadataDTO {
 	protected long capacity;
 	@XmlElement
 	protected long size;
-	// @XmlElement
-	// protected String[] fileIds;
+	@XmlElement
+	protected String pendingFilesString;
+	@XmlElement
+	protected String propertiesString;
+	@XmlElement
+	protected long dateCreated;
+	@XmlElement
+	protected long dateModified;
 
 	@XmlElement
 	public String getDfsVolumeId() {
@@ -64,13 +70,52 @@ public class DataBlockMetadataDTO {
 		this.size = size;
 	}
 
-	// @XmlElement
-	// public String[] getFileIds() {
-	// return this.fileIds;
-	// }
-	//
-	// public void setFileIds(String[] fileIds) {
-	// this.fileIds = fileIds;
-	// }
+	@XmlElement
+	public String getPendingFilesString() {
+		return this.pendingFilesString;
+	}
+
+	public void setPendingFilesString(String pendingFilesString) {
+		this.pendingFilesString = pendingFilesString;
+	}
+
+	@XmlElement
+	public String getPropertiesString() {
+		return this.propertiesString;
+	}
+
+	public void setPropertiesString(String propertiesString) {
+		this.propertiesString = propertiesString;
+	}
+
+	@XmlElement
+	public long getDateCreated() {
+		return this.dateCreated;
+	}
+
+	public void setDateCreated(long dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	@XmlElement
+	public long getDateModified() {
+		return this.dateModified;
+	}
+
+	public void setDateModified(long dateModified) {
+		this.dateModified = dateModified;
+	}
 
 }
+
+// @XmlElement
+// protected String[] fileIds;
+
+// @XmlElement
+// public String[] getFileIds() {
+// return this.fileIds;
+// }
+//
+// public void setFileIds(String[] fileIds) {
+// this.fileIds = fileIds;
+// }

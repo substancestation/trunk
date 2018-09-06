@@ -8,9 +8,13 @@ public interface FileContentMetadata {
 
 	int getPartId();
 
-	String getChecksum();
+	long getSize();
 
-	void setChecksum(String checksum);
+	void setSize(long size);
+
+	long getChecksum();
+
+	void setChecksum(long checksum);
 
 	long getDateCreated();
 

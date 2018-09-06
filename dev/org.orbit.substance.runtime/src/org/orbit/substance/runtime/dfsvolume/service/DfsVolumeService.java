@@ -2,7 +2,9 @@ package org.orbit.substance.runtime.dfsvolume.service;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
+import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.origin.common.jdbc.ConnectionAware;
 import org.origin.common.rest.editpolicy.EditPoliciesAwareService;
 import org.origin.common.rest.server.ServerException;
@@ -36,7 +38,7 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 
 	long getVolumeSize();
 
-	// long getDefaultBlockCapacity();
+	long getDefaultBlockCapacity();
 
 	// ----------------------------------------------------------------------
 	// Methods for accessing data blocks
@@ -47,9 +49,11 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 
 	DataBlockMetadata getDataBlock(String accountId, String blockId) throws ServerException;
 
-	DataBlockMetadata createDataBlock(String accountId, long capacity) throws ServerException;
+	DataBlockMetadata createDataBlock(String accountId, long capacity, List<PendingFile> pendingFiles) throws ServerException;
 
 	boolean updateDataBlockSizeByDelta(String accountId, String blockId, long sizeDelta) throws ServerException;
+
+	boolean updatePendingFiles(String accountId, String blockId, String fileId, boolean cleanExpiredPendingFiles) throws ServerException;
 
 	boolean deleteDataBlock(String accountId, String blockId) throws ServerException;
 
@@ -60,7 +64,7 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 
 	FileContentMetadata getFileContentMetadata(String accountId, String blockId, String fileId, int partId) throws ServerException;
 
-	FileContentMetadata createFileContentMetadata(String accountId, String blockId, String fileId, int partId, long size, int startIndex, int endIndex, String checksum) throws ServerException;
+	FileContentMetadata createFileContentMetadata(String accountId, String blockId, String fileId, int partId, long size, long checksum) throws ServerException;
 
 	boolean updateFileContentMetadata(String accountId, String blockId, FileContentMetadata fileContentMetadata) throws ServerException;
 
@@ -69,12 +73,12 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 	// ----------------------------------------------------------------------
 	// Methods for getting/setting file contents
 	// ----------------------------------------------------------------------
-	InputStream getContentInputStream(String accountId, String blockId, String fileId, int partId) throws ServerException;
+	InputStream getFileContentInputStream(String accountId, String blockId, String fileId, int partId) throws ServerException;
 
-	void getContent(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ServerException;
+	void getFileContent(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ServerException;
 
-	boolean setContent(String accountId, String blockId, String fileId, int partId, InputStream input) throws ServerException;
+	boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream input) throws ServerException;
 
-	boolean setContent(String accountId, String blockId, String fileId, int partId, InputStream input, FileContentMetadata fileContentMetadata) throws ServerException;
+	boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream input, FileContentMetadata fileContentMetadata) throws ServerException;
 
 }

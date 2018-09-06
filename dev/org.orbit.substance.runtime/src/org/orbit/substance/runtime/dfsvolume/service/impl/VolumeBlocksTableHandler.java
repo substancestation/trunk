@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
+import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.jdbc.DatabaseTableAware;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.jdbc.ResultSetListHandler;
@@ -116,6 +118,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 			sb.append("    accountId varchar(250) NOT NULL,");
 			sb.append("    capacity bigint DEFAULT 0,");
 			sb.append("    size bigint DEFAULT 0,");
+			sb.append("    pendingFiles varchar(5000) DEFAULT NULL,");
 			sb.append("    properties varchar(5000) DEFAULT NULL,");
 			sb.append("    dateCreated bigint DEFAULT 0,");
 			sb.append("    dateModified bigint DEFAULT 0,");
@@ -129,6 +132,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 			sb.append("    accountId varchar(500) NOT NULL,");
 			sb.append("    capacity bigint DEFAULT 0,");
 			sb.append("    size bigint DEFAULT 0,");
+			sb.append("    pendingFiles varchar(5000) DEFAULT NULL,");
 			sb.append("    properties varchar(5000) DEFAULT NULL,");
 			sb.append("    dateCreated bigint DEFAULT 0,");
 			sb.append("    dateModified bigint DEFAULT 0,");
@@ -151,10 +155,15 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		String accountId = rs.getString("accountId");
 		long capacity = rs.getLong("capacity");
 		long size = rs.getLong("size");
+		String pendingFilesString = rs.getString("pendingFiles");
+		String propertiesString = rs.getString("properties");
 		long dateCreated = rs.getLong("dateCreated");
 		long dateModified = rs.getLong("dateModified");
 
-		return new DataBlockMetadataImpl(this.dfsVolumeId, id, blockId, accountId, capacity, size, dateCreated, dateModified);
+		List<PendingFile> pendingFiles = ModelConverter.DfsVolume.toPendingFiles(pendingFilesString);
+		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
+
+		return new DataBlockMetadataImpl(this.dfsVolumeId, id, blockId, accountId, capacity, size, pendingFiles, properties, dateCreated, dateModified);
 	}
 
 	/**
@@ -254,14 +263,17 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * @param accountId
 	 * @param capacity
 	 * @param size
+	 * @param pendingFiles
 	 * @param dateCreated
 	 * @param dateModified
 	 * @return
 	 * @throws SQLException
 	 */
-	public DataBlockMetadata insert(Connection conn, String blockId, String accountId, long capacity, long size, long dateCreated, long dateModified) throws SQLException {
-		String insertSQL = "INSERT INTO " + getTableName() + " (blockId, accountId, capacity, size, dateCreated, dateModified) VALUES (?, ?, ?, ?, ?, ?)";
-		boolean succeed = DatabaseUtil.update(conn, insertSQL, new Object[] { blockId, accountId, capacity, size, dateCreated, dateModified }, 1);
+	public DataBlockMetadata insert(Connection conn, String blockId, String accountId, long capacity, long size, List<PendingFile> pendingFiles, long dateCreated, long dateModified) throws SQLException {
+		String pendingFilesString = ModelConverter.DfsVolume.toPendingFilesString(pendingFiles);
+
+		String insertSQL = "INSERT INTO " + getTableName() + " (blockId, accountId, capacity, size, pendingFiles, dateCreated, dateModified) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		boolean succeed = DatabaseUtil.update(conn, insertSQL, new Object[] { blockId, accountId, capacity, size, pendingFilesString, dateCreated, dateModified }, 1);
 		if (succeed) {
 			return get(conn, blockId, accountId);
 		}
@@ -281,7 +293,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		String accountId = dataBlock.getAccountId();
 		long capacity = dataBlock.getCapacity();
 		long size = dataBlock.getSize();
-		long dateModified = new Date().getTime();
+		long dateModified = getCurrentTime();
 
 		if (id > 0) {
 			String updateSQL = "UPDATE " + getTableName() + " SET capacity=?, size=?, dateModified=? WHERE id=?";
@@ -304,7 +316,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public boolean updateSize(Connection conn, int id, String accountId, String blockId, long newSize) throws SQLException {
-		long dateModified = new Date().getTime();
+		long dateModified = getCurrentTime();
 
 		if (id > 0) {
 			String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE id=?";
@@ -316,33 +328,71 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		}
 	}
 
+	// /**
+	// *
+	// * @param conn
+	// * @param id
+	// * @param blockId
+	// * @param accountId
+	// * @param sizeDelta
+	// * @return
+	// * @throws SQLException
+	// */
+	// public boolean updateSizeByDelta(Connection conn, int id, String blockId, String accountId, long sizeDelta) throws SQLException {
+	// DataBlockMetadata dataBlock = get(conn, blockId, accountId);
+	// if (dataBlock == null) {
+	// return false;
+	// }
+	//
+	// long dateModified = getCurrentTime();
+	//
+	// long newSize = dataBlock.getSize() + sizeDelta;
+	// if (id > 0) {
+	// String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE id=?";
+	// return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, id }, 1);
+	//
+	// } else {
+	// String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE blockId=? AND accountId=?";
+	// return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, blockId, accountId }, 1);
+	// }
+	// }
+
 	/**
 	 * 
 	 * @param conn
 	 * @param id
-	 * @param accountId
 	 * @param blockId
-	 * @param sizeDelta
+	 * @param accountId
+	 * @param pendingFiles
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean updateBySizeDelta(Connection conn, int id, String accountId, String blockId, long sizeDelta) throws SQLException {
-		long dateModified = new Date().getTime();
+	public boolean updatePendingFiles(Connection conn, int id, String blockId, String accountId, List<PendingFile> pendingFiles) throws SQLException {
+		String pendingFilesString = ModelConverter.DfsVolume.toPendingFilesString(pendingFiles);
 
-		DataBlockMetadata dataBlock = get(conn, blockId, accountId);
-		if (dataBlock == null) {
-			return false;
-		}
-
-		long newSize = dataBlock.getSize() + sizeDelta;
 		if (id > 0) {
-			String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE id=?";
-			return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, id }, 1);
+			String updateSQL = "UPDATE " + getTableName() + " SET pendingFiles=?, dateModified=? WHERE id=?";
+			return DatabaseUtil.update(conn, updateSQL, new Object[] { pendingFilesString, getCurrentTime(), id }, 1);
 
 		} else {
-			String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE blockId=? AND accountId=?";
-			return DatabaseUtil.update(conn, updateSQL, new Object[] { newSize, dateModified, blockId, accountId }, 1);
+			String updateSQL = "UPDATE " + getTableName() + " SET pendingFiles=?, dateModified=? WHERE blockId=? AND accountId=?";
+			return DatabaseUtil.update(conn, updateSQL, new Object[] { pendingFilesString, getCurrentTime(), blockId, accountId }, 1);
 		}
+	}
+
+	/**
+	 * 
+	 * @param conn
+	 * @param fileId
+	 * @param properties
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean updateProperties(Connection conn, String fileId, Map<String, Object> properties) throws SQLException {
+		String propertiesString = ModelConverter.DfsVolume.toPropertiesString(properties);
+
+		String updateSQL = "UPDATE " + getTableName() + " SET properties=?, dateModified=? WHERE fileId=?";
+		return DatabaseUtil.update(conn, updateSQL, new Object[] { propertiesString, getCurrentTime(), fileId }, 1);
 	}
 
 	/**
@@ -370,4 +420,11 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		return DatabaseUtil.update(conn, deleteSQL, new Object[] { blockId, accountId }, 1);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
+	protected long getCurrentTime() {
+		return new Date().getTime();
+	}
 }

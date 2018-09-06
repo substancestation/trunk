@@ -29,9 +29,9 @@ import org.origin.common.jdbc.ResultSetSingleHandler;
  * 		dfs1_volume1_block3
  * 
  */
-public class VolumeBlockTableHandler implements DatabaseTableAware {
+public class VolumeFileContentTableHandler implements DatabaseTableAware {
 
-	public static Map<String, VolumeBlockTableHandler> tableHandlerMap = new HashMap<String, VolumeBlockTableHandler>();
+	public static Map<String, VolumeFileContentTableHandler> tableHandlerMap = new HashMap<String, VolumeFileContentTableHandler>();
 
 	/**
 	 * 
@@ -41,11 +41,11 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static synchronized VolumeBlockTableHandler getInstance(Connection conn, String dfsVolumeId, String blockId) throws SQLException {
+	public static synchronized VolumeFileContentTableHandler getInstance(Connection conn, String dfsVolumeId, String blockId) throws SQLException {
 		String tableName = doGetTableName(dfsVolumeId, blockId);
-		VolumeBlockTableHandler tableHandler = tableHandlerMap.get(tableName);
+		VolumeFileContentTableHandler tableHandler = tableHandlerMap.get(tableName);
 		if (tableHandler == null) {
-			VolumeBlockTableHandler newTableHandler = new VolumeBlockTableHandler(dfsVolumeId, blockId);
+			VolumeFileContentTableHandler newTableHandler = new VolumeFileContentTableHandler(dfsVolumeId, blockId);
 			tableHandlerMap.put(tableName, newTableHandler);
 			tableHandler = newTableHandler;
 		}
@@ -71,7 +71,7 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 	public static synchronized boolean dispose(Connection conn, String dfsVolumeId, String blockId) throws SQLException {
 		String tableName = doGetTableName(dfsVolumeId, blockId);
 
-		VolumeBlockTableHandler tableHandler = tableHandlerMap.get(tableName);
+		VolumeFileContentTableHandler tableHandler = tableHandlerMap.get(tableName);
 		if (tableHandler != null) {
 			if (DatabaseUtil.tableExist(conn, tableHandler)) {
 				boolean disposed = DatabaseUtil.dispose(conn, tableHandler);
@@ -96,7 +96,7 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 	 * @param dfsVolumeId
 	 * @param blockId
 	 */
-	public VolumeBlockTableHandler(String dfsVolumeId, String blockId) {
+	public VolumeFileContentTableHandler(String dfsVolumeId, String blockId) {
 		this.dfsVolumeId = dfsVolumeId;
 		this.blockId = blockId;
 	}
@@ -133,7 +133,8 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 			sb.append("    id int NOT NULL AUTO_INCREMENT,");
 			sb.append("    fileId varchar(500) NOT NULL,");
 			sb.append("    partId int DEFAULT 0,");
-			sb.append("    checksum varchar(500),");
+			sb.append("    size bigint DEFAULT 0,");
+			sb.append("    checksum bigint DEFAULT 0,");
 			sb.append("    properties varchar(5000) DEFAULT NULL,");
 			sb.append("    fileContent mediumblob,");
 			sb.append("    dateCreated bigint DEFAULT 0,");
@@ -146,7 +147,8 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 			sb.append("    id serial NOT NULL,");
 			sb.append("    fileId varchar(500) NOT NULL,");
 			sb.append("    partId int DEFAULT 0,");
-			sb.append("    checksum varchar(500),");
+			sb.append("    size bigint DEFAULT 0,");
+			sb.append("    checksum bigint DEFAULT 0,");
 			sb.append("    properties varchar(5000) DEFAULT NULL,");
 			sb.append("    fileContent bytea,");
 			sb.append("    dateCreated bigint DEFAULT 0,");
@@ -168,11 +170,12 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 		int id = rs.getInt("id");
 		String fileId = rs.getString("fileId");
 		int partId = rs.getInt("partId");
-		String checksum = rs.getString("checksum");
+		long size = rs.getLong("size");
+		long checksum = rs.getLong("checksum");
 		long dateCreated = rs.getLong("dateCreated");
 		long dateModified = rs.getLong("dateModified");
 
-		return new FileContentMetadataImpl(id, fileId, partId, checksum, dateCreated, dateModified);
+		return new FileContentMetadataImpl(id, fileId, partId, size, checksum, dateCreated, dateModified);
 	}
 
 	/**
@@ -216,17 +219,15 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 	 * @param fileId
 	 * @param partId
 	 * @param size
-	 * @param startIndex
-	 * @param endIndex
 	 * @param checksum
 	 * @param dateCreated
 	 * @param dateModified
 	 * @return
 	 * @throws SQLException
 	 */
-	public FileContentMetadata insert(Connection conn, String fileId, int partId, long size, int startIndex, int endIndex, String checksum, long dateCreated, long dateModified) throws SQLException {
-		String insertSQL = "INSERT INTO " + getTableName() + " (fileId, partId, size, startIndex, endIndex, checksum, dateCreated, dateModified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		boolean succeed = DatabaseUtil.update(conn, insertSQL, new Object[] { fileId, partId, size, startIndex, endIndex, dateCreated, dateModified }, 1);
+	public FileContentMetadata insert(Connection conn, String fileId, int partId, long size, long checksum, long dateCreated, long dateModified) throws SQLException {
+		String insertSQL = "INSERT INTO " + getTableName() + " (fileId, partId, size, checksum, dateCreated, dateModified) VALUES (?, ?, ?, ?, ?, ?)";
+		boolean succeed = DatabaseUtil.update(conn, insertSQL, new Object[] { fileId, partId, size, checksum, dateCreated, dateModified }, 1);
 		if (succeed) {
 			return get(conn, fileId, partId);
 		}
@@ -280,7 +281,7 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 	public boolean update(Connection conn, FileContentMetadata fileContent) throws SQLException {
 		String fileId = fileContent.getFileId();
 		int partId = fileContent.getPartId();
-		String checksum = fileContent.getChecksum();
+		long checksum = fileContent.getChecksum();
 		long dateModified = new Date().getTime();
 
 		String updateSQL = "UPDATE " + getTableName() + " SET checksum=?, dateModified=? WHERE fileId=? AND partId=?";
@@ -393,7 +394,6 @@ public class VolumeBlockTableHandler implements DatabaseTableAware {
 		int contentLength = bytes.length;
 
 		try {
-
 			if (DatabaseTableAware.MYSQL.equalsIgnoreCase(this.database)) {
 				PreparedStatement pstmt = null;
 				try {

@@ -9,7 +9,7 @@ import org.orbit.substance.model.dfs.Path;
 
 public interface FileMetadata {
 
-	DfsClient getFileSystemClient();
+	DfsClient getDfsClient();
 
 	String getFileId();
 

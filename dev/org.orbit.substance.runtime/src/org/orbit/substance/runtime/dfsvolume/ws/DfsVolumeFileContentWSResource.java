@@ -2,6 +2,8 @@ package org.orbit.substance.runtime.dfsvolume.ws;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -21,16 +23,21 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.orbit.platform.sdk.PlatformConstants;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
-import org.orbit.substance.model.dfs.FileMetadataDTO;
-import org.orbit.substance.runtime.dfs.service.DfsService;
+import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
+import org.orbit.substance.model.dfsvolume.PendingFile;
+import org.orbit.substance.model.dfsvolume.PendingFileImpl;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
+import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
+import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
+import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.StatusDTO;
 import org.origin.common.rest.server.AbstractWSApplicationResource;
+import org.origin.common.util.DiskSpaceUnit;
 
 /*
  * DFS file web service resource.
@@ -51,11 +58,11 @@ import org.origin.common.rest.server.AbstractWSApplicationResource;
 public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResource {
 
 	@Inject
-	public DfsService service;
+	public DfsVolumeService service;
 
-	public DfsService getService() throws RuntimeException {
+	public DfsVolumeService getService() throws RuntimeException {
 		if (this.service == null) {
-			throw new RuntimeException("DfsService is not available.");
+			throw new RuntimeException("DfsVolumeService is not available.");
 		}
 		return this.service;
 	}
@@ -66,7 +73,7 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 	 * URL (POST): {scheme}://{host}:{port}/{contextRoot}/file/content (FormData: InputStream and FormDataContentDisposition)
 	 * 
 	 * @param httpHeaders
-	 * @param parentType
+	 * @param fileId
 	 * @param parentValue
 	 * @param contentInputStream
 	 * @param fileDetail
@@ -77,115 +84,131 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.MULTIPART_FORM_DATA })
 	public Response setContent( //
 			@Context HttpHeaders httpHeaders, //
-			@QueryParam(value = "parentType") String parentType, // "fileId" or "path"
-			@QueryParam(value = "parentValue") String parentValue, // fileId string or path string
+			@QueryParam(value = "accountId") String accountId, //
+			@QueryParam(value = "blockId") String blockId, //
+			@QueryParam(value = "capacity") long capacity, //
+			@QueryParam(value = "fileId") String fileId, //
+			@QueryParam(value = "partId") int partId, //
+			@QueryParam(value = "size") long size, //
+			@QueryParam(value = "checksum") long checksum, //
 			@FormDataParam("file") InputStream contentInputStream, //
-			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-
-		String accountId = OrbitTokenUtil.INSTANCE.getAccountId(httpHeaders, PlatformConstants.TOKEN_PROVIDER__ORBIT);
+			@FormDataParam("file") FormDataContentDisposition fileDetail //
+	) {
+		// Note:
+		// - If accountId query parameter is set, the access token must belong to the dfs service.
+		// - If accountId is not set, get the accountId from the access token. The access token must belong to a user.
+		if (accountId != null) {
+			// validate the access token to be the dfs service.
+		} else {
+			// validate the access token to be a user.
+			accountId = OrbitTokenUtil.INSTANCE.getAccountId(httpHeaders, PlatformConstants.TOKEN_PROVIDER__ORBIT);
+		}
 		if (accountId == null || accountId.isEmpty()) {
 			ErrorDTO error = new ErrorDTO("accountId is not available.");
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
-
-		if (parentType == null || parentType.isEmpty()) {
-			ErrorDTO error = new ErrorDTO("parentType is null.");
+		if (fileId == null || fileId.isEmpty()) {
+			ErrorDTO error = new ErrorDTO("fileId is null.");
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
 
-		if (parentValue == null || parentValue.isEmpty()) {
-			ErrorDTO error = new ErrorDTO("parentValue is null.");
-			return Response.status(Status.BAD_REQUEST).entity(error).build();
-		}
-
-		if (!"fileId".equals(parentType) && !"path".equals(parentType)) {
-			ErrorDTO error = new ErrorDTO("parentType is not supported. Supported parentType is: 'fileId' and 'path'.");
-			return Response.status(Status.BAD_REQUEST).entity(error).build();
-		}
-
-		FileMetadata newFile = null;
-		boolean succeed = false;
+		FileContentMetadata fileContent = null;
+		boolean isDataBlockCreated = false;
+		boolean isFileContentCreated = false;
+		boolean isFileContentSet = false;
 		try {
-			FileSystem fileSystem = getService().getFileSystem(accountId);
+			DfsVolumeService service = getService();
 
-			String parentFileId = null;
-			org.orbit.substance.model.dfs.Path parentPath = null;
-			if ("fileId".equals(parentType)) {
-				parentFileId = parentValue;
-			} else if ("path".equals(parentType)) {
-				parentPath = new org.orbit.substance.model.dfs.Path(parentValue);
-			}
+			// 1. Create or get data block.
+			DataBlockMetadata dataBlock = null;
+			if (blockId == null || blockId.isEmpty() || "-1".equals(blockId)) {
+				// Create new data block
+				if (capacity <= 0) {
+					capacity = service.getDefaultBlockCapacity();
+				}
+				if (capacity <= 0) {
+					capacity = DiskSpaceUnit.MB.toBytes(100);
+				}
 
-			boolean isRootDir = ("-1".equals(parentFileId)) ? true : false;
+				List<PendingFile> pendingFiles = new ArrayList<PendingFile>();
+				PendingFile pendingFile = new PendingFileImpl(fileId, size);
+				pendingFiles.add(pendingFile);
 
-			FileMetadata parentFile = null;
-			if (parentFileId != null) {
-				parentFile = fileSystem.getFile(parentFileId);
+				dataBlock = service.createDataBlock(accountId, capacity, pendingFiles);
+				if (dataBlock == null) {
+					ErrorDTO error = new ErrorDTO("New data block cannot be created.");
+					return Response.status(Status.BAD_REQUEST).entity(error).build();
+				}
+				isDataBlockCreated = true;
+				blockId = dataBlock.getBlockId();
 
-			} else if (parentPath != null) {
-				parentFile = fileSystem.getFile(parentPath);
-				if (parentFile == null) {
-					parentFile = fileSystem.mkdirs(parentPath);
+			} else {
+				// Get existing data block
+				dataBlock = service.getDataBlock(accountId, blockId);
+				if (dataBlock == null) {
+					ErrorDTO error = new ErrorDTO("Data block is not found.");
+					return Response.status(Status.BAD_REQUEST).entity(error).build();
 				}
 			}
 
-			if (parentFile == null && !isRootDir) {
-				ErrorDTO error = new ErrorDTO("Parent file is not available.");
-				return Response.status(Status.BAD_REQUEST).entity(error).build();
-			}
-			if (parentFile != null && !parentFile.isDirectory()) {
-				ErrorDTO error = new ErrorDTO("Parent file is not directory.");
-				return Response.status(Status.BAD_REQUEST).entity(error).build();
-			}
-
-			String fileName = fileDetail.getFileName();
-			String newFileName = null;
-			int index = 0;
-			FileMetadata[] memberFiles = isRootDir ? fileSystem.listRoots() : fileSystem.listFiles(parentFile.getParentFileId());
-			while (true) {
-				boolean exists = false;
-				String candidateFileName = (index == 0) ? fileName : fileName + "(" + index + ")";
-
-				for (FileMetadata memberFile : memberFiles) {
-					String currFileName = memberFile.getName();
-					if (candidateFileName.equals(currFileName)) {
-						exists = true;
-						break;
-					}
+			// 2. Get or create file content record (for fileId + partId)
+			fileContent = service.getFileContentMetadata(accountId, blockId, fileId, partId);
+			if (fileContent == null) {
+				fileContent = service.createFileContentMetadata(accountId, blockId, fileId, partId, size, checksum);
+				if (fileContent != null) {
+					isFileContentCreated = true;
 				}
-				if (!exists) {
-					newFileName = candidateFileName;
-					break;
-				}
-				index++;
 			}
-
-			org.orbit.substance.model.dfs.Path theParentPath = isRootDir ? org.orbit.substance.model.dfs.Path.ROOT : parentFile.getPath();
-			org.orbit.substance.model.dfs.Path newFilePath = new org.orbit.substance.model.dfs.Path(theParentPath, newFileName);
-
-			newFile = fileSystem.createNewFile(newFilePath, 0);
-			if (newFile == null) {
-				ErrorDTO error = new ErrorDTO("New file cannot be created.");
+			if (fileContent == null) {
+				ErrorDTO error = new ErrorDTO("File content record cannot be created.");
 				return Response.status(Status.BAD_REQUEST).entity(error).build();
 			}
 
-			String fileId = newFile.getFileId();
-			succeed = fileSystem.setFileContent(fileId, contentInputStream);
-			if (!succeed) {
-				StatusDTO statusDTO = new StatusDTO(StatusDTO.RESP_304, StatusDTO.FAILED, "File content is not set.");
-				return Response.status(Status.NOT_MODIFIED).entity(statusDTO).build();
+			// 3. Set file content to the record
+			isFileContentSet = service.setFileContent(accountId, blockId, fileId, partId, contentInputStream);
+
+			// 4. Update data block
+			if (isFileContentSet) {
+				// (1) Update the size of the data block.
+				service.updateDataBlockSizeByDelta(accountId, blockId, size);
+
+				// (2) Remove the pending file record for reserving space from the data block.
+				service.updatePendingFiles(accountId, blockId, fileId, true);
 			}
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			ErrorDTO error = handleError(e, "500", true);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
 
 		} finally {
 			IOUtil.closeQuietly(contentInputStream, true);
+
+			// 5. Date cleanup, when file content cannot be set.
+			try {
+				DfsVolumeService service = getService();
+				if (!isFileContentSet) {
+					if (isFileContentCreated) {
+						// delete the newly created file content record
+						service.deleteFileContent(accountId, blockId, fileId, partId);
+					}
+					if (isDataBlockCreated) {
+						// delete the newly created data block record
+						service.deleteDataBlock(accountId, blockId);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
-		FileMetadataDTO newFileMetadataDTO = ModelConverter.Dfs.toDTO(newFile);
-		return Response.ok().entity(newFileMetadataDTO).build();
+		// 6. Return the file content DTO (if succeed) or return error status (if failed to set file content).
+		if (!isFileContentSet) {
+			StatusDTO statusDTO = new StatusDTO(StatusDTO.RESP_304, StatusDTO.FAILED, "File content is not set.");
+			return Response.status(Status.NOT_MODIFIED).entity(statusDTO).build();
+		}
+
+		FileContentMetadataDTO fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);
+		return Response.ok().entity(fileContentDTO).build();
 	}
 
 	/**
@@ -229,7 +252,8 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 
 		InputStream input = null;
 		try {
-			FileSystem fileSystem = getService().getFileSystem(accountId);
+			// FileSystem fileSystem = getService().getFileSystem(accountId);
+			FileSystem fileSystem = null;
 
 			FileMetadata file = null;
 			org.orbit.substance.model.dfs.Path path = null;

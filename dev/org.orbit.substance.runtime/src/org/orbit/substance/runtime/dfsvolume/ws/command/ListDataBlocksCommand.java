@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
+import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
@@ -50,18 +51,30 @@ public class ListDataBlocksCommand extends AbstractDfsVolumeWSCommand<DfsVolumeS
 		}
 
 		List<DataBlockMetadataDTO> dataBlockDTOs = new ArrayList<DataBlockMetadataDTO>();
+
 		DfsVolumeService service = getService();
+
 		DataBlockMetadata[] dataBlocks = service.getDataBlocks(accountId);
 		if (dataBlocks != null) {
 			for (DataBlockMetadata dataBlock : dataBlocks) {
-				boolean accept = true;
+				boolean hasEnoughSpace = true;
+
 				if (minFreeSpace > 0) {
-					long currFreeSpace = dataBlock.getCapacity() - dataBlock.getSize();
+					long capacity = dataBlock.getCapacity();
+					long size = dataBlock.getSize();
+					long pendingSize = 0;
+					List<PendingFile> pendingFiles = dataBlock.getPendingFiles();
+					for (PendingFile pendingFile : pendingFiles) {
+						pendingSize += pendingFile.getSize();
+					}
+
+					long currFreeSpace = capacity - (size + pendingSize);
 					if (currFreeSpace < minFreeSpace) {
-						accept = false;
+						hasEnoughSpace = false;
 					}
 				}
-				if (accept) {
+
+				if (hasEnoughSpace) {
 					DataBlockMetadataDTO dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
 					if (dataBlockDTO != null) {
 						dataBlockDTOs.add(dataBlockDTO);

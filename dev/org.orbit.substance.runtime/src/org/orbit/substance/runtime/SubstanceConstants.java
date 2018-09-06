@@ -6,8 +6,6 @@ public class SubstanceConstants {
 	// Global
 	// ----------------------------------------------------------------------------------------
 	// Configuration property names
-	public static String ORBIT_INDEX_SERVICE_URL = "orbit.index_service.url";
-
 	public static String ORBIT_HOST_URL = "orbit.host.url";
 
 	// Index item property names
@@ -16,7 +14,7 @@ public class SubstanceConstants {
 	public static String TOKEN_PROVIDER__ORBIT = "orbit";
 
 	// ----------------------------------------------------------------------------------------
-	// Distributed file system service
+	// Dfs service
 	// ----------------------------------------------------------------------------------------
 	// Configuration property names
 	public static String DFS__AUTOSTART = "substance.dfs.autostart";
@@ -45,7 +43,7 @@ public class SubstanceConstants {
 	public static String IDX__DFS__TYPE = "DFS";
 
 	// ----------------------------------------------------------------------------------------
-	// Distributed file system volume service
+	// Dfs volume service
 	// ----------------------------------------------------------------------------------------
 	// Configuration property names
 	public static String DFS_VOLUME__AUTOSTART = "substance.dfs_volume.autostart";
