@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class PutBackFromTrashByPathCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.PutBackFromTrashByPathCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.PutBackFromTrashByPathCommand";
 
 	public PutBackFromTrashByPathCommand() {
 		super(DfsService.class);

@@ -115,7 +115,7 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 		FileContentMetadata fileContent = null;
 		boolean isDataBlockCreated = false;
 		boolean isFileContentCreated = false;
-		boolean isFileContentSet = false;
+		boolean isContentSet = false;
 		try {
 			DfsVolumeService service = getService();
 
@@ -152,9 +152,9 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 			}
 
 			// 2. Get or create file content record (for fileId + partId)
-			fileContent = service.getFileContentMetadata(accountId, blockId, fileId, partId);
+			fileContent = service.getFileContent(accountId, blockId, fileId, partId);
 			if (fileContent == null) {
-				fileContent = service.createFileContentMetadata(accountId, blockId, fileId, partId, size, checksum);
+				fileContent = service.createFileContent(accountId, blockId, fileId, partId, size, checksum);
 				if (fileContent != null) {
 					isFileContentCreated = true;
 				}
@@ -165,10 +165,10 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 			}
 
 			// 3. Set file content to the record
-			isFileContentSet = service.setFileContent(accountId, blockId, fileId, partId, contentInputStream);
+			isContentSet = service.setContent(accountId, blockId, fileId, partId, contentInputStream);
 
 			// 4. Update data block
-			if (isFileContentSet) {
+			if (isContentSet) {
 				// (1) Update the size of the data block.
 				service.updateDataBlockSizeByDelta(accountId, blockId, size);
 
@@ -186,7 +186,7 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 			// 5. Date cleanup, when file content cannot be set.
 			try {
 				DfsVolumeService service = getService();
-				if (!isFileContentSet) {
+				if (!isContentSet) {
 					if (isFileContentCreated) {
 						// delete the newly created file content record
 						service.deleteFileContent(accountId, blockId, fileId, partId);
@@ -202,7 +202,7 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 		}
 
 		// 6. Return the file content DTO (if succeed) or return error status (if failed to set file content).
-		if (!isFileContentSet) {
+		if (!isContentSet) {
 			StatusDTO statusDTO = new StatusDTO(StatusDTO.RESP_304, StatusDTO.FAILED, "File content is not set.");
 			return Response.status(Status.NOT_MODIFIED).entity(statusDTO).build();
 		}
@@ -273,10 +273,10 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 			String fileId = file.getFileId();
 			fileName = file.getName();
 
-			input = fileSystem.getFileContentInputStream(fileId);
-			if (input != null) {
-				bytes = IOUtil.toByteArray(input);
-			}
+			// input = fileSystem.getFileContentInputStream(fileId);
+			// if (input != null) {
+			// bytes = IOUtil.toByteArray(input);
+			// }
 
 		} catch (IOException e) {
 			ErrorDTO error = handleError(e, StatusDTO.RESP_500, true);

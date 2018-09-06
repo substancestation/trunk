@@ -19,7 +19,7 @@ import org.origin.common.rest.model.Request;
 
 public class ListDataBlocksCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_content.ListDataBlocksCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs_volume.ListDataBlocksCommand";
 
 	public ListDataBlocksCommand() {
 		super(DfsVolumeService.class);

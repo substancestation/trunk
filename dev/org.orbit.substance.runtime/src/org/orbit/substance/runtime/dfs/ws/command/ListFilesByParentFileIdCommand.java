@@ -19,7 +19,7 @@ import org.origin.common.rest.model.Request;
 
 public class ListFilesByParentFileIdCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.ListFilesByParentFileIdCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.ListFilesByParentFileIdCommand";
 
 	public ListFilesByParentFileIdCommand() {
 		super(DfsService.class);

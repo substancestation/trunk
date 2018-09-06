@@ -268,6 +268,20 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 	}
 
 	@Override
+	public boolean updateFileParts(String fileId, String filePartsString) throws ClientException {
+		Request request = new Request(RequestConstants.UPDATE_FILE_PARTS);
+		request.setParameter("file_id", fileId);
+		request.setParameter("file_parts", filePartsString);
+
+		boolean isUpdated = false;
+		Response response = sendRequest(request);
+		if (response != null) {
+			isUpdated = ModelConverter.Dfs.isUpdated(response);
+		}
+		return isUpdated;
+	}
+
+	@Override
 	public FileMetadata mkdirs(Path path) throws ClientException {
 		checkPath(path);
 
@@ -343,7 +357,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 	}
 
 	@Override
-	public FileMetadata putBackFromTrash(String fileId) throws ClientException {
+	public FileMetadata moveOutOfTrash(String fileId) throws ClientException {
 		checkFileId(fileId);
 
 		Request request = new Request(RequestConstants.PUT_BACK_FROM_TRASH_BY_ID);
@@ -358,7 +372,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 	}
 
 	@Override
-	public FileMetadata putBackFromTrash(Path path) throws ClientException {
+	public FileMetadata moveOutOfTrash(Path path) throws ClientException {
 		checkPath(path);
 
 		Request request = new Request(RequestConstants.PUT_BACK_FROM_TRASH_BY_PATH);

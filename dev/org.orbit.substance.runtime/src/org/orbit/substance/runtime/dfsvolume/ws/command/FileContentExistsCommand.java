@@ -72,7 +72,7 @@ public class FileContentExistsCommand extends AbstractDfsVolumeWSCommand<DfsVolu
 			if (accountId.equals(theAccountId)) {
 				accountAndBlockMatch = true;
 
-				FileContentMetadata fileContent = service.getFileContentMetadata(accountId, blockId, fileId, partId);
+				FileContentMetadata fileContent = service.getFileContent(accountId, blockId, fileId, partId);
 				if (fileContent != null) {
 					exists = true;
 				}

@@ -20,7 +20,7 @@ import org.origin.common.rest.model.Request;
 
 public class ListFileContentsCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_content.ListFileContentsCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs_volume.ListFileContentsCommand";
 
 	public ListFileContentsCommand() {
 		super(DfsVolumeService.class);
@@ -59,7 +59,7 @@ public class ListFileContentsCommand extends AbstractDfsVolumeWSCommand<DfsVolum
 			if (accountId.equals(theAccountId)) {
 				accountAndBlockMatch = true;
 
-				FileContentMetadata[] fileContents = service.getFileContentMetadatas(accountId, blockId);
+				FileContentMetadata[] fileContents = service.getFileContents(accountId, blockId);
 				if (fileContents != null) {
 					for (FileContentMetadata fileContent : fileContents) {
 						FileContentMetadataDTO fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);

@@ -22,6 +22,8 @@ import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.connector.util.ModelConverter;
+import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.DefaultDfsClientResolver;
 import org.orbit.substance.webconsole.util.DefaultDfsVolumeClientResolver;
@@ -121,6 +123,7 @@ public class FileUploadServlet extends HttpServlet {
 				DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
 
 				for (File localFile : localFiles) {
+					// (1) Create file metadata in DFS
 					FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, localFile);
 					if (fileMetadata == null) {
 						message = MessageHelper.INSTANCE.add(message, "File metadata cannot be created in DFS.");
@@ -129,11 +132,26 @@ public class FileUploadServlet extends HttpServlet {
 						message = MessageHelper.INSTANCE.add(message, "File metadata is created in DFS.");
 					}
 
-					boolean isUploaded = SubstanceClientsUtil.DfsVolume.uploadFileContent(dfsVolumeClientResolver, accessToken, fileMetadata, localFile);
+					// (2) Upload file to DFS volumes
+					boolean isUploaded = SubstanceClientsUtil.DfsVolume.uploadFile(dfsVolumeClientResolver, accessToken, fileMetadata, localFile);
 					if (isUploaded) {
 						message = MessageHelper.INSTANCE.add(message, "File '" + localFile.getName() + "' is uploaded to DFS volume.");
+
+						// (3) Update file metadata's file parts checksum in DFS
+						String fileId = fileMetadata.getFileId();
+						List<FilePart> fileParts = fileMetadata.getFileParts();
+						String filePartsString = ModelConverter.Dfs.toFilePartsString(fileParts);
+
+						boolean isFileParts = SubstanceClientsUtil.Dfs.updateFileParts(dfsClientResolver, dfsServiceUrl, accessToken, fileId, filePartsString);
+						if (isFileParts) {
+							message = MessageHelper.INSTANCE.add(message, "File parts are updated.");
+						} else {
+							message = MessageHelper.INSTANCE.add(message, "File parts are not updated.");
+						}
+
 					} else {
 						message = MessageHelper.INSTANCE.add(message, "File '" + localFile.getName() + "' is not uploaded to DFS volume.");
+						break;
 					}
 				}
 

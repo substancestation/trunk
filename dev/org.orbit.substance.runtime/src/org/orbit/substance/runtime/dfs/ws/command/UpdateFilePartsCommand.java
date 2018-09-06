@@ -1,31 +1,35 @@
 package org.orbit.substance.runtime.dfs.ws.command;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.orbit.substance.model.RequestConstants;
-import org.orbit.substance.model.dfs.FileMetadataDTO;
-import org.orbit.substance.runtime.dfs.service.FileSystem;
+import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
+import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
-public class PutBackFromTrashByIdCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
+public class UpdateFilePartsCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs.PutBackFromTrashByIdCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.UpdateFilePartsCommand";
 
-	public PutBackFromTrashByIdCommand() {
+	public UpdateFilePartsCommand() {
 		super(DfsService.class);
 	}
 
 	@Override
 	public boolean isSupported(Request request) {
 		String requestName = request.getRequestName();
-		if (RequestConstants.PUT_BACK_FROM_TRASH_BY_ID.equalsIgnoreCase(requestName)) {
+		if (RequestConstants.UPDATE_FILE_PARTS.equalsIgnoreCase(requestName)) {
 			return true;
 		}
 		return false;
@@ -45,17 +49,26 @@ public class PutBackFromTrashByIdCommand extends AbstractDfsCommand<DfsService> 
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
 
+		String file_parts_string = (String) request.getParameter("file_parts");
+		if (file_parts_string == null || file_parts_string.isEmpty()) {
+			ErrorDTO error = new ErrorDTO(String.valueOf(Status.BAD_REQUEST.getStatusCode()), "'file_parts' parameter is not set.");
+			return Response.status(Status.BAD_REQUEST).entity(error).build();
+		}
+
 		FileSystem fileSystem = getService().getFileSystem(accountId);
 
-		FileMetadata existingFileMetadata = fileSystem.getFile(file_id);
-		if (existingFileMetadata == null) {
+		FileMetadata fileMetadata = fileSystem.getFile(file_id);
+		if (fileMetadata == null) {
 			ErrorDTO error = new ErrorDTO(String.valueOf(Status.BAD_REQUEST.getStatusCode()), "File doesn't exist.");
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
 
-		FileMetadata fileMetadata = fileSystem.putBackFromTrash(file_id);
-		FileMetadataDTO fileMetadataDTO = ModelConverter.Dfs.toDTO(fileMetadata);
-		return Response.ok().entity(fileMetadataDTO).build();
+		List<FilePart> fileParts = ModelConverter.Dfs.toFileParts(file_parts_string);
+		boolean succeed = fileSystem.updateFileParts(file_id, fileParts);
+
+		Map<String, Boolean> result = new HashMap<String, Boolean>();
+		result.put("succeed", succeed);
+		return Response.status(Status.OK).entity(result).build();
 	}
 
 }

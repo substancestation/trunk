@@ -10,7 +10,7 @@ import org.origin.common.rest.model.Request;
 
 public class DownloadFileCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.DownloadFileCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.DownloadFileCommand";
 
 	public DownloadFileCommand() {
 		super(DfsService.class);

@@ -1,8 +1,9 @@
 package org.orbit.substance.runtime.dfs.service;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 
+import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.Path;
 
 public interface FileSystem {
@@ -41,6 +42,8 @@ public interface FileSystem {
 
 	FileMetadata allocateVolumes(String fileId, long size) throws IOException;
 
+	boolean updateFileParts(String fileId, List<FilePart> fileParts) throws IOException;
+
 	FileMetadata mkdirs(Path path) throws IOException;
 
 	FileMetadata moveToTrash(String fileId) throws IOException;
@@ -55,13 +58,4 @@ public interface FileSystem {
 
 	boolean delete(Path path) throws IOException;
 
-	boolean setFileContent(String fileId, InputStream contentInputStream) throws IOException;
-
-	InputStream getFileContentInputStream(String fileId) throws IOException;
-
-	void dispose();
-
 }
-
-// FileMetadata createNewFile(Path path) throws IOException;
-// FileMetadata createNewFile(String parentFileId, String fileName) throws IOException;

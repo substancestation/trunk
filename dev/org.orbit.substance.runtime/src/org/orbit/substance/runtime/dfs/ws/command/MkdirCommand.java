@@ -6,10 +6,10 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.substance.model.RequestConstants;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.model.dfs.Path;
-import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
+import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class MkdirCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.MkdirCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.MkdirCommand";
 
 	public MkdirCommand() {
 		super(DfsService.class);

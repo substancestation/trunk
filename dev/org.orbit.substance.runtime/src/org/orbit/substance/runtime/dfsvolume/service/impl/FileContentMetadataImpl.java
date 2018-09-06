@@ -76,7 +76,6 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.checksum;
 	}
 
-	@Override
 	public void setChecksum(long checksum) {
 		this.checksum = checksum;
 	}
@@ -86,7 +85,6 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.dateCreated;
 	}
 
-	@Override
 	public void setDateCreated(long dateCreated) {
 		this.dateCreated = dateCreated;
 	}
@@ -96,7 +94,6 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.dateModified;
 	}
 
-	@Override
 	public void setDateModified(long dateModified) {
 		this.dateModified = dateModified;
 	}

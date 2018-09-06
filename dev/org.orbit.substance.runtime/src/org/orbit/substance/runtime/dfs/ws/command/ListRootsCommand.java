@@ -19,7 +19,7 @@ import org.origin.common.rest.model.Request;
 
 public class ListRootsCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.ListRootsCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.ListRootsCommand";
 
 	public ListRootsCommand() {
 		super(DfsService.class);

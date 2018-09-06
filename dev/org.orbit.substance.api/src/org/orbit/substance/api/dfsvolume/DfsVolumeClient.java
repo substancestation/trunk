@@ -13,7 +13,7 @@ public interface DfsVolumeClient extends ServiceClient {
 	DfsVolumeServiceMetadata getMetadata() throws ClientException;
 
 	// ----------------------------------------------------------------------
-	// Methods for accessing data blocks
+	// Data blocks
 	// ----------------------------------------------------------------------
 	DataBlockMetadata[] getDataBlocks() throws ClientException;
 
@@ -32,7 +32,7 @@ public interface DfsVolumeClient extends ServiceClient {
 	boolean deleteDataBlock(String accountId, String blockId) throws ClientException;
 
 	// ----------------------------------------------------------------------
-	// Methods for accessing file contents of a data block
+	// File contents
 	// ----------------------------------------------------------------------
 	FileContentMetadata[] getFileContentMetadatas(String accountId, String blockId) throws ClientException;
 
@@ -43,7 +43,7 @@ public interface DfsVolumeClient extends ServiceClient {
 	boolean deleteFileContent(String accountId, String blockId, String fileId, int partId) throws ClientException;
 
 	// ----------------------------------------------------------------------
-	// Methods for uploading/downloading file contents
+	// Upload and download
 	// ----------------------------------------------------------------------
 	boolean uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException;
 

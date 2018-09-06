@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -84,11 +83,11 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			this.serviceRegistry = null;
 		}
 
-		for (Iterator<String> accountIdItor = this.accountIdToFileSystemMap.keySet().iterator(); accountIdItor.hasNext();) {
-			String accountId = accountIdItor.next();
-			FileSystem fileSystem = this.accountIdToFileSystemMap.get(accountId);
-			fileSystem.dispose();
-		}
+		// for (Iterator<String> accountIdItor = this.accountIdToFileSystemMap.keySet().iterator(); accountIdItor.hasNext();) {
+		// String accountId = accountIdItor.next();
+		// FileSystem fileSystem = this.accountIdToFileSystemMap.get(accountId);
+		// fileSystem.dispose();
+		// }
 		this.accountIdToFileSystemMap.clear();
 	}
 

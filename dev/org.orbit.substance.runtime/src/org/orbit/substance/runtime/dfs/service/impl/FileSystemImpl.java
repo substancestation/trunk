@@ -1,7 +1,6 @@
 package org.orbit.substance.runtime.dfs.service.impl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.util.Comparators.DfsVolumeClientComparatorByFreeSpace;
 import org.orbit.substance.runtime.util.DefaultDfsVolumeClientResolver;
-import org.orbit.substance.runtime.util.OrbitClientHelper;
+import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.client.ClientException;
@@ -570,7 +569,7 @@ public class FileSystemImpl implements FileSystem {
 		// - Dfs volumes are sorted by volume id (asc)
 		DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
 
-		DfsVolumeClient[] dfsVolumeClients = OrbitClientHelper.INSTANCE.getDfsVolumeClient(dfsVolumeClientResolver, dfsAccessToken, dfsId);
+		DfsVolumeClient[] dfsVolumeClients = ModelConverter.DfsVolume.getDfsVolumeClient(dfsVolumeClientResolver, dfsAccessToken, dfsId);
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
 			try {
 				// Find an existing datablock with enough space to hold the file content alone.
@@ -727,6 +726,30 @@ public class FileSystemImpl implements FileSystem {
 	}
 
 	@Override
+	public boolean updateFileParts(String fileId, List<FilePart> fileParts) throws IOException {
+		boolean isUpdated = false;
+
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
+
+			FileMetadata fileMetadata = tableHandler.getByFileId(conn, fileId);
+			if (fileMetadata == null) {
+				throw new IOException("File doesn't exist.");
+			}
+
+			isUpdated = tableHandler.updateFileParts(conn, fileId, fileParts);
+
+		} catch (SQLException e) {
+			handleSQLException(e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn, true);
+		}
+		return isUpdated;
+	}
+
+	@Override
 	public FileMetadata mkdirs(Path path) throws IOException {
 		FileMetadata result = null;
 		FileMetadata fileMetadata = getFile(path);
@@ -850,26 +873,12 @@ public class FileSystemImpl implements FileSystem {
 		return false;
 	}
 
-	@Override
-	public boolean setFileContent(String fileId, InputStream contentInputStream) throws IOException {
-		int available = contentInputStream.available();
-		System.out.println("fileId = " + fileId);
-		System.out.println("available = " + available);
-		return false;
-	}
-
-	@Override
-	public InputStream getFileContentInputStream(String fileId) throws IOException {
-		System.out.println("fileId = " + fileId);
-		return null;
-	}
-
-	@Override
-	public void dispose() {
-
-	}
-
 }
+
+// FileMetadata createNewFile(Path path) throws IOException;
+// FileMetadata createNewFile(String parentFileId, String fileName) throws IOException;
+// boolean setFileContent(String fileId, InputStream contentInputStream) throws IOException;
+// InputStream getFileContentInputStream(String fileId) throws IOException;
 
 // get dfs volumes of the dfs
 // SubstanceClientsUtil.DfsVolume.listDataBlocks(fileContentServiceUrl, accessToken, accountId);
@@ -882,4 +891,21 @@ public class FileSystemImpl implements FileSystem {
 // String currBlockId = dataBlock.getBlockId();
 // long currCapacity = dataBlock.getCapacity();
 // long currSize = dataBlock.getSize();
+// }
+
+// @Override
+// public boolean setFileContent(String fileId, InputStream contentInputStream) throws IOException {
+// int available = contentInputStream.available();
+// System.out.println("fileId = " + fileId);
+// System.out.println("available = " + available);
+// return false;
+// }
+// @Override
+// public InputStream getFileContentInputStream(String fileId) throws IOException {
+// System.out.println("fileId = " + fileId);
+// return null;
+// }
+
+// @Override
+// public void dispose() {
 // }

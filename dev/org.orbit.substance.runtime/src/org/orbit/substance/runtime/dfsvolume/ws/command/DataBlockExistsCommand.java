@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class DataBlockExistsCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_content.DataBlockExistsCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs_volume.DataBlockExistsCommand";
 
 	public DataBlockExistsCommand() {
 		super(DfsVolumeService.class);

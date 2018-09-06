@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class DeleteDataBlockCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_content.DeleteDataBlockCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs_volume.DeleteDataBlockCommand";
 
 	public DeleteDataBlockCommand() {
 		super(DfsVolumeService.class);

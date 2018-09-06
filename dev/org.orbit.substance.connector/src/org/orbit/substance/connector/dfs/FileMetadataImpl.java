@@ -283,7 +283,7 @@ public class FileMetadataImpl implements FileMetadata {
 				throw new IOException("File is not in trash.");
 			}
 
-			FileMetadata newFile = this.fsClient.putBackFromTrash(this.fileId);
+			FileMetadata newFile = this.fsClient.moveOutOfTrash(this.fileId);
 			if (newFile != null) {
 				succeed = true;
 				update(newFile);

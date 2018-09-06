@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class UpdateDataBlockSizeByDeltaCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_content.UpdateDataBlockSizeByDeltaCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs_volume.UpdateDataBlockSizeByDeltaCommand";
 
 	public UpdateDataBlockSizeByDeltaCommand() {
 		super(DfsVolumeService.class);

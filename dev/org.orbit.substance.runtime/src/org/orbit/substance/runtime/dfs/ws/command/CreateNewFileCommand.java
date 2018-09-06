@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class CreateNewFileCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.CreateNewFileCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.CreateNewFileCommand";
 
 	public CreateNewFileCommand() {
 		super(DfsService.class);

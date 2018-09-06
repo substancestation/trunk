@@ -22,7 +22,9 @@ import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.model.util.FilePartsReader;
+import org.orbit.substance.model.util.FilePartsWriter;
 import org.orbit.substance.model.util.PendingFilesReader;
+import org.orbit.substance.model.util.PendingFilesWriter;
 import org.origin.common.json.JSONUtil;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.util.ResponseUtil;
@@ -189,6 +191,16 @@ public class ModelConverter {
 		 * @return
 		 * @throws ClientException
 		 */
+		public boolean isUpdated(Response response) throws ClientException {
+			return isSucceed(response);
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
 		public boolean isDeleted(Response response) throws ClientException {
 			return isSucceed(response);
 		}
@@ -224,13 +236,18 @@ public class ModelConverter {
 		}
 
 		/**
+		 * Convert FilePart objects to json string
 		 * 
-		 * @param propertiesString
+		 * @param fileParts
 		 * @return
 		 */
-		public Map<String, Object> toProperties(String propertiesString) {
-			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
-			return properties;
+		public String toFilePartsString(List<FilePart> fileParts) {
+			FilePartsWriter writer = new FilePartsWriter();
+			String filePartsString = writer.write(fileParts);
+			if (filePartsString == null) {
+				filePartsString = "";
+			}
+			return filePartsString;
 		}
 
 		/**
@@ -245,6 +262,26 @@ public class ModelConverter {
 				fileParts = new ArrayList<FilePart>();
 			}
 			return fileParts;
+		}
+
+		/**
+		 * 
+		 * @param properties
+		 * @return
+		 */
+		public String toPropertiesString(Map<String, Object> properties) {
+			String propertiesString = JSONUtil.toJsonString(properties);
+			return propertiesString;
+		}
+
+		/**
+		 * 
+		 * @param propertiesString
+		 * @return
+		 */
+		public Map<String, Object> toProperties(String propertiesString) {
+			Map<String, Object> properties = JSONUtil.toProperties(propertiesString, true);
+			return properties;
 		}
 	}
 
@@ -491,6 +528,21 @@ public class ModelConverter {
 		}
 
 		/**
+		 * Convert PendingFile objects to json string
+		 * 
+		 * @param pendingFiles
+		 * @return
+		 */
+		public String toPendingFilesString(List<PendingFile> pendingFiles) {
+			PendingFilesWriter writer = new PendingFilesWriter();
+			String pendingFilesString = writer.write(pendingFiles);
+			if (pendingFilesString == null) {
+				pendingFilesString = "";
+			}
+			return pendingFilesString;
+		}
+
+		/**
 		 * Convert json string to PendingFile objects
 		 * 
 		 * @param pendingFilesString
@@ -503,6 +555,16 @@ public class ModelConverter {
 				pendingFiles = new ArrayList<PendingFile>();
 			}
 			return pendingFiles;
+		}
+
+		/**
+		 * 
+		 * @param properties
+		 * @return
+		 */
+		public String toPropertiesString(Map<String, Object> properties) {
+			String propertiesString = JSONUtil.toJsonString(properties);
+			return propertiesString;
 		}
 
 		/**

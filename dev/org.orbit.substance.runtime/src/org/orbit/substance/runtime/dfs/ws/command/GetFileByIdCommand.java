@@ -16,7 +16,7 @@ import org.origin.common.rest.model.Request;
 
 public class GetFileByIdCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.GetFileByIdCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.GetFileByIdCommand";
 
 	public GetFileByIdCommand() {
 		super(DfsService.class);

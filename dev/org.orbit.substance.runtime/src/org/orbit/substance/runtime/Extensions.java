@@ -21,6 +21,7 @@ import org.orbit.substance.runtime.dfs.ws.command.MoveToTrashByIdCommand;
 import org.orbit.substance.runtime.dfs.ws.command.MoveToTrashByPathCommand;
 import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByIdCommand;
 import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.UpdateFilePartsCommand;
 import org.orbit.substance.runtime.dfs.ws.command.UploadFileToDirectoryCommand;
 import org.orbit.substance.runtime.dfs.ws.command.UploadFileToFileCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.DfsVolumeServiceTimerFactory;
@@ -195,68 +196,75 @@ public class Extensions extends ProgramExtensions {
 		extension11.addInterface(desc11);
 		addExtension(extension11);
 
-		Extension extension12 = new Extension(extensionTypeId, MoveToTrashByIdCommand.ID);
+		Extension extension12 = new Extension(extensionTypeId, UpdateFilePartsCommand.ID);
 		extension12.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc12 = new InterfaceDescription(WSCommand.class, MoveToTrashByIdCommand.class);
+		InterfaceDescription desc12 = new InterfaceDescription(WSCommand.class, UpdateFilePartsCommand.class);
 		desc12.setSingleton(false);
 		extension12.addInterface(desc12);
 		addExtension(extension12);
 
-		Extension extension13 = new Extension(extensionTypeId, MoveToTrashByPathCommand.ID);
+		Extension extension13 = new Extension(extensionTypeId, MoveToTrashByIdCommand.ID);
 		extension13.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc13 = new InterfaceDescription(WSCommand.class, MoveToTrashByPathCommand.class);
+		InterfaceDescription desc13 = new InterfaceDescription(WSCommand.class, MoveToTrashByIdCommand.class);
 		desc13.setSingleton(false);
 		extension13.addInterface(desc13);
 		addExtension(extension13);
 
-		Extension extension14 = new Extension(extensionTypeId, PutBackFromTrashByIdCommand.ID);
+		Extension extension14 = new Extension(extensionTypeId, MoveToTrashByPathCommand.ID);
 		extension14.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc14 = new InterfaceDescription(WSCommand.class, PutBackFromTrashByIdCommand.class);
+		InterfaceDescription desc14 = new InterfaceDescription(WSCommand.class, MoveToTrashByPathCommand.class);
 		desc14.setSingleton(false);
 		extension14.addInterface(desc14);
 		addExtension(extension14);
 
-		Extension extension15 = new Extension(extensionTypeId, PutBackFromTrashByPathCommand.ID);
+		Extension extension15 = new Extension(extensionTypeId, PutBackFromTrashByIdCommand.ID);
 		extension15.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc15 = new InterfaceDescription(WSCommand.class, PutBackFromTrashByPathCommand.class);
+		InterfaceDescription desc15 = new InterfaceDescription(WSCommand.class, PutBackFromTrashByIdCommand.class);
 		desc15.setSingleton(false);
 		extension15.addInterface(desc15);
 		addExtension(extension15);
 
-		Extension extension16 = new Extension(extensionTypeId, DeleteFileByIdCommand.ID);
+		Extension extension16 = new Extension(extensionTypeId, PutBackFromTrashByPathCommand.ID);
 		extension16.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc16 = new InterfaceDescription(WSCommand.class, DeleteFileByIdCommand.class);
+		InterfaceDescription desc16 = new InterfaceDescription(WSCommand.class, PutBackFromTrashByPathCommand.class);
 		desc16.setSingleton(false);
 		extension16.addInterface(desc16);
 		addExtension(extension16);
 
-		Extension extension17 = new Extension(extensionTypeId, DeleteFileByPathCommand.ID);
+		Extension extension17 = new Extension(extensionTypeId, DeleteFileByIdCommand.ID);
 		extension17.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc17 = new InterfaceDescription(WSCommand.class, DeleteFileByPathCommand.class);
+		InterfaceDescription desc17 = new InterfaceDescription(WSCommand.class, DeleteFileByIdCommand.class);
 		desc17.setSingleton(false);
 		extension17.addInterface(desc17);
 		addExtension(extension17);
 
-		Extension extension18 = new Extension(extensionTypeId, UploadFileToFileCommand.ID);
+		Extension extension18 = new Extension(extensionTypeId, DeleteFileByPathCommand.ID);
 		extension18.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc18 = new InterfaceDescription(WSCommand.class, UploadFileToFileCommand.class);
+		InterfaceDescription desc18 = new InterfaceDescription(WSCommand.class, DeleteFileByPathCommand.class);
 		desc18.setSingleton(false);
 		extension18.addInterface(desc18);
 		addExtension(extension18);
 
-		Extension extension19 = new Extension(extensionTypeId, UploadFileToDirectoryCommand.ID);
+		Extension extension19 = new Extension(extensionTypeId, UploadFileToFileCommand.ID);
 		extension19.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc19 = new InterfaceDescription(WSCommand.class, UploadFileToDirectoryCommand.class);
+		InterfaceDescription desc19 = new InterfaceDescription(WSCommand.class, UploadFileToFileCommand.class);
 		desc19.setSingleton(false);
 		extension19.addInterface(desc19);
 		addExtension(extension19);
 
-		Extension extension20 = new Extension(extensionTypeId, DownloadFileCommand.ID);
+		Extension extension20 = new Extension(extensionTypeId, UploadFileToDirectoryCommand.ID);
 		extension20.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc20 = new InterfaceDescription(WSCommand.class, DownloadFileCommand.class);
+		InterfaceDescription desc20 = new InterfaceDescription(WSCommand.class, UploadFileToDirectoryCommand.class);
 		desc20.setSingleton(false);
 		extension20.addInterface(desc20);
 		addExtension(extension20);
+
+		Extension extension21 = new Extension(extensionTypeId, DownloadFileCommand.ID);
+		extension21.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc21 = new InterfaceDescription(WSCommand.class, DownloadFileCommand.class);
+		desc21.setSingleton(false);
+		extension21.addInterface(desc21);
+		addExtension(extension21);
 	}
 
 	protected void createEditPolicyCommandExtensions2() {

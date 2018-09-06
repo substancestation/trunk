@@ -54,7 +54,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	}
 
 	// ----------------------------------------------------------------------
-	// Methods for accessing data blocks
+	// Data blocks
 	// ----------------------------------------------------------------------
 	@Override
 	public DataBlockMetadata[] getDataBlocks() throws ClientException {
@@ -194,7 +194,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	}
 
 	// ----------------------------------------------------------------------
-	// Methods for accessing file contents of a data block
+	// File contents
 	// ----------------------------------------------------------------------
 	@Override
 	public FileContentMetadata[] getFileContentMetadatas(String accountId, String blockId) throws ClientException {
@@ -267,14 +267,13 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	}
 
 	// ----------------------------------------------------------------------
-	// Methods for uploading/downloading file contents
+	// Upload and download
 	// ----------------------------------------------------------------------
 	@Override
 	public boolean uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException {
 		boolean succeed = false;
 		Response response = getWSClient().upload(accountId, blockId, fileId, checksum, file);
 		if (response != null) {
-			// succeed = ModelConverter.DfsVolume.isUploaded(response);
 			FileContentMetadata fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 			if (fileContent != null) {
 				succeed = true;
@@ -288,7 +287,6 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		boolean succeed = false;
 		Response response = getWSClient().upload(accountId, blockId, fileId, partId, size, checksum, inputStream);
 		if (response != null) {
-			// succeed = ModelConverter.DfsVolume.isUploaded(response);
 			FileContentMetadata fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 			if (fileContent != null) {
 				succeed = true;
@@ -303,3 +301,6 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	}
 
 }
+
+// succeed = ModelConverter.DfsVolume.isUploaded(response);
+// succeed = ModelConverter.DfsVolume.isUploaded(response);

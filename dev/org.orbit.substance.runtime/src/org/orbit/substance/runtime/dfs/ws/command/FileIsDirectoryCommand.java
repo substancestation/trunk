@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class FileIsDirectoryCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.FileIsDirectoryCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.FileIsDirectoryCommand";
 
 	public FileIsDirectoryCommand() {
 		super(DfsService.class);

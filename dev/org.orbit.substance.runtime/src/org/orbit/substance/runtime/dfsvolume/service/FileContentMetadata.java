@@ -10,18 +10,15 @@ public interface FileContentMetadata {
 
 	long getSize();
 
-	void setSize(long size);
-
 	long getChecksum();
-
-	void setChecksum(long checksum);
 
 	long getDateCreated();
 
-	void setDateCreated(long dateCreated);
-
 	long getDateModified();
 
-	void setDateModified(long dateModified);
-
 }
+
+// void setSize(long size);
+// void setChecksum(long checksum);
+// void setDateCreated(long dateCreated);
+// void setDateModified(long dateModified);

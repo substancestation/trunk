@@ -7,17 +7,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.orbit.substance.model.RequestConstants;
-import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
+import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 
 public class DeleteFileByIdCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.DeleteFileByIdCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.DeleteFileByIdCommand";
 
 	public DeleteFileByIdCommand() {
 		super(DfsService.class);

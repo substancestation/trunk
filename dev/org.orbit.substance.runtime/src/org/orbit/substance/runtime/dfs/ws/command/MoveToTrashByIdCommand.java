@@ -16,7 +16,7 @@ import org.origin.common.rest.model.Request;
 
 public class MoveToTrashByIdCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.MoveToTrashByIdCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.MoveToTrashByIdCommand";
 
 	public MoveToTrashByIdCommand() {
 		super(DfsService.class);

@@ -31,6 +31,8 @@ public interface DfsClient extends ServiceClient {
 
 	FileMetadata allocateVolumes(String fileId, long size) throws ClientException;
 
+	boolean updateFileParts(String fileId, String filePartsString) throws ClientException;
+
 	FileMetadata mkdirs(Path path) throws ClientException;
 
 	boolean delete(String fileId) throws ClientException;
@@ -41,9 +43,9 @@ public interface DfsClient extends ServiceClient {
 
 	FileMetadata moveToTrash(Path path) throws ClientException;
 
-	FileMetadata putBackFromTrash(String fileId) throws ClientException;
+	FileMetadata moveOutOfTrash(String fileId) throws ClientException;
 
-	FileMetadata putBackFromTrash(Path path) throws ClientException;
+	FileMetadata moveOutOfTrash(Path path) throws ClientException;
 
 	boolean emptyTrash() throws ClientException;
 

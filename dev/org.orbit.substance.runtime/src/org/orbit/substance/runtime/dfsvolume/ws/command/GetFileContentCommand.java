@@ -17,7 +17,7 @@ import org.origin.common.rest.model.Request;
 
 public class GetFileContentCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_content.GetFileContentCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs_volume.GetFileContentCommand";
 
 	public GetFileContentCommand() {
 		super(DfsVolumeService.class);
@@ -71,7 +71,7 @@ public class GetFileContentCommand extends AbstractDfsVolumeWSCommand<DfsVolumeS
 			if (accountId.equals(theAccountId)) {
 				accountAndBlockMatch = true;
 
-				FileContentMetadata fileContent = service.getFileContentMetadata(accountId, blockId, fileId, partId);
+				FileContentMetadata fileContent = service.getFileContent(accountId, blockId, fileId, partId);
 				if (fileContent != null) {
 					fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);
 				}

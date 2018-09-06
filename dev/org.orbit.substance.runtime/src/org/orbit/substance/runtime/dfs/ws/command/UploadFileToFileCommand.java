@@ -10,7 +10,7 @@ import org.origin.common.rest.model.Request;
 
 public class UploadFileToFileCommand extends AbstractDfsCommand<DfsService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_metadata.UploadFileToFileCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs.UploadFileToFileCommand";
 
 	public UploadFileToFileCommand() {
 		super(DfsService.class);

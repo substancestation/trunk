@@ -170,11 +170,11 @@ public class DfsFileContentWSResource extends AbstractWSApplicationResource {
 			}
 
 			String fileId = newFile.getFileId();
-			succeed = fileSystem.setFileContent(fileId, contentInputStream);
-			if (!succeed) {
-				StatusDTO statusDTO = new StatusDTO(StatusDTO.RESP_304, StatusDTO.FAILED, "File content is not set.");
-				return Response.status(Status.NOT_MODIFIED).entity(statusDTO).build();
-			}
+			// succeed = fileSystem.setFileContent(fileId, contentInputStream);
+			// if (!succeed) {
+			// StatusDTO statusDTO = new StatusDTO(StatusDTO.RESP_304, StatusDTO.FAILED, "File content is not set.");
+			// return Response.status(Status.NOT_MODIFIED).entity(statusDTO).build();
+			// }
 
 		} catch (IOException e) {
 			ErrorDTO error = handleError(e, "500", true);
@@ -249,10 +249,10 @@ public class DfsFileContentWSResource extends AbstractWSApplicationResource {
 			String fileId = file.getFileId();
 			fileName = file.getName();
 
-			input = fileSystem.getFileContentInputStream(fileId);
-			if (input != null) {
-				bytes = IOUtil.toByteArray(input);
-			}
+			// input = fileSystem.getFileContentInputStream(fileId);
+			// if (input != null) {
+			// bytes = IOUtil.toByteArray(input);
+			// }
 
 		} catch (IOException e) {
 			ErrorDTO error = handleError(e, StatusDTO.RESP_500, true);

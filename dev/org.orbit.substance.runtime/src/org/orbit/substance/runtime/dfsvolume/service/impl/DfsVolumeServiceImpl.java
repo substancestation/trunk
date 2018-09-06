@@ -574,7 +574,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	public static FileContentMetadata[] EMPTY_FILE_CONTENTS = new FileContentMetadata[0];
 
 	@Override
-	public FileContentMetadata[] getFileContentMetadatas(String accountId, String blockId) throws ServerException {
+	public FileContentMetadata[] getFileContents(String accountId, String blockId) throws ServerException {
 		FileContentMetadata[] result = null;
 		Connection conn = null;
 		try {
@@ -598,7 +598,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public FileContentMetadata getFileContentMetadata(String accountId, String blockId, String fileId, int partId) throws ServerException {
+	public FileContentMetadata getFileContent(String accountId, String blockId, String fileId, int partId) throws ServerException {
 		FileContentMetadata result = null;
 		Connection conn = null;
 		try {
@@ -616,7 +616,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public FileContentMetadata createFileContentMetadata(String accountId, String blockId, String fileId, int partId, long size, long checksum) throws ServerException {
+	public FileContentMetadata createFileContent(String accountId, String blockId, String fileId, int partId, long size, long checksum) throws ServerException {
 		FileContentMetadata result = null;
 		Connection conn = null;
 		try {
@@ -642,7 +642,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public boolean updateFileContentMetadata(String accountId, String blockId, FileContentMetadata fileContentMetadata) throws ServerException {
+	public boolean updateFileContent(String accountId, String blockId, FileContentMetadata fileContentMetadata) throws ServerException {
 		boolean isUpdated = false;
 		Connection conn = null;
 		try {
@@ -696,7 +696,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	// Methods for getting/setting file contents
 	// ----------------------------------------------------------------------
 	@Override
-	public InputStream getFileContentInputStream(String accountId, String blockId, String fileId, int partId) throws ServerException {
+	public InputStream getContentInputStream(String accountId, String blockId, String fileId, int partId) throws ServerException {
 		InputStream input = null;
 		Connection conn = null;
 		try {
@@ -717,7 +717,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public void getFileContent(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ServerException {
+	public void getContent(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ServerException {
 		InputStream input = null;
 		Connection conn = null;
 		try {
@@ -745,7 +745,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	}
 
 	@Override
-	public boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream inputStream) throws ServerException {
+	public boolean setContent(String accountId, String blockId, String fileId, int partId, InputStream inputStream) throws ServerException {
 		boolean isUpdated = false;
 		Connection conn = null;
 		try {
@@ -761,41 +761,6 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			}
 
 			isUpdated = tableHandler.setContent(conn, fileId, partId, inputStream);
-
-		} catch (SQLException e) {
-			handleSQLException(e);
-
-		} finally {
-			DatabaseUtil.closeQuietly(conn, true);
-		}
-		return isUpdated;
-	}
-
-	@Override
-	public boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream inputStream, FileContentMetadata fileContentToUpdate) throws ServerException {
-		boolean isUpdated = false;
-		Connection conn = null;
-		try {
-			conn = getConnection();
-
-			String dfsVolumeId = getVolumeId();
-			VolumeFileContentTableHandler tableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId);
-			tableHandler.setDatabase(this.database);
-
-			FileContentMetadata fileContent = tableHandler.get(conn, fileId, partId);
-			if (fileContent == null) {
-				throw new ServerException(StatusDTO.RESP_500, "File content metadata is not found.");
-			}
-
-			boolean isContentUpdated = tableHandler.setContent(conn, fileId, partId, inputStream);
-			boolean isMetadataUpdated = false;
-			if (isContentUpdated) {
-				isMetadataUpdated = tableHandler.update(conn, fileContentToUpdate);
-			}
-
-			if (isContentUpdated && isMetadataUpdated) {
-				isUpdated = true;
-			}
 
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -853,4 +818,40 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 // }
 // }
 // }
+// }
+
+// @Override
+// public boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream inputStream, FileContentMetadata
+// fileContentToUpdate) throws ServerException {
+// boolean isUpdated = false;
+// Connection conn = null;
+// try {
+// conn = getConnection();
+//
+// String dfsVolumeId = getVolumeId();
+// VolumeFileContentTableHandler tableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsVolumeId, blockId);
+// tableHandler.setDatabase(this.database);
+//
+// FileContentMetadata fileContent = tableHandler.get(conn, fileId, partId);
+// if (fileContent == null) {
+// throw new ServerException(StatusDTO.RESP_500, "File content metadata is not found.");
+// }
+//
+// boolean isContentUpdated = tableHandler.setContent(conn, fileId, partId, inputStream);
+// boolean isMetadataUpdated = false;
+// if (isContentUpdated) {
+// isMetadataUpdated = tableHandler.update(conn, fileContentToUpdate);
+// }
+//
+// if (isContentUpdated && isMetadataUpdated) {
+// isUpdated = true;
+// }
+//
+// } catch (SQLException e) {
+// handleSQLException(e);
+//
+// } finally {
+// DatabaseUtil.closeQuietly(conn, true);
+// }
+// return isUpdated;
 // }

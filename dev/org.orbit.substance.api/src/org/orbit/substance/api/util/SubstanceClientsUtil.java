@@ -63,15 +63,36 @@ public class SubstanceClientsUtil {
 		 * @throws ClientException
 		 */
 		public FileMetadata[] listRoots(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
-			FileMetadata[] rootFiles = null;
+			FileMetadata[] rootFileMetadatas = null;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
-				rootFiles = dfsClient.listRoots();
+				rootFileMetadatas = dfsClient.listRoots();
 			}
-			if (rootFiles == null) {
-				rootFiles = EMPTY_FILES;
+			if (rootFileMetadatas == null) {
+				rootFileMetadatas = EMPTY_FILES;
 			}
-			return rootFiles;
+			return rootFileMetadatas;
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param parentFileId
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata[] listFiles(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String parentFileId) throws ClientException {
+			FileMetadata[] memberFileMetadatas = null;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				memberFileMetadatas = dfsClient.listFiles(parentFileId);
+			}
+			if (memberFileMetadatas == null) {
+				memberFileMetadatas = EMPTY_FILES;
+			}
+			return memberFileMetadatas;
 		}
 
 		/**
@@ -84,12 +105,12 @@ public class SubstanceClientsUtil {
 		 * @throws ClientException
 		 */
 		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
-			FileMetadata file = null;
+			FileMetadata fileMetadata = null;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
-				file = dfsClient.createNewFile(path);
+				fileMetadata = dfsClient.createNewFile(path);
 			}
-			return file;
+			return fileMetadata;
 		}
 
 		/**
@@ -103,13 +124,13 @@ public class SubstanceClientsUtil {
 		 * @throws ClientException
 		 */
 		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path, java.io.File localFile) throws ClientException {
-			FileMetadata file = null;
+			FileMetadata fileMetadata = null;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
 				long size = localFile.length();
-				file = dfsClient.createNewFile(path, size);
+				fileMetadata = dfsClient.createNewFile(path, size);
 			}
-			return file;
+			return fileMetadata;
 		}
 
 		/**
@@ -154,6 +175,25 @@ public class SubstanceClientsUtil {
 
 		/**
 		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileId
+		 * @param filePartsString
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean updateFileParts(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId, String filePartsString) throws ClientException {
+			boolean isUpdated = false;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null && filePartsString != null) {
+				isUpdated = dfsClient.updateFileParts(fileId, filePartsString);
+			}
+			return isUpdated;
+		}
+
+		/**
+		 * 
 		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @return
@@ -173,6 +213,7 @@ public class SubstanceClientsUtil {
 
 	public static class DfsVolume {
 		public static final DataBlockMetadata[] EMPTY_DATA_BLOCKS = new DataBlockMetadata[0];
+		public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 		/**
 		 * 
@@ -292,8 +333,6 @@ public class SubstanceClientsUtil {
 			return succeed;
 		}
 
-		private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
-
 		/**
 		 * 
 		 * @param dfsVolumeClientResolver
@@ -304,7 +343,7 @@ public class SubstanceClientsUtil {
 		 * @throws ClientException
 		 * @throws IOException
 		 */
-		public boolean uploadFileContent(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, File localFile) throws ClientException, IOException {
+		public boolean uploadFile(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, File localFile) throws ClientException, IOException {
 			if (fileMetadata == null) {
 				throw new IllegalArgumentException("fileMetadata is null.");
 			}
@@ -315,7 +354,7 @@ public class SubstanceClientsUtil {
 				throw new IllegalArgumentException(" localFile doesn't exist.");
 			}
 
-			boolean succeed = false;
+			boolean isUploaded = false;
 
 			String fileId = fileMetadata.getFileId();
 			List<FilePart> fileParts = fileMetadata.getFileParts();
@@ -358,8 +397,8 @@ public class SubstanceClientsUtil {
 					}
 				}
 
-				succeed = (uploadSucceed && !uploadFailed) ? true : false;
-				if (succeed) {
+				isUploaded = (uploadSucceed && !uploadFailed) ? true : false;
+				if (isUploaded) {
 					filePart.setChecksum(partChecksum);
 				}
 
@@ -438,8 +477,8 @@ public class SubstanceClientsUtil {
 								}
 							}
 
-							succeed = (uploadSucceed && !uploadFailed) ? true : false;
-							if (succeed) {
+							isUploaded = (uploadSucceed && !uploadFailed) ? true : false;
+							if (isUploaded) {
 								filePart.setChecksum(partChecksum);
 							}
 
@@ -453,7 +492,7 @@ public class SubstanceClientsUtil {
 				}
 			}
 
-			return succeed;
+			return isUploaded;
 		}
 
 		/**

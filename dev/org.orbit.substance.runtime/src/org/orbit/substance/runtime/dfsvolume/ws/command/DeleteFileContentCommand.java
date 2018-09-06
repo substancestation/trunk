@@ -18,7 +18,7 @@ import org.origin.common.rest.model.Request;
 
 public class DeleteFileContentCommand extends AbstractDfsVolumeWSCommand<DfsVolumeService> implements WSCommand {
 
-	public static String ID = "org.orbit.substance.runtime.dfs_content.DeleteFileContentCommand";
+	public static String ID = "org.orbit.substance.runtime.dfs_volume.DeleteFileContentCommand";
 
 	public DeleteFileContentCommand() {
 		super(DfsVolumeService.class);
@@ -72,7 +72,7 @@ public class DeleteFileContentCommand extends AbstractDfsVolumeWSCommand<DfsVolu
 			if (accountId.equals(theAccountId)) {
 				accountAndBlockMatch = true;
 
-				FileContentMetadata fileContent = service.getFileContentMetadata(accountId, blockId, fileId, partId);
+				FileContentMetadata fileContent = service.getFileContent(accountId, blockId, fileId, partId);
 				if (fileContent != null) {
 					exists = true;
 				}
