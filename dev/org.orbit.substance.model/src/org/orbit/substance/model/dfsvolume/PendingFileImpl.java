@@ -1,6 +1,9 @@
 package org.orbit.substance.model.dfsvolume;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import org.origin.common.util.TimeUtil;
 
 public class PendingFileImpl implements PendingFile {
 
@@ -44,6 +47,18 @@ public class PendingFileImpl implements PendingFile {
 
 	public void setDateCreated(long dateCreated) {
 		this.dateCreated = dateCreated;
+	}
+
+	@Override
+	public boolean isExpired() {
+		long dateCreated = getDateCreated();
+		boolean isExpired = false;
+		Date expireTime = TimeUtil.addTimeToDate(new Date(dateCreated), 120, TimeUnit.SECONDS);
+		Date timeNow = new Date();
+		if (timeNow.after(expireTime)) {
+			isExpired = true;
+		}
+		return isExpired;
 	}
 
 }

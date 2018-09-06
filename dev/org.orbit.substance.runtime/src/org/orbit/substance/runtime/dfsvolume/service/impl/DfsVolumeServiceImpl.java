@@ -6,13 +6,11 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.SubstanceConstants;
@@ -28,7 +26,6 @@ import org.origin.common.rest.server.ServerException;
 import org.origin.common.rest.util.LifecycleAware;
 import org.origin.common.util.DiskSpaceUnit;
 import org.origin.common.util.PropertyUtil;
-import org.origin.common.util.TimeUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
@@ -508,8 +505,8 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 
 			List<PendingFile> pendingFilesToRemove = new ArrayList<PendingFile>();
 			List<PendingFile> pendingFiles = dataBlock.getPendingFiles();
+
 			for (PendingFile pendingFile : pendingFiles) {
-				long dateCreated = pendingFile.getDateCreated();
 				String currFileId = pendingFile.getFileId();
 				if (fileId.equals(currFileId)) {
 					pendingFilesToRemove.add(pendingFile);
@@ -518,14 +515,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 						// Note:
 						// - PendingFile item expires in 120 seconds.
 						// - After certain space is reserved in a data block, it is expected that the file content can be uploaded within 120 seconds.long
-						// dateCreated = pendingFile.getDateCreated();
-						boolean isExpired = false;
-						Date expireTime = TimeUtil.addTimeToDate(new Date(dateCreated), 120, TimeUnit.SECONDS);
-						Date timeNow = new Date();
-						if (timeNow.after(expireTime)) {
-							isExpired = true;
-						}
-						if (isExpired) {
+						if (pendingFile.isExpired()) {
 							pendingFilesToRemove.add(pendingFile);
 						}
 					}

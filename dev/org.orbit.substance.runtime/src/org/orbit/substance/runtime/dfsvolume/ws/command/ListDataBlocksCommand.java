@@ -64,7 +64,11 @@ public class ListDataBlocksCommand extends AbstractDfsVolumeWSCommand<DfsVolumeS
 					long size = dataBlock.getSize();
 					long pendingSize = 0;
 					List<PendingFile> pendingFiles = dataBlock.getPendingFiles();
+
 					for (PendingFile pendingFile : pendingFiles) {
+						if (pendingFile.isExpired()) {
+							continue;
+						}
 						pendingSize += pendingFile.getSize();
 					}
 

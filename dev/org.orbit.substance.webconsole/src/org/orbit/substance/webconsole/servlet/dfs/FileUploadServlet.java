@@ -142,8 +142,8 @@ public class FileUploadServlet extends HttpServlet {
 						List<FilePart> fileParts = fileMetadata.getFileParts();
 						String filePartsString = ModelConverter.Dfs.toFilePartsString(fileParts);
 
-						boolean isFileParts = SubstanceClientsUtil.Dfs.updateFileParts(dfsClientResolver, dfsServiceUrl, accessToken, fileId, filePartsString);
-						if (isFileParts) {
+						boolean isFilePartsUpdated = SubstanceClientsUtil.Dfs.updateFileParts(dfsClientResolver, dfsServiceUrl, accessToken, fileId, filePartsString);
+						if (isFilePartsUpdated) {
 							message = MessageHelper.INSTANCE.add(message, "File parts are updated.");
 						} else {
 							message = MessageHelper.INSTANCE.add(message, "File parts are not updated.");

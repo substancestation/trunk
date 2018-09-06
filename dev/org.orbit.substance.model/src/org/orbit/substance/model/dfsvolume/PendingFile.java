@@ -12,4 +12,6 @@ public interface PendingFile {
 
 	long getDateCreated();
 
+	boolean isExpired();
+
 }

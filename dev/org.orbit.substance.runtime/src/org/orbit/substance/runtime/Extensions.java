@@ -182,23 +182,23 @@ public class Extensions extends ProgramExtensions {
 		extension9.addInterface(desc9);
 		addExtension(extension9);
 
-		Extension extension10 = new Extension(extensionTypeId, MkdirCommand.ID);
+		Extension extension10 = new Extension(extensionTypeId, CreateNewFileCommand.ID);
 		extension10.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc10 = new InterfaceDescription(WSCommand.class, MkdirCommand.class);
+		InterfaceDescription desc10 = new InterfaceDescription(WSCommand.class, CreateNewFileCommand.class);
 		desc10.setSingleton(false);
 		extension10.addInterface(desc10);
 		addExtension(extension10);
 
-		Extension extension11 = new Extension(extensionTypeId, CreateNewFileCommand.ID);
+		Extension extension11 = new Extension(extensionTypeId, UpdateFilePartsCommand.ID);
 		extension11.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc11 = new InterfaceDescription(WSCommand.class, CreateNewFileCommand.class);
+		InterfaceDescription desc11 = new InterfaceDescription(WSCommand.class, UpdateFilePartsCommand.class);
 		desc11.setSingleton(false);
 		extension11.addInterface(desc11);
 		addExtension(extension11);
 
-		Extension extension12 = new Extension(extensionTypeId, UpdateFilePartsCommand.ID);
+		Extension extension12 = new Extension(extensionTypeId, MkdirCommand.ID);
 		extension12.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc12 = new InterfaceDescription(WSCommand.class, UpdateFilePartsCommand.class);
+		InterfaceDescription desc12 = new InterfaceDescription(WSCommand.class, MkdirCommand.class);
 		desc12.setSingleton(false);
 		extension12.addInterface(desc12);
 		addExtension(extension12);
