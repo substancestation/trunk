@@ -28,6 +28,8 @@ import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.DefaultDfsClientResolver;
 import org.orbit.substance.webconsole.util.DefaultDfsVolumeClientResolver;
 import org.orbit.substance.webconsole.util.MessageHelper;
+import org.origin.common.util.DiskSpaceUnit;
+import org.origin.common.util.ServletUtil;
 
 /**
  * Upon receiving file upload submission, parses the request to read upload data and saves the file on disk.
@@ -42,10 +44,14 @@ public class FileUploadServlet extends HttpServlet {
 	// location to store file uploaded
 	protected static final String UPLOAD_DIRECTORY = "upload";
 
-	// upload settings
-	protected static final int MEMORY_THRESHOLD = 10 * 1024 * 1024; // 10MB
-	protected static final int MAX_FILE_SIZE = 250 * 1024 * 1024; // 250MB
-	protected static final int MAX_REQUEST_SIZE = 260 * 1024 * 1024; // 260MB
+	// // upload settings
+	// protected static final int MEMORY_THRESHOLD = 10 * 1024 * 1024; // 10MB
+	// protected static final int MAX_FILE_SIZE = 250 * 1024 * 1024; // 250MB
+	// protected static final int MAX_REQUEST_SIZE = 260 * 1024 * 1024; // 260MB
+
+	protected static final long MEMORY_THRESHOLD = DiskSpaceUnit.MB.toBytes(50);
+	protected static final long MAX_FILE_SIZE = DiskSpaceUnit.MB.toBytes(250);
+	protected static final long MAX_REQUEST_SIZE = DiskSpaceUnit.MB.toBytes(260);
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -54,10 +60,7 @@ public class FileUploadServlet extends HttpServlet {
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = "";
-		String parentFileId = (String) request.getParameter("parentFileId");
-		if (parentFileId == null || parentFileId.isEmpty()) {
-			parentFileId = "-1";
-		}
+		String parentFileId = ServletUtil.getParameter(request, "parentFileId", "-1");
 
 		// 1. Check http request with multipart form
 		boolean isMultipartForm = ServletFileUpload.isMultipartContent(request);
@@ -67,6 +70,7 @@ public class FileUploadServlet extends HttpServlet {
 
 		if (isMultipartForm) {
 			File dfsUploadDir = null;
+			List<File> localFiles = new ArrayList<File>();
 			try {
 				// 2. Prepare common upload directory
 				String platformHome = PlatformSDKActivator.getInstance().getPlatform().getHome();
@@ -85,7 +89,7 @@ public class FileUploadServlet extends HttpServlet {
 
 				// 4. Configure upload settings
 				DiskFileItemFactory factory = new DiskFileItemFactory();
-				factory.setSizeThreshold(MEMORY_THRESHOLD); // sets memory threshold - beyond which files are stored in disk
+				factory.setSizeThreshold((int) MEMORY_THRESHOLD); // sets memory threshold - beyond which files are stored in disk
 				factory.setRepository(new File(System.getProperty("java.io.tmpdir"))); // sets temporary location to store files
 
 				ServletFileUpload upload = new ServletFileUpload(factory);
@@ -99,10 +103,12 @@ public class FileUploadServlet extends HttpServlet {
 				}
 
 				// 6. Upload file to local folder of the web server
-				List<File> localFiles = new ArrayList<File>();
 				for (FileItem fileItem : fileItems) {
 					if (!fileItem.isFormField()) {
 						String fileName = fileItem.getName();
+						if (fileName == null || fileName.isEmpty()) {
+							continue;
+						}
 						try {
 							File localFile = new File(dfsUploadDir, fileName);
 							fileItem.write(localFile);
@@ -114,6 +120,10 @@ public class FileUploadServlet extends HttpServlet {
 							message = MessageHelper.INSTANCE.add(message, "File '" + fileName + "' is not uploaded to web server. " + e.getMessage());
 						}
 					}
+				}
+
+				if (localFiles.isEmpty()) {
+					message = MessageHelper.INSTANCE.add(message, "File is not selected.");
 				}
 
 				// 7. Create file metadata in dfs and upload file content to dfs volume.
@@ -161,9 +171,11 @@ public class FileUploadServlet extends HttpServlet {
 
 			} finally {
 				// 8. Clean up
-				if (dfsUploadDir != null && dfsUploadDir.exists()) {
+				for (File localFile : localFiles) {
 					try {
-						// dfsUploadDir.delete();
+						if (localFile.exists()) {
+							localFile.delete();
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -174,7 +186,7 @@ public class FileUploadServlet extends HttpServlet {
 		HttpSession session = request.getSession(true);
 		session.setAttribute("message", message);
 
-		response.sendRedirect(contextRoot + "/files");
+		response.sendRedirect(contextRoot + "/files?parentFileId=" + parentFileId);
 	}
 
 }

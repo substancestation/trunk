@@ -48,8 +48,8 @@ public class DeleteFileByIdCommand extends AbstractDfsCommand<DfsService> implem
 
 		FileSystem fileSystem = getService().getFileSystem(accountId);
 
-		FileMetadata existingFileMetadata = fileSystem.getFile(file_id);
-		if (existingFileMetadata == null) {
+		FileMetadata fileMetadata = fileSystem.getFile(file_id);
+		if (fileMetadata == null) {
 			ErrorDTO error = new ErrorDTO(String.valueOf(Status.BAD_REQUEST.getStatusCode()), "File doesn't exist.");
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}

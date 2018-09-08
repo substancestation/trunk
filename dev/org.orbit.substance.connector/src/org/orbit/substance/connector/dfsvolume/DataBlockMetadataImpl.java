@@ -12,6 +12,7 @@ import org.orbit.substance.model.dfsvolume.PendingFile;
 public class DataBlockMetadataImpl implements DataBlockMetadata {
 
 	protected DfsVolumeClient dfsVolumeClient;
+	protected String dfsId;
 	protected String dfsVolumeId;
 	protected String blockId;
 	protected String accountId;
@@ -37,6 +38,15 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 
 	public void setDfsVolumeClient(DfsVolumeClient dfsVolumeClient) {
 		this.dfsVolumeClient = dfsVolumeClient;
+	}
+
+	@Override
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
 	}
 
 	@Override

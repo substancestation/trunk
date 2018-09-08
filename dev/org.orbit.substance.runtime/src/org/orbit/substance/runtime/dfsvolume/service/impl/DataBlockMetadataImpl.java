@@ -10,6 +10,7 @@ import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 
 public class DataBlockMetadataImpl implements DataBlockMetadata {
 
+	protected String dfsId;
 	protected String dfsVolumeId;
 	protected int id;
 	protected String blockId;
@@ -26,6 +27,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 
 	/**
 	 * 
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @param id
 	 * @param blockId
@@ -37,7 +39,8 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 	 * @param dateCreated
 	 * @param dateModified
 	 */
-	public DataBlockMetadataImpl(String dfsVolumeId, int id, String blockId, String accountId, long capacity, long size, List<PendingFile> pendingFiles, Map<String, Object> properties, long dateCreated, long dateModified) {
+	public DataBlockMetadataImpl(String dfsId, String dfsVolumeId, int id, String blockId, String accountId, long capacity, long size, List<PendingFile> pendingFiles, Map<String, Object> properties, long dateCreated, long dateModified) {
+		this.dfsId = dfsId;
 		this.dfsVolumeId = dfsVolumeId;
 		this.id = id;
 		this.blockId = blockId;
@@ -51,19 +54,31 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 	}
 
 	@Override
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	@Override
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
+	}
+
+	@Override
 	public String getDfsVolumeId() {
 		return this.dfsVolumeId;
 	}
 
+	@Override
 	public void setDfsVolumeId(String dfsVolumeId) {
 		this.dfsVolumeId = dfsVolumeId;
 	}
 
 	@Override
 	public int getId() {
-		return id;
+		return this.id;
 	}
 
+	@Override
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -73,6 +88,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.blockId;
 	}
 
+	@Override
 	public void setBlockId(String blockId) {
 		this.blockId = blockId;
 	}
@@ -82,6 +98,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.accountId;
 	}
 
+	@Override
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
@@ -91,6 +108,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.capacity;
 	}
 
+	@Override
 	public void setCapacity(long capacity) {
 		this.capacity = capacity;
 	}
@@ -100,6 +118,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.size;
 	}
 
+	@Override
 	public void setSize(long size) {
 		this.size = size;
 	}
@@ -112,6 +131,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.pendingFiles;
 	}
 
+	@Override
 	public synchronized void setPendingFiles(List<PendingFile> pendingFiles) {
 		this.pendingFiles = pendingFiles;
 	}
@@ -124,6 +144,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.properties;
 	}
 
+	@Override
 	public synchronized void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
@@ -133,6 +154,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.dateCreated;
 	}
 
+	@Override
 	public void setDateCreated(long dateCreated) {
 		this.dateCreated = dateCreated;
 	}
@@ -142,6 +164,7 @@ public class DataBlockMetadataImpl implements DataBlockMetadata {
 		return this.dateModified;
 	}
 
+	@Override
 	public void setDateModified(long dateModified) {
 		this.dateModified = dateModified;
 	}

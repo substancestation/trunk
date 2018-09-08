@@ -254,7 +254,9 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		boolean succeed = false;
 
 		Request request = new Request(RequestConstants.DELETE_FILE_CONTENT);
-		request.setParameter("account_id", accountId);
+		if (accountId != null && !accountId.isEmpty()) {
+			request.setParameter("account_id", accountId);
+		}
 		request.setParameter("block_id", blockId);
 		request.setParameter("file_id", fileId);
 		request.setParameter("part_id", partId);
@@ -270,37 +272,34 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	// Upload and download
 	// ----------------------------------------------------------------------
 	@Override
-	public boolean uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException {
-		boolean succeed = false;
+	public FileContentMetadata uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException {
+		FileContentMetadata fileContent = null;
 		Response response = getWSClient().upload(accountId, blockId, fileId, checksum, file);
 		if (response != null) {
-			FileContentMetadata fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
-			if (fileContent != null) {
-				succeed = true;
-			}
+			fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 		}
-		return succeed;
+		return fileContent;
 	}
 
 	@Override
-	public boolean uploadFile(String accountId, String blockId, String fileId, int partId, long size, long checksum, InputStream inputStream) throws ClientException {
-		boolean succeed = false;
+	public FileContentMetadata uploadFile(String accountId, String blockId, String fileId, int partId, long size, long checksum, InputStream inputStream) throws ClientException {
+		FileContentMetadata fileContent = null;
 		Response response = getWSClient().upload(accountId, blockId, fileId, partId, size, checksum, inputStream);
 		if (response != null) {
-			FileContentMetadata fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
-			if (fileContent != null) {
-				succeed = true;
-			}
+			fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 		}
-		return succeed;
+		return fileContent;
 	}
 
 	@Override
 	public boolean downloadFile(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ClientException {
-		return false;
+		boolean succeed = false;
+		try {
+			succeed = getWSClient().download(accountId, blockId, fileId, partId, output);
+		} catch (ClientException e) {
+			throw e;
+		}
+		return succeed;
 	}
 
 }
-
-// succeed = ModelConverter.DfsVolume.isUploaded(response);
-// succeed = ModelConverter.DfsVolume.isUploaded(response);

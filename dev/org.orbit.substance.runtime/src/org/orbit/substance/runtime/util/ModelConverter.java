@@ -30,45 +30,47 @@ public class ModelConverter {
 	public static class Dfs {
 		/**
 		 * 
-		 * @param file
+		 * @param fileMetadata
 		 * @return
 		 */
-		public FileMetadataDTO toDTO(FileMetadata file) {
-			if (file == null) {
+		public FileMetadataDTO toDTO(FileMetadata fileMetadata) {
+			if (fileMetadata == null) {
 				return null;
 			}
 
-			String accountId = file.getAccountId();
-			String fileId = file.getFileId();
-			String parentFileId = file.getParentFileId();
-			Path path = file.getPath();
-			long size = file.getSize();
-			boolean isDirectory = file.isDirectory();
-			boolean isHidden = file.isHidden();
-			boolean inTrash = file.isInTrash();
-			List<FilePart> fileParts = file.getFileParts();
-			Map<String, Object> properties = file.getProperties();
-			long dateCreated = file.getDateCreated();
-			long dateModified = file.getDateModified();
+			String dfsId = fileMetadata.getDfsId();
+			String accountId = fileMetadata.getAccountId();
+			String fileId = fileMetadata.getFileId();
+			String parentFileId = fileMetadata.getParentFileId();
+			Path path = fileMetadata.getPath();
+			long size = fileMetadata.getSize();
+			boolean isDirectory = fileMetadata.isDirectory();
+			boolean isHidden = fileMetadata.isHidden();
+			boolean inTrash = fileMetadata.isInTrash();
+			List<FilePart> fileParts = fileMetadata.getFileParts();
+			Map<String, Object> properties = fileMetadata.getProperties();
+			long dateCreated = fileMetadata.getDateCreated();
+			long dateModified = fileMetadata.getDateModified();
 
 			String filePartsString = toFilePartsString(fileParts);
 			String propertiesString = toPropertiesString(properties);
 
-			FileMetadataDTO fileDTO = new FileMetadataDTO();
-			fileDTO.setAccountId(accountId);
-			fileDTO.setFileId(fileId);
-			fileDTO.setParentFileId(parentFileId);
-			fileDTO.setPath(path.getPathString());
-			fileDTO.setSize(size);
-			fileDTO.setDirectory(isDirectory);
-			fileDTO.setHidden(isHidden);
-			fileDTO.setInTrash(inTrash);
-			fileDTO.setFilePartsString(filePartsString);
-			fileDTO.setPropertiesString(propertiesString);
-			fileDTO.setDateCreated(dateCreated);
-			fileDTO.setDateModified(dateModified);
+			FileMetadataDTO fileMetadataDTO = new FileMetadataDTO();
+			fileMetadataDTO.setDfsId(dfsId);
+			fileMetadataDTO.setAccountId(accountId);
+			fileMetadataDTO.setFileId(fileId);
+			fileMetadataDTO.setParentFileId(parentFileId);
+			fileMetadataDTO.setPath(path.getPathString());
+			fileMetadataDTO.setSize(size);
+			fileMetadataDTO.setDirectory(isDirectory);
+			fileMetadataDTO.setHidden(isHidden);
+			fileMetadataDTO.setInTrash(inTrash);
+			fileMetadataDTO.setFilePartsString(filePartsString);
+			fileMetadataDTO.setPropertiesString(propertiesString);
+			fileMetadataDTO.setDateCreated(dateCreated);
+			fileMetadataDTO.setDateModified(dateModified);
 
-			return fileDTO;
+			return fileMetadataDTO;
 		}
 
 		/**
@@ -133,6 +135,7 @@ public class ModelConverter {
 				return null;
 			}
 
+			String dfsId = dataBlock.getDfsId();
 			String dfsVolumeId = dataBlock.getDfsVolumeId();
 			String blockId = dataBlock.getBlockId();
 			String accountId = dataBlock.getAccountId();
@@ -147,6 +150,7 @@ public class ModelConverter {
 			String propertiesString = toPropertiesString(properties);
 
 			DataBlockMetadataDTO dataBlockDTO = new DataBlockMetadataDTO();
+			dataBlockDTO.setDfsId(dfsId);
 			dataBlockDTO.setDfsVolumeId(dfsVolumeId);
 			dataBlockDTO.setBlockId(blockId);
 			dataBlockDTO.setAccountId(accountId);
@@ -170,6 +174,9 @@ public class ModelConverter {
 				return null;
 			}
 
+			String dfsId = fileContent.getDfsId();
+			String dfsVolumeId = fileContent.getDfsVolumeId();
+			String blockId = fileContent.getBlockId();
 			String fileId = fileContent.getFileId();
 			int partId = fileContent.getPartId();
 			long size = fileContent.getSize();
@@ -178,6 +185,9 @@ public class ModelConverter {
 			long dateModified = fileContent.getDateModified();
 
 			FileContentMetadataDTO fileContentDTO = new FileContentMetadataDTO();
+			fileContentDTO.setDfsId(dfsId);
+			fileContentDTO.setDfsVolumeId(dfsVolumeId);
+			fileContentDTO.setBlockId(blockId);
 			fileContentDTO.setFileId(fileId);
 			fileContentDTO.setPartId(partId);
 			fileContentDTO.setSize(size);

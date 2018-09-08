@@ -41,7 +41,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	@Override
 	public IndexItem addIndex(IndexProvider indexProvider, DfsVolumeService service) throws IOException {
 		String dfsId = service.getDfsId();
-		String dfsVolumeId = service.getVolumeId();
+		String dfsVolumeId = service.getDfsVolumeId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();
@@ -66,7 +66,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	@Override
 	public void updateIndex(IndexProvider indexProvider, DfsVolumeService service, IndexItem indexItem) throws IOException {
 		String dfsId = service.getDfsId();
-		String dfsVolumeId = service.getVolumeId();
+		String dfsVolumeId = service.getDfsVolumeId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();

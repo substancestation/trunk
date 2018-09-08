@@ -16,6 +16,7 @@ public class FileMetadataImpl implements FileMetadata {
 
 	protected DfsClient fsClient;
 
+	protected String dfsId;
 	protected String accountId;
 	protected String fileId;
 	protected String parentFileId;
@@ -46,6 +47,16 @@ public class FileMetadataImpl implements FileMetadata {
 		this.fsClient = fsClient;
 	}
 
+	@Override
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
+	}
+
+	@Override
 	public String getAccountId() {
 		return this.accountId;
 	}

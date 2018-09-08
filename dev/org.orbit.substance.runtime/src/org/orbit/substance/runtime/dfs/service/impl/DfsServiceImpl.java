@@ -224,18 +224,12 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			if (blockCapacityMBStr != null && !blockCapacityMBStr.isEmpty()) {
 				int blockCapacityMB = Integer.parseInt(blockCapacityMBStr);
 				if (blockCapacityMB > 0) {
-					// 1MB = 1024KB
-					// 1KB = 1024B
-					// blockCapacityBytes = blockCapacityMB * 1024 * 1024;
-					blockCapacityBytes = DiskSpaceUnit.GB.toBytes(blockCapacityMB);
+					blockCapacityBytes = DiskSpaceUnit.MB.toBytes(blockCapacityMB);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// if (blockCapacityBytes <= 0) {
-		// blockCapacityBytes = 100 * 1024 * 1024; // 100MB
-		// }
 		return blockCapacityBytes;
 	}
 
@@ -254,3 +248,10 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 	}
 
 }
+
+// 1MB = 1024KB
+// 1KB = 1024B
+// blockCapacityBytes = blockCapacityMB * 1024 * 1024;
+// if (blockCapacityBytes <= 0) {
+// blockCapacityBytes = 100 * 1024 * 1024; // 100MB
+// }

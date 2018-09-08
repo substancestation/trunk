@@ -1,7 +1,9 @@
 package org.orbit.substance.connector.dfsvolume;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -17,7 +19,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.origin.common.io.FileUtil;
+import org.origin.common.io.IOUtil;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.WSClient;
 import org.origin.common.rest.client.WSClientConfiguration;
@@ -149,6 +151,48 @@ public class DfsVolumeWSClient extends WSClient {
 			handleException(e);
 		}
 		return response;
+	}
+
+	/**
+	 * Download app file.
+	 * 
+	 * URL (GET): {scheme}://{host}:{port}/{contextRoot}/file/content
+	 * 
+	 * @param accountId
+	 * @param blockId
+	 * @param fileId
+	 * @param partId
+	 * @param output
+	 * @return
+	 * @throws ClientException
+	 */
+	public boolean download(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ClientException {
+		InputStream input = null;
+		try {
+			WebTarget target = getRootPath().path("app").path("content");
+			if (accountId != null && !accountId.isEmpty()) {
+				target = target.queryParam("accountId", "accountId");
+			}
+			target = target.queryParam("blockId", blockId);
+			target = target.queryParam("fileId", fileId);
+			target = target.queryParam("partId", partId);
+
+			Builder builder = target.request(MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM);
+			Response response = updateHeaders(builder).get();
+			checkResponse(target, response);
+
+			input = response.readEntity(InputStream.class);
+
+			if (input != null) {
+				IOUtil.copy(input, output);
+			}
+
+		} catch (ClientException | IOException e) {
+			handleException(e);
+		} finally {
+			IOUtil.closeQuietly(input, true);
+		}
+		return true;
 	}
 
 }

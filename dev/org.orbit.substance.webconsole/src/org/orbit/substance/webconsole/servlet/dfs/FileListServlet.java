@@ -16,6 +16,7 @@ import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.DefaultDfsClientResolver;
 import org.orbit.substance.webconsole.util.MessageHelper;
+import org.origin.common.util.ServletUtil;
 
 public class FileListServlet extends HttpServlet {
 
@@ -38,6 +39,8 @@ public class FileListServlet extends HttpServlet {
 			}
 		}
 
+		String parentFileId = ServletUtil.getParameter(request, "parentFileId", "-1");
+
 		// ---------------------------------------------------------------
 		// Handle data
 		// ---------------------------------------------------------------
@@ -45,12 +48,20 @@ public class FileListServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			DfsClientResolver dfsResolver = new DefaultDfsClientResolver();
-			files = SubstanceClientsUtil.Dfs.listRoots(dfsResolver, dfsServiceUrl, accessToken);
+			DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
+
+			if (parentFileId == null || parentFileId.isEmpty() || "-1".equals(parentFileId)) {
+				files = SubstanceClientsUtil.Dfs.listRoots(dfsClientResolver, dfsServiceUrl, accessToken);
+			} else {
+				files = SubstanceClientsUtil.Dfs.listFiles(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
+			}
 
 		} catch (Exception e) {
 			message = MessageHelper.INSTANCE.add(message, "Exception occurs: '" + e.getMessage() + "'.");
 			e.printStackTrace();
+		}
+		if (files == null) {
+			files = SubstanceClientsUtil.Dfs.EMPTY_FILES;
 		}
 
 		// ---------------------------------------------------------------
@@ -59,15 +70,15 @@ public class FileListServlet extends HttpServlet {
 		if (message != null) {
 			request.setAttribute("message", message);
 		}
-		if (files != null) {
-			request.setAttribute("files", files);
-		}
+		request.setAttribute("parentFileId", parentFileId);
+		request.setAttribute("files", files);
 
-		// e.g. contextRoot is "/orbit/webconsole/dfs"
-		// /orbit/webconsole/dfs/views/dfs_fils_list.jsp
-		// /orbit/webconsole/component/views/user_accounts_list_v1.jsp
-		// request.getRequestDispatcher(contextRoot + "/views/dfs_fils_list.jsp").forward(request, response);
 		request.getRequestDispatcher(contextRoot + "/views/dfs_files_list.jsp").forward(request, response);
 	}
 
 }
+
+// e.g. contextRoot is "/orbit/webconsole/dfs"
+// /orbit/webconsole/dfs/views/dfs_fils_list.jsp
+// /orbit/webconsole/component/views/user_accounts_list_v1.jsp
+// request.getRequestDispatcher(contextRoot + "/views/dfs_fils_list.jsp").forward(request, response);

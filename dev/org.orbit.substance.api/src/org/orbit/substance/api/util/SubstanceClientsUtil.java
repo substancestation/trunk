@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
+import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.model.dfs.FileContentAccess;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.Path;
@@ -25,14 +27,18 @@ import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.WSClientConstants;
 import org.origin.common.rest.model.ServiceMetadata;
 import org.origin.common.rest.model.ServiceMetadataImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SubstanceClientsUtil {
+
+	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClientsUtil.class);
 
 	public static Dfs Dfs = new Dfs();
 	public static DfsVolume DfsVolume = new DfsVolume();
 
 	public static class Dfs {
-		public static FileMetadata[] EMPTY_FILES = new FileMetadata[0];
+		public FileMetadata[] EMPTY_FILES = new FileMetadata[0];
 
 		/**
 		 * 
@@ -93,6 +99,24 @@ public class SubstanceClientsUtil {
 				memberFileMetadatas = EMPTY_FILES;
 			}
 			return memberFileMetadatas;
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileId
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata getFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
+			FileMetadata fileMetadata = null;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				fileMetadata = dfsClient.getFile(fileId);
+			}
+			return fileMetadata;
 		}
 
 		/**
@@ -190,6 +214,24 @@ public class SubstanceClientsUtil {
 				isUpdated = dfsClient.updateFileParts(fileId, filePartsString);
 			}
 			return isUpdated;
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileId
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean deleteFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
+			boolean isDeleted = false;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				isDeleted = dfsClient.delete(fileId);
+			}
+			return isDeleted;
 		}
 
 		/**
@@ -348,10 +390,10 @@ public class SubstanceClientsUtil {
 				throw new IllegalArgumentException("fileMetadata is null.");
 			}
 			if (localFile == null) {
-				throw new IllegalArgumentException(" localFile is null.");
+				throw new IllegalArgumentException("localFile is null.");
 			}
 			if (!localFile.exists()) {
-				throw new IllegalArgumentException(" localFile doesn't exist.");
+				throw new IllegalArgumentException("localFile doesn't exist.");
 			}
 
 			boolean isUploaded = false;
@@ -371,33 +413,39 @@ public class SubstanceClientsUtil {
 				byte[] partBytes = IOUtil.toByteArray(localFile);
 				long partChecksum = ChecksumUtil.getChecksum(partBytes);
 
-				boolean uploadSucceed = false;
-				boolean uploadFailed = false;
+				boolean isPartUploaded = false;
+				boolean isPartUploadFailed = false;
 
 				List<FileContentAccess> fileContentAccessList = filePart.getContentAccess();
 				for (FileContentAccess fileContentAccess : fileContentAccessList) {
 					try {
 						String dfsId = fileContentAccess.getDfsId();
 						String dfsVolumeId = fileContentAccess.getDfsVolumeId();
-						String blockId = fileContentAccess.getDataBlockId();
+						String blockId = fileContentAccess.getBlockId();
 
 						DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
 						if (dfsVolumeClient == null) {
 							throw new IOException("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'");
 						}
 
-						boolean currSucceed = dfsVolumeClient.uploadFile(null, blockId, fileId, partChecksum, localFile);
-						if (currSucceed) {
-							uploadSucceed = true;
+						FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, partChecksum, localFile);
+						if (fileContent != null) {
+							if (blockId == null || blockId.isEmpty() || "-1".equals(blockId)) {
+								String newBlockId = fileContent.getBlockId();
+								fileContentAccess.setBlockId(newBlockId);
+							}
+
+							isPartUploaded = true;
+							break;
 						} else {
-							uploadFailed = true;
+							isPartUploadFailed = true;
 						}
 					} catch (IOException e) {
 						throw e;
 					}
 				}
 
-				isUploaded = (uploadSucceed && !uploadFailed) ? true : false;
+				isUploaded = (isPartUploaded && !isPartUploadFailed) ? true : false;
 				if (isUploaded) {
 					filePart.setChecksum(partChecksum);
 				}
@@ -445,8 +493,8 @@ public class SubstanceClientsUtil {
 							byte[] partBytes = partOutputStream.toByteArray();
 							long partChecksum = ChecksumUtil.getChecksum(partBytes);
 
-							boolean uploadSucceed = false;
-							boolean uploadFailed = false;
+							boolean isPartUploaded = false;
+							boolean isPartUploadFailed = false;
 
 							List<FileContentAccess> fileContentAccessList = filePart.getContentAccess();
 							for (FileContentAccess fileContentAccess : fileContentAccessList) {
@@ -456,18 +504,24 @@ public class SubstanceClientsUtil {
 
 									String dfsId = fileContentAccess.getDfsId();
 									String dfsVolumeId = fileContentAccess.getDfsVolumeId();
-									String blockId = fileContentAccess.getDataBlockId();
+									String blockId = fileContentAccess.getBlockId();
 
 									DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
 									if (dfsVolumeClient == null) {
 										throw new IOException("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'");
 									}
 
-									boolean currSucceed = dfsVolumeClient.uploadFile(null, blockId, fileId, partId, currSize, partChecksum, partInputStream);
-									if (currSucceed) {
-										uploadSucceed = true;
+									FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, partId, currSize, partChecksum, partInputStream);
+									if (fileContent != null) {
+										if (blockId == null || blockId.isEmpty() || "-1".equals(blockId)) {
+											String newBlockId = fileContent.getBlockId();
+											fileContentAccess.setBlockId(newBlockId);
+										}
+
+										isPartUploaded = true;
+										break;
 									} else {
-										uploadFailed = true;
+										isPartUploadFailed = true;
 									}
 
 								} catch (IOException e) {
@@ -477,7 +531,7 @@ public class SubstanceClientsUtil {
 								}
 							}
 
-							isUploaded = (uploadSucceed && !uploadFailed) ? true : false;
+							isUploaded = (isPartUploaded && !isPartUploadFailed) ? true : false;
 							if (isUploaded) {
 								filePart.setChecksum(partChecksum);
 							}
@@ -493,6 +547,231 @@ public class SubstanceClientsUtil {
 			}
 
 			return isUploaded;
+		}
+
+		/**
+		 * 
+		 * @param dfsVolumeClientResolver
+		 * @param accessToken
+		 * @param fileMetadata
+		 * @param output
+		 * @return
+		 * @throws ClientException
+		 * @throws IOException
+		 */
+		public boolean downloadFile(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, OutputStream output) throws ClientException, IOException {
+			if (fileMetadata == null) {
+				throw new IllegalArgumentException("fileMetadata is null.");
+			}
+
+			boolean isDownloaded = false;
+
+			String fileId = fileMetadata.getFileId();
+			List<FilePart> fileParts = fileMetadata.getFileParts();
+			if (fileParts.isEmpty()) {
+				throw new IllegalStateException("File parts is empty. fileId='" + fileId + "'");
+			}
+
+			if (fileParts.size() == 1) {
+				// The file has only one part.
+				// - Download the file from dfs volume block and directly write to the output stream.
+				FilePart filePart = fileParts.get(0);
+				int partId = filePart.getPartId();
+				long checksum = filePart.getChecksum();
+
+				List<FileContentAccess> contentAccessList = filePart.getContentAccess();
+				if (contentAccessList.isEmpty()) {
+					throw new IllegalStateException("FileContentAccess list is empty. fileId='" + fileId + "', partId='" + partId + "'.");
+				}
+
+				boolean isPartDownloaded = false;
+				byte[] partBytes = null;
+
+				for (FileContentAccess contentAccess : contentAccessList) {
+					ByteArrayOutputStream partOutputStream = null;
+					try {
+						partOutputStream = new ByteArrayOutputStream();
+
+						String dfsId = contentAccess.getDfsId();
+						String dfsVolumeId = contentAccess.getDfsVolumeId();
+						String blockId = contentAccess.getBlockId();
+
+						DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
+						if (dfsVolumeClient == null) {
+							LOG.error("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'.");
+							continue;
+						}
+						boolean ping = dfsVolumeClient.ping();
+						if (!ping) {
+							LOG.error("Dfs volume service is not active. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'.");
+							continue;
+						}
+
+						isPartDownloaded = dfsVolumeClient.downloadFile(null, blockId, fileId, partId, partOutputStream);
+						if (isPartDownloaded) {
+							partBytes = partOutputStream.toByteArray();
+							break;
+						}
+
+					} finally {
+						IOUtil.closeQuietly(partOutputStream, true);
+					}
+				} // file content access loop
+
+				if (isPartDownloaded && partBytes != null) {
+					long payloadChecksum = ChecksumUtil.getChecksum(partBytes);
+					if (checksum != payloadChecksum) {
+						LOG.error("Checksum doesn't match. fileId='" + fileId + "', partId='" + partId + "'. Expected checksum: '" + checksum + "', payload checksum: '" + payloadChecksum + "'.");
+					} else {
+						LOG.error("Checksum match. fileId='" + fileId + "', partId='" + partId + "'. Checksum: '" + checksum + "'.");
+					}
+
+					// Write the part bytes directly to the output stream.
+					ByteArrayInputStream partInputStream = new ByteArrayInputStream(partBytes);
+					IOUtil.copy(partInputStream, output);
+					IOUtil.closeQuietly(partInputStream, true);
+
+				} else {
+					throw new IOException("FilePart cannot be downloaded. fileId='" + fileId + "', partId='" + partId + "'.");
+				}
+
+				isDownloaded = true;
+
+			} else {
+				// The file has multiple parts
+				// - Download each file part from dfs volume block and write to separate places.
+				for (FilePart filePart : fileParts) {
+					int partId = filePart.getPartId();
+					// long startIndex = filePart.getStartIndex();
+					// long endIndex = filePart.getEndIndex();
+					long checksum = filePart.getChecksum();
+
+					List<FileContentAccess> contentAccessList = filePart.getContentAccess();
+					if (contentAccessList.isEmpty()) {
+						throw new IllegalStateException("FileContentAccess list is empty. fileId='" + fileId + "', partId='" + partId + "'.");
+					}
+
+					boolean isPartDownloaded = false;
+					byte[] partBytes = null;
+
+					for (FileContentAccess contentAccess : contentAccessList) {
+						ByteArrayOutputStream partOutputStream = null;
+						try {
+							partOutputStream = new ByteArrayOutputStream();
+
+							String dfsId = contentAccess.getDfsId();
+							String dfsVolumeId = contentAccess.getDfsVolumeId();
+							String blockId = contentAccess.getBlockId();
+
+							DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
+							if (dfsVolumeClient == null) {
+								LOG.error("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'.");
+								continue;
+							}
+							boolean ping = dfsVolumeClient.ping();
+							if (!ping) {
+								LOG.error("Dfs volume service is not active. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'.");
+								continue;
+							}
+
+							isPartDownloaded = dfsVolumeClient.downloadFile(null, blockId, fileId, partId, partOutputStream);
+							if (isPartDownloaded) {
+								partBytes = partOutputStream.toByteArray();
+								break;
+							}
+
+						} finally {
+							IOUtil.closeQuietly(partOutputStream, true);
+						}
+					} // file content access loop
+
+					if (isPartDownloaded && partBytes != null) {
+						long payloadChecksum = ChecksumUtil.getChecksum(partBytes);
+						if (checksum != payloadChecksum) {
+							LOG.error("Checksum doesn't match. fileId='" + fileId + "', partId='" + partId + "'. Expected checksum: '" + checksum + "', payload checksum: '" + payloadChecksum + "'.");
+						} else {
+							LOG.error("Checksum match. fileId='" + fileId + "', partId='" + partId + "'. Checksum: '" + checksum + "'.");
+						}
+
+						ByteArrayInputStream partInputStream = new ByteArrayInputStream(partBytes);
+						IOUtil.copy(partInputStream, output);
+						IOUtil.closeQuietly(partInputStream, true);
+
+					} else {
+						throw new IOException("FilePart cannot be downloaded. fileId='" + fileId + "', partId='" + partId + "'.");
+					}
+
+				} // file parts loop
+
+				isDownloaded = true;
+			}
+
+			return isDownloaded;
+		}
+
+		/**
+		 * 
+		 * @param dfsVolumeClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileMetadata
+		 * @return
+		 * @throws ClientException
+		 * @throws IOException
+		 */
+		public boolean deleteFileContent(DfsVolumeClientResolver dfsVolumeClientResolver, String dfsServiceUrl, String accessToken, FileMetadata fileMetadata) throws ClientException, IOException {
+			if (fileMetadata == null) {
+				throw new IllegalArgumentException("fileMetadata is null.");
+			}
+
+			boolean isDeleted = false;
+
+			String fileId = fileMetadata.getFileId();
+			List<FilePart> fileParts = fileMetadata.getFileParts();
+			if (fileParts.isEmpty()) {
+				throw new IllegalStateException("File parts is empty. fileId='" + fileId + "'");
+			}
+
+			boolean hasPartDeleted = false;
+			boolean hasPartDeleteFailed = false;
+
+			for (FilePart filePart : fileParts) {
+				int partId = filePart.getPartId();
+
+				boolean isPartDeleted = false;
+
+				List<FileContentAccess> contentAccessList = filePart.getContentAccess();
+				for (FileContentAccess contentAccess : contentAccessList) {
+					String dfsId = contentAccess.getDfsId();
+					String dfsVolumeId = contentAccess.getDfsVolumeId();
+					String blockId = contentAccess.getBlockId();
+
+					DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
+					if (dfsVolumeClient == null) {
+						LOG.error("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'.");
+						continue;
+					}
+					boolean ping = dfsVolumeClient.ping();
+					if (!ping) {
+						LOG.error("Dfs volume service is not active. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'.");
+						continue;
+					}
+
+					boolean currSucceed = dfsVolumeClient.deleteFileContent(null, blockId, fileId, partId);
+					if (currSucceed) {
+						isPartDeleted = true;
+					}
+				}
+
+				if (isPartDeleted) {
+					hasPartDeleted = true;
+				} else {
+					hasPartDeleteFailed = true;
+				}
+			}
+
+			isDeleted = (hasPartDeleted && !hasPartDeleteFailed) ? true : false;
+			return isDeleted;
 		}
 
 		/**

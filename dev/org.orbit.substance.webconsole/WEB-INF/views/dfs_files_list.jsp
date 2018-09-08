@@ -2,16 +2,20 @@
 <%@ page import="java.io.*,java.util.*, javax.servlet.*"%>
 <%@ page import="org.origin.common.util.*"%>
 <%@ page import="org.orbit.substance.api.dfs.*"%>
-<%@ page import="org.orbit.substance.api.dfs.File"%>
-<%@ page import="org.orbit.substance.api.dfs.Path"%>
+<%@ page import="org.orbit.substance.model.dfs.*"%>
 <%@ page import="org.orbit.substance.webconsole.*"%>
 <%
 	String platformContextRoot = getServletConfig().getInitParameter(WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT);
 	String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
 
-	org.orbit.substance.api.dfs.File[] files = (org.orbit.substance.api.dfs.File[]) request.getAttribute("files");
+	String parentFileId = (String) request.getAttribute("parentFileId");
+	FileMetadata[] files = (FileMetadata[]) request.getAttribute("files");
+
+	if (parentFileId == null || parentFileId.isEmpty()) {
+		parentFileId = "-1";
+	}
 	if (files == null) {
-		files = new org.orbit.substance.api.dfs.File[0];
+		files = new FileMetadata[0];
 	}
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -32,36 +36,37 @@
 	<div class="main_div01">
 		<h2>Files</h2>
 		<div class="top_tools_div01">
-			<a id="action.addMachine" class="button02">Add</a>
-			<a id="action.deleteMachines" class="button02">Delete</a>
 			<a id="actionUploadFile" class="button02">Upload</a>
-			<a class="button02" href="<%=contextRoot + "/files"%>">Refresh</a>
+			<a id="actionDeleteFiles" class="button02">Delete</a>
+			<a class="button02" href="<%=contextRoot + "/files?parentFileId=" + parentFileId%>">Refresh</a>
 		</div>
 		<table class="main_table01">
-			<form id="main_list" method="post" action="<%=contextRoot + "/domain/machinedelete"%>">
+			<form id="main_list" method="post" action="<%=contextRoot + "/filedelete"%>">
+			<input type="hidden" name="parentFileId" value="<%=parentFileId%>" />
 			<tr>
-				<th class="th1" width="10"></th>
+				<th class="th1" width="20">
+					<input type="checkbox" onClick="toggleSelection(this, 'fileId')" />
+				</th>
 				<th class="th1" width="180">File Id</th>
 				<th class="th1" width="180">Parent File Id</th>
 				<th class="th1" width="180">Path</th>
-				<th class="th1" width="180">Is Directory</th>
-				<th class="th1" width="180">Is Hidden</th>
-				<th class="th1" width="180">Size</th>
-				<th class="th1" width="180">Date Created</th>
-				<th class="th1" width="180">Date Modified</th>
-				<th class="th1" width="180">Actions</th>
+				<th class="th1" width="50">Directory</th>
+				<th class="th1" width="50">Hidden</th>
+				<th class="th1" width="50">Size</th>
+				<th class="th1" width="150">Date Modified</th>
+				<th class="th1" width="150">Actions</th>
 			</tr>
 			<%
 				if (files.length == 0) {
 			%>
 			<tr>
-				<td colspan="10">(n/a)</td>
+				<td colspan="9">(n/a)</td>
 			</tr>
 			<%
 				} else {
-					for (File file : files) {
+					for (FileMetadata file : files) {
 						String fileId = file.getFileId();
-						String parentFileId = file.getParentFileId();
+						String currParentFileId = file.getParentFileId();
 						Path path = file.getPath();
 						boolean isDirectory = file.isDirectory();
 						boolean isHidden = file.isHidden();
@@ -75,18 +80,17 @@
 			%>
 			<tr>
 				<td class="td1">
-					<input type="checkbox" name="file_id" value="<%=fileId%>">
+					<input type="checkbox" name="fileId" value="<%=fileId%>">
 				</td>
 				<td class="td1"><%=fileId%></td>
 				<td class="td1"><%=parentFileId%></td>
-				<td class="td1"><%=pathStr%></td>
-				<td class="td2"><%=isDirectory%></td>
-				<td class="td2"><%=isHidden%></td>
-				<td class="td2"><%=size%></td>
-				<td class="td2"><%=dateCreatedStr%></td>
-				<td class="td2"><%=dateModifiedStr%></td>
+				<td class="td2"><%=pathStr%></td>
+				<td class="td1"><%=isDirectory%></td>
+				<td class="td1"><%=isHidden%></td>
+				<td class="td1"><%=size%></td>
+				<td class="td1"><%=dateModifiedStr%></td>
 				<td class="td1">
-
+					Download
 				</td>
 			</tr>
 			<%
@@ -100,6 +104,7 @@
 	<dialog id="uploadFileDialog">
 	<div class="dialog_title_div01">Upload File</div>
 		<form id="upload_form" method="post" action="<%=contextRoot + "/fileupload"%>" enctype="multipart/form-data">
+		<input type="hidden" name="parentFileId" value="<%=parentFileId%>" />
 		<div class="dialog_main_div01">
 			<table class="dialog_table01">
 				<tr>
@@ -112,6 +117,15 @@
 			<a id="cancelUploadFile" class="button02b">Cancel</a>
 		</div>
 		</form>
+	</dialog>
+
+	<dialog id="deleteFilesDialog">
+		<div class="dialog_title_div01">Delete Files</div>
+		<div class="dialog_main_div01" id="deleteFilesDialogMessageDiv">Are you sure you want to delete selected files?</div>
+		<div class="dialog_button_div01">
+			<a id="okDeleteFiles" class="button02">OK</a>
+			<a id="cancelDeleteFiles" class="button02b">Cancel</a>
+		</div>
 	</dialog>
 
 </body>

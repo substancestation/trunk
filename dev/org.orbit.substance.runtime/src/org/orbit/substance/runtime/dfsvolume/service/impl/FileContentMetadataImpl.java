@@ -4,6 +4,9 @@ import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
 
 public class FileContentMetadataImpl implements FileContentMetadata {
 
+	protected String dfsId;
+	protected String dfsVolumeId;
+	protected String blockId;
 	protected int id;
 	protected String fileId;
 	protected int partId;
@@ -17,6 +20,9 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 
 	/**
 	 * 
+	 * @param dfsId
+	 * @param dfsVolumeId
+	 * @param blockId
 	 * @param id
 	 * @param fileId
 	 * @param partId
@@ -25,7 +31,10 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 	 * @param dateCreated
 	 * @param dateModified
 	 */
-	public FileContentMetadataImpl(int id, String fileId, int partId, long size, long checksum, long dateCreated, long dateModified) {
+	public FileContentMetadataImpl(String dfsId, String dfsVolumeId, String blockId, int id, String fileId, int partId, long size, long checksum, long dateCreated, long dateModified) {
+		this.dfsId = dfsId;
+		this.dfsVolumeId = dfsVolumeId;
+		this.blockId = blockId;
 		this.id = id;
 		this.fileId = fileId;
 		this.partId = partId;
@@ -36,10 +45,41 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 	}
 
 	@Override
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	@Override
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
+	}
+
+	@Override
+	public String getDfsVolumeId() {
+		return this.dfsVolumeId;
+	}
+
+	@Override
+	public void setDfsVolumeId(String dfsVolumeId) {
+		this.dfsVolumeId = dfsVolumeId;
+	}
+
+	@Override
+	public String getBlockId() {
+		return this.blockId;
+	}
+
+	@Override
+	public void setBlockId(String blockId) {
+		this.blockId = blockId;
+	}
+
+	@Override
 	public int getId() {
 		return this.id;
 	}
 
+	@Override
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -49,6 +89,7 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.fileId;
 	}
 
+	@Override
 	public void setFileId(String fileId) {
 		this.fileId = fileId;
 	}
@@ -58,6 +99,7 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.partId;
 	}
 
+	@Override
 	public void setPartId(int partId) {
 		this.partId = partId;
 	}
@@ -67,6 +109,7 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.size;
 	}
 
+	@Override
 	public void setSize(long size) {
 		this.size = size;
 	}
@@ -76,6 +119,7 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.checksum;
 	}
 
+	@Override
 	public void setChecksum(long checksum) {
 		this.checksum = checksum;
 	}
@@ -85,6 +129,7 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.dateCreated;
 	}
 
+	@Override
 	public void setDateCreated(long dateCreated) {
 		this.dateCreated = dateCreated;
 	}
@@ -94,29 +139,9 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 		return this.dateModified;
 	}
 
+	@Override
 	public void setDateModified(long dateModified) {
 		this.dateModified = dateModified;
 	}
 
 }
-
-// protected int startIndex;
-// protected int endIndex;
-
-// @Override
-// public int getStartIndex() {
-// return this.startIndex;
-// }
-//
-// public void setStartIndex(int startIndex) {
-// this.startIndex = startIndex;
-// }
-//
-// @Override
-// public int getEndIndex() {
-// return this.endIndex;
-// }
-//
-// public void setEndIndex(int endIndex) {
-// this.endIndex = endIndex;
-// }

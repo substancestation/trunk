@@ -45,8 +45,8 @@ public class CreateNewFileCommand extends AbstractDfsCommand<DfsService> impleme
 		String file_name = (String) request.getParameter("file_name");
 		long size = 0;
 		Object size_obj = request.getParameter("size");
-		if (size_obj instanceof Long) {
-			size = (long) size_obj;
+		if (size_obj != null) {
+			size = Long.valueOf(size_obj.toString());
 		}
 
 		boolean createByPath = false;
@@ -77,10 +77,12 @@ public class CreateNewFileCommand extends AbstractDfsCommand<DfsService> impleme
 			newFileMetadata = fileSystem.createNewFile(path, size);
 
 		} else if (createByParentIdAndName) {
-			FileMetadata parentFileMetadata = fileSystem.getFile(parent_file_id);
-			if (parentFileMetadata == null) {
-				ErrorDTO error = new ErrorDTO(String.valueOf(Status.BAD_REQUEST.getStatusCode()), String.format("Parent file with file id '%s' is not found.", parent_file_id));
-				return Response.status(Status.BAD_REQUEST).entity(error).build();
+			if (!"-1".equals(parent_file_id)) {
+				FileMetadata parentFileMetadata = fileSystem.getFile(parent_file_id);
+				if (parentFileMetadata == null) {
+					ErrorDTO error = new ErrorDTO(String.valueOf(Status.BAD_REQUEST.getStatusCode()), String.format("Parent file with file id '%s' is not found.", parent_file_id));
+					return Response.status(Status.BAD_REQUEST).entity(error).build();
+				}
 			}
 			if (fileSystem.exists(parent_file_id, file_name)) {
 				ErrorDTO error = new ErrorDTO(String.valueOf(Status.BAD_REQUEST.getStatusCode()), "File already exists.");

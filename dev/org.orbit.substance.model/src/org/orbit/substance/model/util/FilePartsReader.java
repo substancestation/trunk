@@ -157,7 +157,7 @@ public class FilePartsReader {
 		if (contentAccessJSONObject.has(CONTENT_ACCESS__BLOCK_ID)) {
 			blockId = contentAccessJSONObject.getString(CONTENT_ACCESS__BLOCK_ID);
 		}
-		contentAccess.setDataBlockId(blockId);
+		contentAccess.setBlockId(blockId);
 
 		return contentAccess;
 	}

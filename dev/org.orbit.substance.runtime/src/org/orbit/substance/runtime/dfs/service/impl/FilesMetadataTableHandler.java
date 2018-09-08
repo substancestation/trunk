@@ -177,15 +177,15 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 		long dateCreated = rs.getLong("dateCreated");
 		long dateModified = rs.getLong("dateModified");
 
-		List<FilePart> fileParts = ModelConverter.Dfs.toFileParts(filePartsString);
-		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
-
-		// this should not happen
 		if (parentFileId == null || parentFileId.isEmpty()) {
+			// this should never happen. just in case.
 			parentFileId = "-1";
 		}
 
-		return new FileMetadataImpl(id, this.accountId, fileId, parentFileId, null, name, size, isDirectory, isHidden, inTrash, fileParts, properties, dateCreated, dateModified);
+		List<FilePart> fileParts = ModelConverter.Dfs.toFileParts(filePartsString);
+		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
+
+		return new FileMetadataImpl(this.dfsId, id, this.accountId, fileId, parentFileId, null, name, size, isDirectory, isHidden, inTrash, fileParts, properties, dateCreated, dateModified);
 	}
 
 	/**

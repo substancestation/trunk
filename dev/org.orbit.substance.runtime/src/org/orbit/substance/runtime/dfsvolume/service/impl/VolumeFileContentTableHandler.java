@@ -36,16 +36,17 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	/**
 	 * 
 	 * @param conn
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @param blockId
 	 * @return
 	 * @throws SQLException
 	 */
-	public static synchronized VolumeFileContentTableHandler getInstance(Connection conn, String dfsVolumeId, String blockId) throws SQLException {
-		String tableName = doGetTableName(dfsVolumeId, blockId);
+	public static synchronized VolumeFileContentTableHandler getInstance(Connection conn, String dfsId, String dfsVolumeId, String blockId) throws SQLException {
+		String tableName = doGetTableName(dfsId, dfsVolumeId, blockId);
 		VolumeFileContentTableHandler tableHandler = tableHandlerMap.get(tableName);
 		if (tableHandler == null) {
-			VolumeFileContentTableHandler newTableHandler = new VolumeFileContentTableHandler(dfsVolumeId, blockId);
+			VolumeFileContentTableHandler newTableHandler = new VolumeFileContentTableHandler(dfsId, dfsVolumeId, blockId);
 			tableHandlerMap.put(tableName, newTableHandler);
 			tableHandler = newTableHandler;
 		}
@@ -63,13 +64,14 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	/**
 	 * 
 	 * @param conn
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @param blockId
 	 * @return
 	 * @throws SQLException
 	 */
-	public static synchronized boolean dispose(Connection conn, String dfsVolumeId, String blockId) throws SQLException {
-		String tableName = doGetTableName(dfsVolumeId, blockId);
+	public static synchronized boolean dispose(Connection conn, String dfsId, String dfsVolumeId, String blockId) throws SQLException {
+		String tableName = doGetTableName(dfsId, dfsVolumeId, blockId);
 
 		VolumeFileContentTableHandler tableHandler = tableHandlerMap.get(tableName);
 		if (tableHandler != null) {
@@ -88,15 +90,18 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	}
 
 	protected String database;
+	protected String dfsId;
 	protected String dfsVolumeId;
 	protected String blockId;
 
 	/**
 	 * 
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @param blockId
 	 */
-	public VolumeFileContentTableHandler(String dfsVolumeId, String blockId) {
+	public VolumeFileContentTableHandler(String dfsId, String dfsVolumeId, String blockId) {
+		this.dfsId = dfsId;
 		this.dfsVolumeId = dfsVolumeId;
 		this.blockId = blockId;
 	}
@@ -111,18 +116,19 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 
 	@Override
 	public String getTableName() {
-		String tableName = doGetTableName(this.dfsVolumeId, this.blockId);
+		String tableName = doGetTableName(this.dfsId, this.dfsVolumeId, this.blockId);
 		return tableName;
 	}
 
 	/**
 	 * 
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @param blockId
 	 * @return
 	 */
-	public static String doGetTableName(String dfsVolumeId, String blockId) {
-		return dfsVolumeId + "_" + blockId;
+	public static String doGetTableName(String dfsId, String dfsVolumeId, String blockId) {
+		return dfsId + "_" + dfsVolumeId + "_" + blockId;
 	}
 
 	@Override
@@ -166,7 +172,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	protected static FileContentMetadata toFileContent(ResultSet rs) throws SQLException {
+	protected FileContentMetadata toFileContent(ResultSet rs) throws SQLException {
 		int id = rs.getInt("id");
 		String fileId = rs.getString("fileId");
 		int partId = rs.getInt("partId");
@@ -175,12 +181,15 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 		long dateCreated = rs.getLong("dateCreated");
 		long dateModified = rs.getLong("dateModified");
 
-		return new FileContentMetadataImpl(id, fileId, partId, size, checksum, dateCreated, dateModified);
+		return new FileContentMetadataImpl(this.dfsId, this.dfsVolumeId, this.blockId, id, fileId, partId, size, checksum, dateCreated, dateModified);
 	}
 
 	/**
 	 * 
 	 * @param conn
+	 * @param dfsId
+	 * @param dfsVolumeId
+	 * @param blockId
 	 * @return
 	 * @throws SQLException
 	 */
@@ -218,20 +227,18 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	 * @param conn
 	 * @param fileId
 	 * @param partId
-	 * @param size
-	 * @param checksum
-	 * @param dateCreated
-	 * @param dateModified
 	 * @return
 	 * @throws SQLException
 	 */
-	public FileContentMetadata insert(Connection conn, String fileId, int partId, long size, long checksum, long dateCreated, long dateModified) throws SQLException {
-		String insertSQL = "INSERT INTO " + getTableName() + " (fileId, partId, size, checksum, dateCreated, dateModified) VALUES (?, ?, ?, ?, ?, ?)";
-		boolean succeed = DatabaseUtil.update(conn, insertSQL, new Object[] { fileId, partId, size, checksum, dateCreated, dateModified }, 1);
-		if (succeed) {
-			return get(conn, fileId, partId);
-		}
-		return null;
+	public FileContentMetadata get(Connection conn, String fileId, int partId) throws SQLException {
+		String querySQL = "SELECT * FROM " + getTableName() + " WHERE fileId=? AND partId=?";
+		ResultSetSingleHandler<FileContentMetadata> rsHandler = new ResultSetSingleHandler<FileContentMetadata>() {
+			@Override
+			protected FileContentMetadata handleRow(ResultSet rs) throws SQLException {
+				return toFileContent(rs);
+			}
+		};
+		return DatabaseUtil.query(conn, querySQL, new Object[] { fileId, partId }, rsHandler);
 	}
 
 	/**
@@ -249,6 +256,11 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 			protected Boolean handleRow(ResultSet rs) throws SQLException {
 				return rs.next() ? true : false;
 			}
+
+			@Override
+			protected Boolean getEmptyValue() {
+				return false;
+			}
 		};
 		return DatabaseUtil.query(conn, querySQL, new Object[] { fileId, partId }, rsHandler);
 	}
@@ -258,18 +270,20 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	 * @param conn
 	 * @param fileId
 	 * @param partId
+	 * @param size
+	 * @param checksum
+	 * @param dateCreated
+	 * @param dateModified
 	 * @return
 	 * @throws SQLException
 	 */
-	public FileContentMetadata get(Connection conn, String fileId, int partId) throws SQLException {
-		String querySQL = "SELECT * FROM " + getTableName() + " WHERE fileId=? AND partId=?";
-		ResultSetSingleHandler<FileContentMetadata> rsHandler = new ResultSetSingleHandler<FileContentMetadata>() {
-			@Override
-			protected FileContentMetadata handleRow(ResultSet rs) throws SQLException {
-				return toFileContent(rs);
-			}
-		};
-		return DatabaseUtil.query(conn, querySQL, new Object[] { fileId, partId }, rsHandler);
+	public FileContentMetadata insert(Connection conn, String fileId, int partId, long size, long checksum, long dateCreated, long dateModified) throws SQLException {
+		String insertSQL = "INSERT INTO " + getTableName() + " (fileId, partId, size, checksum, dateCreated, dateModified) VALUES (?, ?, ?, ?, ?, ?)";
+		boolean succeed = DatabaseUtil.update(conn, insertSQL, new Object[] { fileId, partId, size, checksum, dateCreated, dateModified }, 1);
+		if (succeed) {
+			return get(conn, fileId, partId);
+		}
+		return null;
 	}
 
 	/**
@@ -303,6 +317,18 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	/**
 	 * 
 	 * @param conn
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
+	public boolean deleteAll(Connection conn) throws SQLException {
+		String deleteSQL = "DELETE FROM " + getTableName();
+		return DatabaseUtil.update(conn, deleteSQL, null, -1);
+	}
+
+	/**
+	 * 
+	 * @param conn
 	 * @param fileId
 	 * @param partId
 	 * @return
@@ -321,7 +347,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	public InputStream getContentInputStream(Connection conn, String fileId, int partId) throws SQLException {
+	public InputStream getContent(Connection conn, String fileId, int partId) throws SQLException {
 		InputStream inputStream = null;
 
 		if (DatabaseTableAware.MYSQL.equalsIgnoreCase(this.database)) {

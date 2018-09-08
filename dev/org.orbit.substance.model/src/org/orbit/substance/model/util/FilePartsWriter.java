@@ -128,7 +128,7 @@ public class FilePartsWriter {
 		}
 
 		// "blockId" attribute
-		String blockId = contentAccess.getDataBlockId();
+		String blockId = contentAccess.getBlockId();
 		if (blockId != null && !blockId.isEmpty()) {
 			contentAccessJSONObject.put(CONTENT_ACCESS__BLOCK_ID, blockId);
 		}

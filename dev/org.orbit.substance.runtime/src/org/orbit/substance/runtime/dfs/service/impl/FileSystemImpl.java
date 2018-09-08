@@ -35,8 +35,12 @@ import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.server.ServerException;
 import org.origin.common.util.DiskSpaceUnit;
 import org.origin.common.util.UUIDUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FileSystemImpl implements FileSystem {
+
+	protected static Logger LOG = LoggerFactory.getLogger(FileSystemImpl.class);
 
 	public static FileMetadata[] EMPTY_FILES = new FileMetadata[0];
 
@@ -549,6 +553,7 @@ public class FileSystemImpl implements FileSystem {
 	 * @throws IOException
 	 */
 	protected void allocateVolumes(FileMetadata fileMetadata, long size) throws IOException {
+		LOG.debug("allocateVolumes()");
 		if (fileMetadata == null) {
 			throw new RuntimeException("File is null.");
 		}
@@ -628,73 +633,81 @@ public class FileSystemImpl implements FileSystem {
 
 		List<FilePart> fileParts = new ArrayList<FilePart>();
 
-		while (sizeLeft > 0) {
-			for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
-				DfsVolumeServiceMetadata serviceMetadata = serviceMetadataMap.get(dfsVolumeClient);
-				String dfsVolumeId = serviceMetadata.getDfsVolumeId();
+		if (dfsVolumeClients.length > 0) {
 
-				long volumeCapacity = serviceMetadata.getVolumeCapacity();
-				long volumeSize = serviceMetadata.getVolumeSize();
-				long volumeFreeSpace = volumeCapacity - volumeSize;
+			while (sizeLeft > 0) {
+				for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
+					DfsVolumeServiceMetadata serviceMetadata = serviceMetadataMap.get(dfsVolumeClient);
+					String dfsVolumeId = serviceMetadata.getDfsVolumeId();
 
-				// Note:
-				// - Dfs determines default data block capacity, for now.
-				// - If dfs volumes can determine its own default data block capacity, the problem is for large file with multiple data blocks, creating backup
-				// of the data blocks in other dfs volumes will cause other dfs voluems to have data blocks with varies capacity.
-				long dataBlockCapacity = defaultDataBlockCapacity;
-				if (dataBlockCapacity <= 0) {
-					dataBlockCapacity = DiskSpaceUnit.MB.toBytes(100);
-				}
+					long volumeCapacity = serviceMetadata.getVolumeCapacity();
+					long volumeSize = serviceMetadata.getVolumeSize();
+					long volumeFreeSpace = volumeCapacity - volumeSize;
 
-				if (volumeFreeSpace < dataBlockCapacity) {
-					// The dfs volume doesn't have enough space for creating a new data block, try next dfs volume.
-					// Can break the loop here as well, since dfs volumes are sorted by free space (desc). following dfs volumes in the loop already all have
-					// smaller free space.
-					continue;
-				}
+					// Note:
+					// - Dfs determines default data block capacity, for now.
+					// - If dfs volumes can determine its own default data block capacity, the problem is for large file with multiple data blocks, creating
+					// backup
+					// of the data blocks in other dfs volumes will cause other dfs voluems to have data blocks with varies capacity.
+					long dataBlockCapacity = defaultDataBlockCapacity;
+					if (dataBlockCapacity <= 0) {
+						dataBlockCapacity = DiskSpaceUnit.MB.toBytes(100);
+					}
 
-				// Note:
-				// - Data block id can be created when client uploads file contents to a dfs volume.
-				// - A data block newly created for a file (or file segment) should be locked until file content have been uploaded.
-				// - If a data block is for a full file segment, the data block is exclusive for the file segment. No other files should be uploaded to the data
-				// block. The data block matadata can have attribute to keep this information.
-				// - If a data blick is for a file (or a ending file segment), the data block should be locked for uploading other files until the file (or
-				// ending file segment) is uploaded to the dfs volume.
-				// - No need to allocate pending data block size, since the data block doesn't exist. The data block size can be set when the new data block is
-				// created.
-				String dataBlockId = "-1";
-				FileContentAccessImpl contentAccess = new FileContentAccessImpl(dfsId, dfsVolumeId, dataBlockId);
+					long volumeFreeSpaceMB = DiskSpaceUnit.BYTE.toMB(volumeFreeSpace);
+					long blockCapacityMB = DiskSpaceUnit.BYTE.toMB(dataBlockCapacity);
+					LOG.debug("    volumeFreeSpace = " + volumeFreeSpaceMB + " (MB)");
+					LOG.debug("    blockCapacity = " + blockCapacityMB + " (MB)");
 
-				// Checksum of file content segment is not available until file segment content is uploaded.
-				// Or maybe there is no need to keep it in dfs volume.
-				long partChecksum = -1;
+					if (volumeFreeSpace < dataBlockCapacity) {
+						// The dfs volume doesn't have enough space for creating a new data block, try next dfs volume.
+						// Can break the loop here as well, since dfs volumes are sorted by free space (desc). following dfs volumes in the loop already all
+						// have smaller free space.
+						continue;
+					}
 
-				if (sizeLeft <= dataBlockCapacity) {
-					// The data block is the last one (or the only one) for holding the content of the file.
-					FilePartImpl filePart = new FilePartImpl(partId, startIndex, -1, partChecksum);
-					filePart.getContentAccess().add(contentAccess);
-					fileParts.add(filePart);
+					// Note:
+					// - Data block id can be created when client uploads file contents to a dfs volume.
+					// - A data block newly created for a file (or file segment) should be locked until file content have been uploaded.
+					// - If a data block is for a full file segment, the data block is exclusive for the file segment. No other files should be uploaded to the
+					// data block. The data block matadata can have attribute to keep this information.
+					// - If a data blick is for a file (or a ending file segment), the data block should be locked for uploading other files until the file (or
+					// ending file segment) is uploaded to the dfs volume.
+					// - No need to allocate pending data block size, since the data block doesn't exist. The data block size can be set when the new data block
+					// is created.
+					String blockId = "-1";
+					FileContentAccessImpl contentAccess = new FileContentAccessImpl(dfsId, dfsVolumeId, blockId);
 
-					sizeLeft = 0;
-					partId++;
+					// Checksum of file content segment is not available until file segment content is uploaded.
+					// Or maybe there is no need to keep it in dfs volume.
+					long partChecksum = -1;
 
-					// Enough data blocks are created. No need to continue the dfs volumes loop.
-					break;
+					if (sizeLeft <= dataBlockCapacity) {
+						// The data block is the last one (or the only one) for holding the content of the file.
+						FilePartImpl filePart = new FilePartImpl(partId, startIndex, -1, partChecksum);
+						filePart.getContentAccess().add(contentAccess);
+						fileParts.add(filePart);
 
-				} else {
-					// The data block is not the last one.
-					endIndex = startIndex + dataBlockCapacity;
+						sizeLeft = 0;
+						partId++;
 
-					FilePartImpl filePart = new FilePartImpl(partId, startIndex, endIndex, partChecksum);
-					filePart.getContentAccess().add(contentAccess);
-					fileParts.add(filePart);
+						// Enough data blocks are created. No need to continue the dfs volumes loop.
+						break;
 
-					startIndex = endIndex;
+					} else {
+						// The data block is not the last one.
+						endIndex = startIndex + dataBlockCapacity;
 
-					sizeLeft -= dataBlockCapacity;
-					partId++;
+						FilePartImpl filePart = new FilePartImpl(partId, startIndex, endIndex, partChecksum);
+						filePart.getContentAccess().add(contentAccess);
+						fileParts.add(filePart);
 
-					// More data block is needed. Continue the dfs volumes loop.
+						startIndex = endIndex;
+
+						sizeLeft -= dataBlockCapacity;
+						partId++;
+						// More data block is needed. Continue the dfs volumes loop.
+					}
 				}
 			}
 		}
@@ -815,7 +828,7 @@ public class FileSystemImpl implements FileSystem {
 				throw new IOException("File doesn't exist.");
 			}
 
-			doDelete(conn, fileMetadata);
+			isDeleted = doDelete(conn, fileMetadata);
 
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -860,17 +873,14 @@ public class FileSystemImpl implements FileSystem {
 		}
 		String fileId = fileMetadata.getFileId();
 
-		// 1. delete file contents
-		boolean isFileContentDeleted = false;
-
-		// 2. delete file metadata
 		FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
 		boolean isFileMetadataDeleted = tableHandler.deleteByFileId(conn, fileId);
 
-		if (isFileContentDeleted && isFileMetadataDeleted) {
-			return true;
+		if (isFileMetadataDeleted) {
+			// delete file contents
 		}
-		return false;
+
+		return isFileMetadataDeleted;
 	}
 
 }

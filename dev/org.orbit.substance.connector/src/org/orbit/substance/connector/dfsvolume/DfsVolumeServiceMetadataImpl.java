@@ -36,7 +36,10 @@ public class DfsVolumeServiceMetadataImpl extends ServiceMetadataImpl implements
 	public long getVolumeCapacity() {
 		long capacity = -1;
 		if (hasProperty(PROP__VOLUME_CAPACITY)) {
-			capacity = getProperty(PROP__VOLUME_CAPACITY, Long.class);
+			Object value = getProperty(PROP__VOLUME_CAPACITY);
+			if (value != null) {
+				capacity = Long.valueOf(value.toString());
+			}
 		}
 		return capacity;
 	}
@@ -45,7 +48,10 @@ public class DfsVolumeServiceMetadataImpl extends ServiceMetadataImpl implements
 	public long getVolumeSize() {
 		long size = -1;
 		if (hasProperty(PROP__VOLUME_SIZE)) {
-			size = getProperty(PROP__VOLUME_SIZE, Long.class);
+			Object value = getProperty(PROP__VOLUME_SIZE);
+			if (value != null) {
+				size = Long.valueOf(value.toString());
+			}
 		}
 		return size;
 	}

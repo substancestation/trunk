@@ -10,8 +10,8 @@ public interface FileContentAccess {
 
 	void setDfsVolumeId(String dfsVolumeId);
 
-	String getDataBlockId();
+	String getBlockId();
 
-	void setDataBlockId(String dataBlockId);
+	void setBlockId(String blockId);
 
 }

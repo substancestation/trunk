@@ -6,6 +6,10 @@ import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 public class FileContentMetadataImpl implements FileContentMetadata {
 
 	protected DfsVolumeClient dfsVolumeClient;
+
+	protected String dfsId;
+	protected String dfsVolumeId;
+	protected String blockId;
 	protected String fileId;
 	protected int partId;
 	protected long size;
@@ -28,6 +32,33 @@ public class FileContentMetadataImpl implements FileContentMetadata {
 
 	public void setDfsVolumeClient(DfsVolumeClient dfsVolumeClient) {
 		this.dfsVolumeClient = dfsVolumeClient;
+	}
+
+	@Override
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
+	}
+
+	@Override
+	public String getDfsVolumeId() {
+		return this.dfsVolumeId;
+	}
+
+	public void setDfsVolumeId(String dfsVolumeId) {
+		this.dfsVolumeId = dfsVolumeId;
+	}
+
+	@Override
+	public String getBlockId() {
+		return this.blockId;
+	}
+
+	public void setBlockId(String blockId) {
+		this.blockId = blockId;
 	}
 
 	@Override

@@ -17,6 +17,10 @@ public interface FileMetadata {
 	public static final String ATTR__DATE_CREATED = "dateCreated";
 	public static final String ATTR__DATE_MODIFIED = "dateModified";
 
+	String getDfsId();
+
+	void setDfsId(String dfsId);
+
 	int getId();
 
 	void setId(int id);

@@ -11,6 +11,10 @@ public interface FileMetadata {
 
 	DfsClient getDfsClient();
 
+	String getDfsId();
+
+	String getAccountId();
+
 	String getFileId();
 
 	String getParentFileId();

@@ -48,7 +48,7 @@ public class DfsVolumeWSApplication extends OrbitWSApplication {
 		DfsVolumeService service = getAdapter(DfsVolumeService.class);
 		if (metadata instanceof ServiceMetadataImpl && service != null) {
 			String dfsId = service.getDfsId();
-			String dfsVolumeId = service.getVolumeId();
+			String dfsVolumeId = service.getDfsVolumeId();
 			long volumeCapacity = service.getVolumeCapacity();
 			long volumeSize = service.getVolumeSize();
 			// long blockCapacity = service.getDefaultBlockCapacity();

@@ -34,15 +34,16 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	/**
 	 * 
 	 * @param conn
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @return
 	 * @throws SQLException
 	 */
-	public static synchronized VolumeBlocksTableHandler getInstance(Connection conn, String dfsVolumeId) throws SQLException {
-		String tableName = doGetTableName(dfsVolumeId);
+	public static synchronized VolumeBlocksTableHandler getInstance(Connection conn, String dfsId, String dfsVolumeId) throws SQLException {
+		String tableName = doGetTableName(dfsId, dfsVolumeId);
 		VolumeBlocksTableHandler tableHandler = tableHandlerMap.get(tableName);
 		if (tableHandler == null) {
-			VolumeBlocksTableHandler newTableHandler = new VolumeBlocksTableHandler(dfsVolumeId);
+			VolumeBlocksTableHandler newTableHandler = new VolumeBlocksTableHandler(dfsId, dfsVolumeId);
 			tableHandlerMap.put(tableName, newTableHandler);
 			tableHandler = newTableHandler;
 		}
@@ -60,12 +61,13 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	/**
 	 * 
 	 * @param conn
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @return
 	 * @throws SQLException
 	 */
-	public static synchronized boolean dispose(Connection conn, String dfsVolumeId) throws SQLException {
-		String tableName = doGetTableName(dfsVolumeId);
+	public static synchronized boolean dispose(Connection conn, String dfsId, String dfsVolumeId) throws SQLException {
+		String tableName = doGetTableName(dfsId, dfsVolumeId);
 
 		VolumeBlocksTableHandler tableHandler = tableHandlerMap.get(tableName);
 		if (tableHandler != null) {
@@ -83,19 +85,22 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		return false;
 	}
 
+	protected String dfsId;
 	protected String dfsVolumeId;
 
 	/**
 	 * 
+	 * @param dfsId
 	 * @param dfsVolumeId
 	 */
-	public VolumeBlocksTableHandler(String dfsVolumeId) {
+	public VolumeBlocksTableHandler(String dfsId, String dfsVolumeId) {
+		this.dfsId = dfsId;
 		this.dfsVolumeId = dfsVolumeId;
 	}
 
 	@Override
 	public String getTableName() {
-		String tableName = doGetTableName(this.dfsVolumeId);
+		String tableName = doGetTableName(this.dfsId, this.dfsVolumeId);
 		return tableName;
 	}
 
@@ -104,8 +109,8 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * @param dfsVolumeId
 	 * @return
 	 */
-	public static String doGetTableName(String dfsVolumeId) {
-		return dfsVolumeId + "_blocks";
+	public static String doGetTableName(String dfsId, String dfsVolumeId) {
+		return dfsId + "_" + dfsVolumeId + "_blocks";
 	}
 
 	@Override
@@ -163,7 +168,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		List<PendingFile> pendingFiles = ModelConverter.DfsVolume.toPendingFiles(pendingFilesString);
 		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
 
-		return new DataBlockMetadataImpl(this.dfsVolumeId, id, blockId, accountId, capacity, size, pendingFiles, properties, dateCreated, dateModified);
+		return new DataBlockMetadataImpl(this.dfsId, this.dfsVolumeId, id, blockId, accountId, capacity, size, pendingFiles, properties, dateCreated, dateModified);
 	}
 
 	/**
@@ -214,6 +219,11 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 			@Override
 			protected Boolean handleRow(ResultSet rs) throws SQLException {
 				return rs.next() ? true : false;
+			}
+
+			@Override
+			protected Boolean getEmptyValue() {
+				return false;
 			}
 		};
 		return DatabaseUtil.query(conn, querySQL, new Object[] { blockId }, rsHandler);

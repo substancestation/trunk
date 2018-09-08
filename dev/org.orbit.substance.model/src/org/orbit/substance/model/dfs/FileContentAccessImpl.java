@@ -4,7 +4,7 @@ public class FileContentAccessImpl implements FileContentAccess {
 
 	protected String dfsId;
 	protected String dfsVolumeId;
-	protected String dataBlockId;
+	protected String blockId;
 
 	public FileContentAccessImpl() {
 	}
@@ -13,16 +13,16 @@ public class FileContentAccessImpl implements FileContentAccess {
 	 * 
 	 * @param dfsId
 	 * @param dfsVolumeId
-	 * @param dataBlockId
+	 * @param blockId
 	 */
-	public FileContentAccessImpl(String dfsId, String dfsVolumeId, String dataBlockId) {
+	public FileContentAccessImpl(String dfsId, String dfsVolumeId, String blockId) {
 		checkDfsId(dfsId);
 		checkDfsVolumeId(dfsVolumeId);
-		checkDataBlockId(dataBlockId);
+		checkBlockId(blockId);
 
 		this.dfsId = dfsId;
 		this.dfsVolumeId = dfsVolumeId;
-		this.dataBlockId = dataBlockId;
+		this.blockId = blockId;
 	}
 
 	protected void checkDfsId(String dfsId) {
@@ -37,9 +37,9 @@ public class FileContentAccessImpl implements FileContentAccess {
 		}
 	}
 
-	protected void checkDataBlockId(String dataBlockId) {
-		if (dataBlockId == null || dataBlockId.isEmpty()) {
-			throw new IllegalArgumentException("dataBlockId is null.");
+	protected void checkBlockId(String blockId) {
+		if (blockId == null || blockId.isEmpty()) {
+			throw new IllegalArgumentException("blockId is null.");
 		}
 	}
 
@@ -68,15 +68,15 @@ public class FileContentAccessImpl implements FileContentAccess {
 	}
 
 	@Override
-	public String getDataBlockId() {
-		return this.dataBlockId;
+	public String getBlockId() {
+		return this.blockId;
 	}
 
 	@Override
-	public void setDataBlockId(String dataBlockId) {
-		checkDataBlockId(dataBlockId);
+	public void setBlockId(String blockId) {
+		checkBlockId(blockId);
 
-		this.dataBlockId = dataBlockId;
+		this.blockId = blockId;
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class FileContentAccessImpl implements FileContentAccess {
 		int result = 1;
 		result = prime * result + ((this.dfsId == null) ? 0 : this.dfsId.hashCode());
 		result = prime * result + ((this.dfsVolumeId == null) ? 0 : this.dfsVolumeId.hashCode());
-		result = prime * result + ((this.dataBlockId == null) ? 0 : this.dataBlockId.hashCode());
+		result = prime * result + ((this.blockId == null) ? 0 : this.blockId.hashCode());
 		return result;
 	}
 
@@ -101,52 +101,16 @@ public class FileContentAccessImpl implements FileContentAccess {
 
 		String otherDfsId = other.getDfsId();
 		String otherDfsVolumeId = other.getDfsVolumeId();
-		String otherDataBlockId = other.getDataBlockId();
+		String otherBlockId = other.getBlockId();
 
 		boolean matchDfsId = ((this.dfsId == null && otherDfsId == null) || (this.dfsId != null && this.dfsId.equals(otherDfsId))) ? true : false;
 		boolean matchDfsVolumeId = ((this.dfsVolumeId == null && otherDfsVolumeId == null) || (this.dfsVolumeId != null && this.dfsVolumeId.equals(otherDfsVolumeId))) ? true : false;
-		boolean matchDataBlockId = ((this.dataBlockId == null && otherDataBlockId == null) || (this.dataBlockId != null && this.dataBlockId.equals(otherDataBlockId))) ? true : false;
+		boolean matchBlockId = ((this.blockId == null && otherBlockId == null) || (this.blockId != null && this.blockId.equals(otherBlockId))) ? true : false;
 
-		if (matchDfsId && matchDfsVolumeId && matchDataBlockId) {
+		if (matchDfsId && matchDfsVolumeId && matchBlockId) {
 			return true;
 		}
 		return false;
 	}
 
 }
-
-// FilePart getFilePart();
-// void setFilePart(FilePart filePart);
-// protected FilePart filePart;
-// @Override
-// public FilePart getFilePart() {
-// return this.filePart;
-// }
-// public void setFilePart(FilePart filePart) {
-// this.filePart = filePart;
-// }
-// int getId();
-// void setId(int id);
-// protected int id;
-// /**
-// *
-// * @param id
-// * @param dfsId
-// * @param dfsVolumeId
-// * @param dataBlockId
-// */
-// public FileContentAccessImpl(int id, String dfsId, String dfsVolumeId, String dataBlockId) {
-// this.id = id;
-// this.dfsId = dfsId;
-// this.dfsVolumeId = dfsVolumeId;
-// this.dataBlockId = dataBlockId;
-// }
-// @Override
-// public int getId() {
-// return this.id;
-// }
-//
-// @Override
-// public void setId(int id) {
-// this.id = id;
-// }

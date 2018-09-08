@@ -11,20 +11,6 @@ import org.origin.common.rest.server.ServerException;
 import org.origin.common.service.PropertiesAware;
 import org.origin.common.service.WebServiceAware;
 
-/*
- * File system id: 
- *     dfs_metadata_1
- * 
- * File content id: 
- *     dfs_content_1_1, 
- *     dfs_content_1_2, 
- *     dfs_content_1_3, 
- *     ...
- * 
- * Block id: 
- *     1, 2, 3, 4, ...
- * 
- */
 public interface DfsVolumeService extends WebServiceAware, PropertiesAware, ConnectionAware, EditPoliciesAwareService {
 
 	// ----------------------------------------------------------------------
@@ -32,7 +18,7 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 	// ----------------------------------------------------------------------
 	String getDfsId();
 
-	String getVolumeId();
+	String getDfsVolumeId();
 
 	long getVolumeCapacity();
 
@@ -49,7 +35,13 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 
 	DataBlockMetadata getDataBlock(String accountId, String blockId) throws ServerException;
 
+	boolean dataBlockExists(String accountId, String blockId) throws ServerException;
+
+	boolean isDataBlockEmpty(String accountId, String blockId) throws ServerException;
+
 	DataBlockMetadata createDataBlock(String accountId, long capacity, List<PendingFile> pendingFiles) throws ServerException;
+
+	boolean updateDataBlockSize(String accountId, String blockId, long newSize) throws ServerException;
 
 	boolean updateDataBlockSizeByDelta(String accountId, String blockId, long sizeDelta) throws ServerException;
 
@@ -70,16 +62,15 @@ public interface DfsVolumeService extends WebServiceAware, PropertiesAware, Conn
 
 	boolean deleteFileContent(String accountId, String blockId, String fileId, int partId) throws ServerException;
 
+	boolean deleteFileContents(String accountId, String blockId) throws ServerException;
+
 	// ----------------------------------------------------------------------
 	// Download/upload
 	// ----------------------------------------------------------------------
-	InputStream getContentInputStream(String accountId, String blockId, String fileId, int partId) throws ServerException;
+	InputStream getContent(String accountId, String blockId, String fileId, int partId) throws ServerException;
 
 	void getContent(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ServerException;
 
 	boolean setContent(String accountId, String blockId, String fileId, int partId, InputStream input) throws ServerException;
 
 }
-
-// boolean setFileContent(String accountId, String blockId, String fileId, int partId, InputStream input, FileContentMetadata fileContentMetadata) throws
-// ServerException;

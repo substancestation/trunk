@@ -12,6 +12,7 @@ import org.orbit.substance.runtime.util.ModelConverter;
 
 public class FileMetadataImpl implements FileMetadata {
 
+	protected String dfsId;
 	protected int id;
 	protected String accountId;
 	protected String fileId;
@@ -32,6 +33,7 @@ public class FileMetadataImpl implements FileMetadata {
 
 	/**
 	 * 
+	 * @param dfsId
 	 * @param id
 	 * @param accountId
 	 * @param fileId
@@ -47,7 +49,8 @@ public class FileMetadataImpl implements FileMetadata {
 	 * @param dateCreated
 	 * @param dateModified
 	 */
-	public FileMetadataImpl(int id, String accountId, String fileId, String parentFileId, Path path, String name, long size, boolean isDirectory, boolean isHidden, boolean inTrash, List<FilePart> fileParts, Map<String, Object> properties, long dateCreated, long dateModified) {
+	public FileMetadataImpl(String dfsId, int id, String accountId, String fileId, String parentFileId, Path path, String name, long size, boolean isDirectory, boolean isHidden, boolean inTrash, List<FilePart> fileParts, Map<String, Object> properties, long dateCreated, long dateModified) {
+		this.dfsId = dfsId;
 		this.id = id;
 		this.accountId = accountId;
 		this.fileId = fileId;
@@ -62,6 +65,15 @@ public class FileMetadataImpl implements FileMetadata {
 		this.properties = properties;
 		this.dateCreated = dateCreated;
 		this.dateModified = dateModified;
+	}
+
+	@Override
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
 	}
 
 	@Override
@@ -276,6 +288,7 @@ public class FileMetadataImpl implements FileMetadata {
 		String propertiesString = ModelConverter.Dfs.toPropertiesString(this.properties);
 
 		sb.append("FileMetadataImpl (");
+		sb.append("dfsId='").append(this.dfsId).append("'");
 		sb.append("id='").append(this.id).append("'");
 		sb.append(", accountId='").append(this.accountId).append("'");
 		sb.append(", fileId='").append(this.fileId).append("'");

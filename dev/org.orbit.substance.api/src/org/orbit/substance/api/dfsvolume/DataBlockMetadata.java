@@ -9,6 +9,8 @@ public interface DataBlockMetadata {
 
 	DfsVolumeClient getDfsVolumeClient();
 
+	String getDfsId();
+
 	String getDfsVolumeId();
 
 	String getBlockId();

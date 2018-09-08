@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class FileMetadataDTO {
 
 	@XmlElement
+	protected String dfsId;
+	@XmlElement
 	protected String accountId;
 	@XmlElement
 	protected String fileId;
@@ -32,6 +34,15 @@ public class FileMetadataDTO {
 	protected long dateModified;
 
 	public FileMetadataDTO() {
+	}
+
+	@XmlElement
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
 	}
 
 	@XmlElement
@@ -143,15 +154,3 @@ public class FileMetadataDTO {
 	}
 
 }
-
-// @XmlElement
-// protected boolean exists;
-
-// @XmlElement
-// public boolean exists() {
-// return this.exists;
-// }
-//
-// public void setExists(boolean exists) {
-// this.exists = exists;
-// }

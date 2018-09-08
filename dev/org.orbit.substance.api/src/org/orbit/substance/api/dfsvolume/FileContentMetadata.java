@@ -4,6 +4,12 @@ public interface FileContentMetadata {
 
 	DfsVolumeClient getDfsVolumeClient();
 
+	String getDfsId();
+
+	String getDfsVolumeId();
+
+	String getBlockId();
+
 	String getFileId();
 
 	int getPartId();

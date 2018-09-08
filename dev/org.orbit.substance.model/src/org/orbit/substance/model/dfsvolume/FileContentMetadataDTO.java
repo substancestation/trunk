@@ -7,6 +7,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class FileContentMetadataDTO {
 
 	@XmlElement
+	protected String dfsId;
+	@XmlElement
+	protected String dfsVolumeId;
+	@XmlElement
+	protected String blockId;
+	@XmlElement
 	protected String fileId;
 	@XmlElement
 	protected int partId;
@@ -18,6 +24,33 @@ public class FileContentMetadataDTO {
 	protected long dateCreated;
 	@XmlElement
 	protected long dateModified;
+
+	@XmlElement
+	public String getDfsId() {
+		return this.dfsId;
+	}
+
+	public void setDfsId(String dfsId) {
+		this.dfsId = dfsId;
+	}
+
+	@XmlElement
+	public String getDfsVolumeId() {
+		return this.dfsVolumeId;
+	}
+
+	public void setDfsVolumeId(String dfsVolumeId) {
+		this.dfsVolumeId = dfsVolumeId;
+	}
+
+	@XmlElement
+	public String getBlockId() {
+		return this.blockId;
+	}
+
+	public void setBlockId(String blockId) {
+		this.blockId = blockId;
+	}
 
 	@XmlElement
 	public String getFileId() {

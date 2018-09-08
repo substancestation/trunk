@@ -94,7 +94,8 @@ public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
 		}
 
 		for (IndexItem dfsVolumeIndexItem : dfsVolumesIndexItems) {
-			boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
+			// boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
+			boolean isOnline = true;
 			if (isOnline) {
 				String hostUrl = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
 				String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
