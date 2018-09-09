@@ -38,8 +38,8 @@
 	<div class="main_div01">
 		<h2>Files</h2>
 		<div class="top_tools_div01">
-			<a id="actionUploadFile" class="button02">Upload</a>
 			<a id="actionCreateDirectory" class="button02">New Directory</a>
+			<a id="actionUploadFile" class="button02">Upload File</a>
 			<a id="actionDeleteFiles" class="button02">Delete</a>
 			<a class="button02" href="<%=contextRoot + "/files?parentFileId=" + parentFileId%>">Refresh</a>
 			<% if (grandParentFileId != null) { %>
@@ -54,9 +54,9 @@
 					<input type="checkbox" onClick="toggleSelection(this, 'fileId')" />
 				</th>
 				<th class="th1" width="500">Path</th>
-				<th class="th1" width="50">Directory</th>
-				<th class="th1" width="50">Size</th>
-				<th class="th1" width="50">Date Modified</th>
+				<th class="th1" width="60">Directory</th>
+				<th class="th1" width="60">Size</th>
+				<th class="th1" width="60">Date Modified</th>
 			</tr>
 			<%
 				if (files.length == 0) {
@@ -125,7 +125,7 @@
 			</table>
 		</div>
 		<div class="dialog_button_div01">
-			<a class="button02" href="javascript:document.getElementById('upload_form').submit();">OK</a>
+			<a id="okUploadFile" class="button02">OK</a>
 			<a id="cancelUploadFile" class="button02b">Cancel</a>
 		</div>
 		</form>

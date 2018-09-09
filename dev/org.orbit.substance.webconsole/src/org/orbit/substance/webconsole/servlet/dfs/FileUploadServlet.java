@@ -41,12 +41,12 @@ public class FileUploadServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -8884733342899016175L;
 
-	// location to store file uploaded
-	protected static final String UPLOAD_DIRECTORY = "upload";
-
 	protected static final long MEMORY_THRESHOLD = DiskSpaceUnit.MB.toBytes(50);
 	protected static final long MAX_FILE_SIZE = DiskSpaceUnit.MB.toBytes(250);
 	protected static final long MAX_REQUEST_SIZE = DiskSpaceUnit.MB.toBytes(260);
+
+	// location to store file uploaded
+	protected static final String UPLOAD_DIRECTORY = "upload";
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -119,6 +119,11 @@ public class FileUploadServlet extends HttpServlet {
 
 						} catch (Exception e) {
 							message = MessageHelper.INSTANCE.add(message, "File '" + fileName + "' is not uploaded to web server. " + e.getMessage());
+						}
+					} else {
+						String itemFieldName = fileItem.getFieldName();
+						if ("parentFileId".equals(itemFieldName)) {
+							parentFileId = fileItem.getString();
 						}
 					}
 				}
@@ -196,8 +201,3 @@ public class FileUploadServlet extends HttpServlet {
 	}
 
 }
-
-// // upload settings
-// protected static final int MEMORY_THRESHOLD = 10 * 1024 * 1024; // 10MB
-// protected static final int MAX_FILE_SIZE = 250 * 1024 * 1024; // 250MB
-// protected static final int MAX_REQUEST_SIZE = 260 * 1024 * 1024; // 260MB

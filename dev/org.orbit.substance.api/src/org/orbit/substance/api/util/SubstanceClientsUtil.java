@@ -33,8 +33,13 @@ public class SubstanceClientsUtil {
 
 	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClientsUtil.class);
 
+	public static DfsAdmin DfsAdmin = new DfsAdmin();
 	public static Dfs Dfs = new Dfs();
 	public static DfsVolume DfsVolume = new DfsVolume();
+
+	public static class DfsAdmin {
+
+	}
 
 	public static class Dfs {
 		public FileMetadata[] EMPTY_FILES = new FileMetadata[0];

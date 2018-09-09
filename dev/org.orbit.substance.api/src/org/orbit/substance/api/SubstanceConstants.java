@@ -10,6 +10,19 @@ public interface SubstanceConstants {
 	public static String ORBIT_DFS_VOLUME_URL = "orbit.dfs_volume.url";
 
 	// ----------------------------------------------------------------------------------------
+	// Dfs service
+	// ----------------------------------------------------------------------------------------
+	// Index item properties
+	public static String IDX_PROP__DFS__ID = "dfs.id";
+	public static String IDX_PROP__DFS__NAME = "dfs.name";
+	public static String IDX_PROP__DFS__HOST_URL = "dfs.host.url";
+	public static String IDX_PROP__DFS__CONTEXT_ROOT = "dfs.context_root";
+
+	// Index item values
+	public static String IDX__DFS__INDEXER_ID = "substance.dfs.indexer";
+	public static String IDX__DFS__TYPE = "DFS";
+
+	// ----------------------------------------------------------------------------------------
 	// Dfs volume service
 	// ----------------------------------------------------------------------------------------
 	// Index item properties

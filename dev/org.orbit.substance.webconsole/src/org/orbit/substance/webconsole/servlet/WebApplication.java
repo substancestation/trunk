@@ -15,6 +15,7 @@ import org.orbit.substance.webconsole.servlet.dfs.FileDeleteServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileDownloadServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileListServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileUploadServlet;
+import org.orbit.substance.webconsole.servlet.dfsadmin.DfsListServlet;
 import org.osgi.framework.BundleContext;
 
 public class WebApplication extends PlatformWebApplication {
@@ -70,6 +71,9 @@ public class WebApplication extends PlatformWebApplication {
 		addServlet(new ServletMetadataImpl("/fileupload", new FileUploadServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/filedownload", new FileDownloadServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/filedelete", new FileDeleteServlet(), dicts));
+
+		// Admin
+		addServlet(new ServletMetadataImpl("/admin/dfslist", new DfsListServlet(), dicts));
 
 		// Add JSPs
 		addJSP(new JspMetadataImpl(bundleContext.getBundle(), "/views", "/WEB-INF", dicts));
