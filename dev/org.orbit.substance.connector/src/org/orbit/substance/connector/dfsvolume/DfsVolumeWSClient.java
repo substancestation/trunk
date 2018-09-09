@@ -169,7 +169,7 @@ public class DfsVolumeWSClient extends WSClient {
 	public boolean download(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ClientException {
 		InputStream input = null;
 		try {
-			WebTarget target = getRootPath().path("app").path("content");
+			WebTarget target = getRootPath().path("file").path("content");
 			if (accountId != null && !accountId.isEmpty()) {
 				target = target.queryParam("accountId", "accountId");
 			}
@@ -187,7 +187,9 @@ public class DfsVolumeWSClient extends WSClient {
 				IOUtil.copy(input, output);
 			}
 
-		} catch (ClientException | IOException e) {
+		} catch (ClientException e) {
+			handleException(e);
+		} catch (IOException e) {
 			handleException(e);
 		} finally {
 			IOUtil.closeQuietly(input, true);

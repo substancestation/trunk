@@ -372,7 +372,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 			ResultSet rs = null;
 			PreparedStatement pstmt = null;
 			try {
-				String querySQL = "SELECT * FROM " + getTableName() + " WHERE appId=? AND appVersion=?";
+				String querySQL = "SELECT * FROM " + getTableName() + " WHERE fileId=? AND partId=?";
 				pstmt = conn.prepareStatement(querySQL);
 				pstmt.setString(1, fileId);
 				pstmt.setInt(2, partId);

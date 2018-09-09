@@ -831,7 +831,7 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	// ----------------------------------------------------------------------
 	@Override
 	public InputStream getContent(String accountId, String blockId, String fileId, int partId) throws ServerException {
-		InputStream input = null;
+		InputStream inputStream = null;
 		Connection conn = null;
 		try {
 			conn = getConnection();
@@ -841,14 +841,14 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			VolumeFileContentTableHandler fileContentTableHandler = VolumeFileContentTableHandler.getInstance(conn, dfsId, dfsVolumeId, blockId);
 
 			fileContentTableHandler.setDatabase(this.database);
-			input = fileContentTableHandler.getContent(conn, fileId, partId);
+			inputStream = fileContentTableHandler.getContent(conn, fileId, partId);
 
 		} catch (SQLException e) {
 			handleSQLException(e);
 		} finally {
 			DatabaseUtil.closeQuietly(conn, true);
 		}
-		return input;
+		return inputStream;
 	}
 
 	@Override

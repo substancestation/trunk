@@ -23,9 +23,13 @@ public interface DfsClient extends ServiceClient {
 
 	boolean exists(Path path) throws ClientException;
 
+	FileMetadata createDirectory(Path path) throws ClientException;
+
+	FileMetadata createDirectory(String parentFileId, String fileName) throws ClientException;
+
 	FileMetadata createNewFile(Path path) throws ClientException;
 
-	FileMetadata createNewFile(Path path, long size) throws ClientException;
+	// FileMetadata createNewFile(Path path, long size) throws ClientException;
 
 	FileMetadata createNewFile(String parentFileId, String fileName, long size) throws ClientException;
 

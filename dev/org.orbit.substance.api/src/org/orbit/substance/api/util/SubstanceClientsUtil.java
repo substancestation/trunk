@@ -20,7 +20,6 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.model.dfs.FileContentAccess;
 import org.orbit.substance.model.dfs.FilePart;
-import org.orbit.substance.model.dfs.Path;
 import org.origin.common.io.ChecksumUtil;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.client.ClientException;
@@ -119,40 +118,39 @@ public class SubstanceClientsUtil {
 			return fileMetadata;
 		}
 
-		/**
-		 * 
-		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
-		 * @param accessToken
-		 * @param path
-		 * @return
-		 * @throws ClientException
-		 */
-		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
-			FileMetadata fileMetadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
-			if (dfsClient != null) {
-				fileMetadata = dfsClient.createNewFile(path);
-			}
-			return fileMetadata;
-		}
+		// /**
+		// *
+		// * @param dfsClientResolver
+		// * @param dfsServiceUrl
+		// * @param accessToken
+		// * @param path
+		// * @return
+		// * @throws ClientException
+		// */
+		// public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+		// FileMetadata fileMetadata = null;
+		// DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+		// if (dfsClient != null) {
+		// fileMetadata = dfsClient.createNewFile(path);
+		// }
+		// return fileMetadata;
+		// }
 
 		/**
 		 * 
 		 * @param dfsClientResolver
 		 * @param dfsServiceUrl
 		 * @param accessToken
-		 * @param path
-		 * @param localFile
+		 * @param parentFileId
+		 * @param fileName
 		 * @return
 		 * @throws ClientException
 		 */
-		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path, java.io.File localFile) throws ClientException {
+		public FileMetadata createDirectory(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String parentFileId, String fileName) throws ClientException {
 			FileMetadata fileMetadata = null;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
-				long size = localFile.length();
-				fileMetadata = dfsClient.createNewFile(path, size);
+				fileMetadata = dfsClient.createDirectory(parentFileId, fileName);
 			}
 			return fileMetadata;
 		}
@@ -163,16 +161,15 @@ public class SubstanceClientsUtil {
 		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param parentFileId
-		 * @param localFile
+		 * @param fileName
+		 * @param size
 		 * @return
 		 * @throws ClientException
 		 */
-		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String parentFileId, java.io.File localFile) throws ClientException {
+		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String parentFileId, String fileName, long size) throws ClientException {
 			FileMetadata fileMetadata = null;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
-				String fileName = localFile.getName();
-				long size = localFile.length();
 				fileMetadata = dfsClient.createNewFile(parentFileId, fileName, size);
 			}
 			return fileMetadata;
@@ -830,3 +827,24 @@ public class SubstanceClientsUtil {
 // }
 
 // long checksum = FileUtil.getChecksum(localFile);
+
+// /**
+// *
+// * @param dfsClientResolver
+// * @param dfsServiceUrl
+// * @param accessToken
+// * @param path
+// * @param localFile
+// * @return
+// * @throws ClientException
+// */
+// public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path, java.io.File localFile)
+// throws ClientException {
+// FileMetadata fileMetadata = null;
+// DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+// if (dfsClient != null) {
+// long size = localFile.length();
+// fileMetadata = dfsClient.createNewFile(path, size);
+// }
+// return fileMetadata;
+// }

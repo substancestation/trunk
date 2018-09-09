@@ -340,7 +340,7 @@ public class FileSystemImpl implements FileSystem {
 
 			String currParentFileId = fileMetadata.getParentFileId();
 			while (currParentFileId != null && !currParentFileId.isEmpty() && !currParentFileId.equals("-1")) {
-				FileMetadata parentFileMetadata = tableHandler.getByFileId(conn, fileId);
+				FileMetadata parentFileMetadata = tableHandler.getByFileId(conn, currParentFileId);
 				if (parentFileMetadata == null) {
 					// Parent file doesn't exists. Path cannot be constructed.
 					return null;
@@ -353,7 +353,7 @@ public class FileSystemImpl implements FileSystem {
 				}
 
 				String parentFileName = parentFileMetadata.getName();
-				currPath = new Path(currPath, parentFileName);
+				currPath = new Path(parentFileName, currPath);
 
 				currParentFileId = parentFileMetadata.getParentFileId();
 			}
@@ -406,6 +406,100 @@ public class FileSystemImpl implements FileSystem {
 			isDirectory = fileMetadata.isDirectory();
 		}
 		return isDirectory;
+	}
+
+	@Override
+	public FileMetadata createDirectory(Path path) throws IOException {
+		FileMetadata newFileMetadata = null;
+
+		if (path == null || path.isEmpty()) {
+			throw new IOException("Path is empty.");
+		}
+		FileMetadata existingFileMetadata = getFile(path);
+		if (existingFileMetadata != null) {
+			if (existingFileMetadata.isDirectory()) {
+				throw new IOException("Path already exists and is a directory.");
+			} else {
+				throw new IOException("Path already exists and is a file.");
+			}
+		}
+
+		Connection conn = null;
+		try {
+			conn = getConnection();
+
+			FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
+
+			String parentFileId = null;
+			Path parentPath = path.getParent();
+			if (parentPath == null || parentPath.isRoot()) {
+				parentFileId = "-1";
+
+			} else {
+				FileMetadata parentFileMetadata = getFile(parentPath);
+				if (parentFileMetadata == null) {
+					throw new IOException("Parent directory doesn't exist.");
+				} else {
+					if (!parentFileMetadata.isDirectory()) {
+						throw new IOException("Parent file is not a directory.");
+					}
+				}
+				parentFileId = parentFileMetadata.getFileId();
+			}
+
+			String fileId = generateFileId();
+			String fileName = path.getLastSegment();
+			boolean isDirectory = true;
+			boolean isHidden = false;
+			boolean inTrash = false;
+			List<FilePart> fileParts = new ArrayList<FilePart>();
+			Map<String, Object> properties = new HashMap<String, Object>();
+
+			newFileMetadata = tableHandler.create(conn, fileId, parentFileId, fileName, 0, isDirectory, isHidden, inTrash, fileParts, properties);
+			if (newFileMetadata == null) {
+				throw new RuntimeException("New directory metadata cannot be created.");
+			}
+
+			updatePath(newFileMetadata);
+
+		} catch (SQLException e) {
+			handleSQLException(e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn, true);
+		}
+		return newFileMetadata;
+	}
+
+	@Override
+	public FileMetadata createDirectory(String parentFileId, String fileName) throws IOException {
+		FileMetadata newDirectoryMetadata = null;
+
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
+
+			String fileId = generateFileId();
+			boolean isDirectory = true;
+			boolean isHidden = false;
+			boolean inTrash = false;
+			List<FilePart> fileParts = new ArrayList<FilePart>();
+			Map<String, Object> properties = new HashMap<String, Object>();
+
+			newDirectoryMetadata = tableHandler.create(conn, fileId, parentFileId, fileName, 0, isDirectory, isHidden, inTrash, fileParts, properties);
+			if (newDirectoryMetadata == null) {
+				throw new RuntimeException("New directory metadata cannot be created.");
+			}
+
+			updatePath(newDirectoryMetadata);
+
+		} catch (SQLException e) {
+			handleSQLException(e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn, true);
+		}
+
+		return newDirectoryMetadata;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import org.orbit.service.servlet.impl.ResourceMetadataImpl;
 import org.orbit.service.servlet.impl.ServletMetadataImpl;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.webconsole.WebConstants;
+import org.orbit.substance.webconsole.servlet.dfs.CreateDirectoryServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileDeleteServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileDownloadServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileListServlet;
@@ -65,6 +66,7 @@ public class WebApplication extends PlatformWebApplication {
 
 		// Files
 		addServlet(new ServletMetadataImpl("/files", new FileListServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/mkdir", new CreateDirectoryServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/fileupload", new FileUploadServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/filedownload", new FileDownloadServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/filedelete", new FileDeleteServlet(), dicts));

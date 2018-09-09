@@ -44,17 +44,15 @@ public class FileUploadServlet extends HttpServlet {
 	// location to store file uploaded
 	protected static final String UPLOAD_DIRECTORY = "upload";
 
-	// // upload settings
-	// protected static final int MEMORY_THRESHOLD = 10 * 1024 * 1024; // 10MB
-	// protected static final int MAX_FILE_SIZE = 250 * 1024 * 1024; // 250MB
-	// protected static final int MAX_REQUEST_SIZE = 260 * 1024 * 1024; // 260MB
-
 	protected static final long MEMORY_THRESHOLD = DiskSpaceUnit.MB.toBytes(50);
 	protected static final long MAX_FILE_SIZE = DiskSpaceUnit.MB.toBytes(250);
 	protected static final long MAX_REQUEST_SIZE = DiskSpaceUnit.MB.toBytes(260);
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// ---------------------------------------------------------------
+		// Get parameters
+		// ---------------------------------------------------------------
 		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
@@ -68,6 +66,9 @@ public class FileUploadServlet extends HttpServlet {
 			message = MessageHelper.INSTANCE.add(message, "Error: Form must has enctype=multipart/form-data.");
 		}
 
+		// ---------------------------------------------------------------
+		// Handle data
+		// ---------------------------------------------------------------
 		if (isMultipartForm) {
 			File dfsUploadDir = null;
 			List<File> localFiles = new ArrayList<File>();
@@ -134,7 +135,9 @@ public class FileUploadServlet extends HttpServlet {
 
 				for (File localFile : localFiles) {
 					// (1) Create file metadata in DFS
-					FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, localFile);
+					String fileName = localFile.getName();
+					long fileSize = localFile.length();
+					FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, fileName, fileSize);
 					if (fileMetadata == null) {
 						message = MessageHelper.INSTANCE.add(message, "File metadata cannot be created in DFS.");
 						break;
@@ -183,6 +186,9 @@ public class FileUploadServlet extends HttpServlet {
 			}
 		}
 
+		// ---------------------------------------------------------------
+		// Render data
+		// ---------------------------------------------------------------
 		HttpSession session = request.getSession(true);
 		session.setAttribute("message", message);
 
@@ -190,3 +196,8 @@ public class FileUploadServlet extends HttpServlet {
 	}
 
 }
+
+// // upload settings
+// protected static final int MEMORY_THRESHOLD = 10 * 1024 * 1024; // 10MB
+// protected static final int MAX_FILE_SIZE = 250 * 1024 * 1024; // 250MB
+// protected static final int MAX_REQUEST_SIZE = 260 * 1024 * 1024; // 260MB

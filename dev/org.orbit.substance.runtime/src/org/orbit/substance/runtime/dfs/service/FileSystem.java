@@ -36,6 +36,10 @@ public interface FileSystem {
 
 	boolean isDirectory(Path path) throws IOException;
 
+	FileMetadata createDirectory(Path path) throws IOException;
+
+	FileMetadata createDirectory(String parentFileId, String fileName) throws IOException;
+
 	FileMetadata createNewFile(Path path, long size) throws IOException;
 
 	FileMetadata createNewFile(String parentFileId, String fileName, long size) throws IOException;

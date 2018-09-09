@@ -26,8 +26,6 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.model.dfsvolume.PendingFileImpl;
-import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
@@ -37,6 +35,7 @@ import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.StatusDTO;
 import org.origin.common.rest.server.AbstractWSApplicationResource;
+import org.origin.common.rest.server.ServerException;
 import org.origin.common.util.DiskSpaceUnit;
 
 /*
@@ -228,62 +227,57 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM })
 	public Response getContent( //
 			@Context HttpHeaders httpHeaders, //
-			@QueryParam("type") String type, //
-			@QueryParam("value") String value) {
-
-		String accountId = OrbitTokenUtil.INSTANCE.getAccountId(httpHeaders, PlatformConstants.TOKEN_PROVIDER__ORBIT);
+			@QueryParam(value = "accountId") String accountId, //
+			@QueryParam(value = "blockId") String blockId, //
+			@QueryParam(value = "fileId") String fileId, //
+			@QueryParam(value = "partId") int partId //
+	) {
+		// Note:
+		// - If accountId query parameter is set, the access token must belong to the dfs service.
+		// - If accountId is not set, get the accountId from the access token. The access token must belong to a user.
+		if (accountId != null) {
+			// validate the access token to be the dfs service.
+		} else {
+			// validate the access token to be a user.
+			accountId = OrbitTokenUtil.INSTANCE.getAccountId(httpHeaders, PlatformConstants.TOKEN_PROVIDER__ORBIT);
+		}
 		if (accountId == null || accountId.isEmpty()) {
 			ErrorDTO error = new ErrorDTO("accountId is not available.");
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
-
-		if (type == null || type.isEmpty()) {
-			ErrorDTO error = new ErrorDTO("type is null.");
-			return Response.status(Status.BAD_REQUEST).entity(error).build();
-		}
-
-		if (value == null || value.isEmpty()) {
-			ErrorDTO error = new ErrorDTO("value is null.");
+		if (fileId == null || fileId.isEmpty()) {
+			ErrorDTO error = new ErrorDTO("fileId is null.");
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
 
 		String fileName = null;
 		byte[] bytes = null;
 
-		InputStream input = null;
+		InputStream inputStream = null;
 		try {
-			// FileSystem fileSystem = getService().getFileSystem(accountId);
-			FileSystem fileSystem = null;
+			DfsVolumeService service = getService();
 
-			FileMetadata file = null;
-			org.orbit.substance.model.dfs.Path path = null;
-			if ("fileId".equals(type)) {
-				String fileId = value;
-				file = fileSystem.getFile(fileId);
-			} else if ("path".equals(type)) {
-				path = new org.orbit.substance.model.dfs.Path(value);
-				file = fileSystem.getFile(path);
-			}
-
-			if (file == null) {
-				ErrorDTO error = new ErrorDTO("File is not found.");
+			FileContentMetadata fileContent = service.getFileContent(accountId, blockId, fileId, partId);
+			if (fileContent == null) {
+				ErrorDTO error = new ErrorDTO("File content is not found.");
 				return Response.status(Status.BAD_REQUEST).entity(error).build();
 			}
 
-			String fileId = file.getFileId();
-			fileName = file.getName();
-
-			// input = fileSystem.getFileContentInputStream(fileId);
-			// if (input != null) {
-			// bytes = IOUtil.toByteArray(input);
-			// }
+			inputStream = service.getContent(accountId, blockId, fileId, partId);
+			if (inputStream != null) {
+				bytes = IOUtil.toByteArray(inputStream);
+			}
 
 		} catch (IOException e) {
 			ErrorDTO error = handleError(e, StatusDTO.RESP_500, true);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
 
+		} catch (ServerException e) {
+			ErrorDTO error = handleError(e, StatusDTO.RESP_500, true);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
+
 		} finally {
-			IOUtil.closeQuietly(input, true);
+			IOUtil.closeQuietly(inputStream, true);
 		}
 
 		if (bytes == null) {

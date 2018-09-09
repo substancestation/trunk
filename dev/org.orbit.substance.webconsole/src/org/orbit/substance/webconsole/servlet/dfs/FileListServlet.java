@@ -40,6 +40,7 @@ public class FileListServlet extends HttpServlet {
 		}
 
 		String parentFileId = ServletUtil.getParameter(request, "parentFileId", "-1");
+		String grandParentFileId = null;
 
 		// ---------------------------------------------------------------
 		// Handle data
@@ -52,8 +53,14 @@ public class FileListServlet extends HttpServlet {
 
 			if (parentFileId == null || parentFileId.isEmpty() || "-1".equals(parentFileId)) {
 				files = SubstanceClientsUtil.Dfs.listRoots(dfsClientResolver, dfsServiceUrl, accessToken);
+
 			} else {
 				files = SubstanceClientsUtil.Dfs.listFiles(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
+
+				FileMetadata parentFile = SubstanceClientsUtil.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
+				if (parentFile != null) {
+					grandParentFileId = parentFile.getParentFileId();
+				}
 			}
 
 		} catch (Exception e) {
@@ -72,13 +79,11 @@ public class FileListServlet extends HttpServlet {
 		}
 		request.setAttribute("parentFileId", parentFileId);
 		request.setAttribute("files", files);
+		if (grandParentFileId != null) {
+			request.setAttribute("grandParentFileId", grandParentFileId);
+		}
 
 		request.getRequestDispatcher(contextRoot + "/views/dfs_files_list.jsp").forward(request, response);
 	}
 
 }
-
-// e.g. contextRoot is "/orbit/webconsole/dfs"
-// /orbit/webconsole/dfs/views/dfs_fils_list.jsp
-// /orbit/webconsole/component/views/user_accounts_list_v1.jsp
-// request.getRequestDispatcher(contextRoot + "/views/dfs_fils_list.jsp").forward(request, response);

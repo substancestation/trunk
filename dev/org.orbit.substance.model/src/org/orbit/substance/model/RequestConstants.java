@@ -14,6 +14,7 @@ public interface RequestConstants {
 	public static String FILE_ID_EXISTS = "file_id_exists";
 	public static String PATH_EXISTS = "path_exists";
 	public static String IS_DIRECTORY = "is_directory";
+	public static String CREATE_DIRECTORY = "create_directory";
 	public static String CREATE_NEW_FILE = "create_new_file";
 	public static String ALLOCATE_VOLUMES = "allocate_volumes";
 	public static String UPDATE_FILE_PARTS = "update_file_parts";

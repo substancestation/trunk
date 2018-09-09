@@ -12,6 +12,7 @@ function uploadFile() {
 	uploadFileDialog.showModal();
 }
 
+
 $(document).on("click", "#actionUploadFile", function() {
 	document.getElementById('uploadFileDialog').showModal();
 });
@@ -23,6 +24,21 @@ $(document).on("click", "#cancelUploadFile", function() {
 });
 
 
+$(document).on("click", "#actionCreateDirectory", function() {
+	document.getElementById('createDirectoryDialog').showModal();
+});
+
+$(document).on("click", "#okCreateDirectory", function() {
+	var form = document.getElementById("new_form");
+	form.submit();
+});
+
+$(document).on("click", "#cancelCreateDirectory", function() {
+	document.getElementById('new_form').reset();
+	document.getElementById('createDirectoryDialog').close();
+});
+
+
 $(document).on("click", "#actionDeleteFiles", function() {
 	document.getElementById('deleteFilesDialog').showModal();
 });
@@ -31,7 +47,6 @@ $(document).on("click", "#okDeleteFiles", function() {
 	var form = document.getElementById("main_list");
 	form.submit();
 });
-
 $(document).on("click", "#cancelDeleteFiles", function() {
 	document.getElementById('main_list').reset();
 	document.getElementById('deleteFilesDialog').close();

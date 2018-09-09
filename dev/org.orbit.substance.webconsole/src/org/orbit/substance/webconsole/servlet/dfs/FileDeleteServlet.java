@@ -1,6 +1,8 @@
 package org.orbit.substance.webconsole.servlet.dfs;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -54,6 +56,8 @@ public class FileDeleteServlet extends HttpServlet {
 			DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
 			DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
 
+			List<FileMetadata> encounteredFiles = new ArrayList<FileMetadata>();
+
 			for (int i = 0; i < fileIds.length; i++) {
 				String fileId = fileIds[i];
 
@@ -63,23 +67,14 @@ public class FileDeleteServlet extends HttpServlet {
 					continue;
 				}
 
-				boolean isFileMetadataDeleted = SubstanceClientsUtil.Dfs.deleteFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
-				if (isFileMetadataDeleted) {
-					if (!fileMetadata.getFileParts().isEmpty()) {
-						boolean isFileContentDeleted = SubstanceClientsUtil.DfsVolume.deleteFileContent(dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileMetadata);
-
-						if (!isFileContentDeleted) {
-							message = MessageHelper.INSTANCE.add(message, "File content is not deleted. fileId='" + fileId + "'.");
-						}
-					}
-				}
-
-				if (isFileMetadataDeleted) {
+				boolean isDeleted = delete(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileMetadata, encounteredFiles);
+				if (isDeleted) {
 					hasSucceed = true;
 				} else {
 					hasFailed = true;
 				}
 			}
+
 		} catch (ClientException e) {
 			message = MessageHelper.INSTANCE.add(message, "Exception occurs: '" + e.getMessage() + "'.");
 			e.printStackTrace();
@@ -98,6 +93,48 @@ public class FileDeleteServlet extends HttpServlet {
 		session.setAttribute("message", message);
 
 		response.sendRedirect(contextRoot + "/files?parentFileId=" + parentFileId);
+	}
+
+	/**
+	 * 
+	 * @param dfsClientResolver
+	 * @param dfsVolumeClientResolver
+	 * @param dfsServiceUrl
+	 * @param accessToken
+	 * @param fileMetadata
+	 * @param encounteredFiles
+	 * @return
+	 * @throws ClientException
+	 * @throws IOException
+	 */
+	protected boolean delete(DfsClientResolver dfsClientResolver, DfsVolumeClientResolver dfsVolumeClientResolver, String dfsServiceUrl, String accessToken, FileMetadata fileMetadata, List<FileMetadata> encounteredFiles) throws ClientException, IOException {
+		if (fileMetadata == null) {
+			return false;
+		}
+		if (encounteredFiles.contains(fileMetadata)) {
+			return true;
+		}
+		encounteredFiles.add(fileMetadata);
+
+		boolean isDeleted = false;
+		String fileId = fileMetadata.getFileId();
+
+		if (fileMetadata.isDirectory()) {
+			FileMetadata[] memberFiles = SubstanceClientsUtil.Dfs.listFiles(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			for (FileMetadata memberFile : memberFiles) {
+				boolean currDeleted = delete(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, memberFile, encounteredFiles);
+				if (!currDeleted) {
+					return false;
+				}
+			}
+			isDeleted = SubstanceClientsUtil.Dfs.deleteFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+
+		} else {
+			SubstanceClientsUtil.DfsVolume.deleteFileContent(dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileMetadata);
+			isDeleted = SubstanceClientsUtil.Dfs.deleteFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+		}
+
+		return isDeleted;
 	}
 
 }
