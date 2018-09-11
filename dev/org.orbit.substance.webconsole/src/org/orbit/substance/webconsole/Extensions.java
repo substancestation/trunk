@@ -1,5 +1,6 @@
 package org.orbit.substance.webconsole;
 
+import org.orbit.platform.sdk.menu.DropdownMenuProvider;
 import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
 import org.orbit.substance.webconsole.extension.WebApplicationActivator;
 import org.orbit.substance.webconsole.extension.WebApplicationPropertyTester;
@@ -25,15 +26,22 @@ public class Extensions extends ProgramExtensions {
 	public void createExtensions() {
 		LOG.debug("createExtensions()");
 
+		createTopMenuExtensions();
 		createServiceActivatorExtensions();
 		createPropertyTesterExtensions();
 	}
 
+	protected void createTopMenuExtensions() {
+		String extensionTypeId = DropdownMenuProvider.EXTENSION_TYPE_ID;
+		
+		
+	}
+
 	protected void createServiceActivatorExtensions() {
-		String typeId = ServiceActivator.EXTENSION_TYPE_ID;
+		String extensionTypeId = ServiceActivator.EXTENSION_TYPE_ID;
 
 		// DFS Web Application Activator
-		Extension extension2 = new Extension(typeId, WebApplicationActivator.ID, "DFS Web Application Activator");
+		Extension extension2 = new Extension(extensionTypeId, WebApplicationActivator.ID, "DFS Web Application Activator");
 		InterfaceDescription desc2 = new InterfaceDescription(ServiceActivator.class, WebApplicationActivator.class);
 		desc2.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(WebApplicationPropertyTester.ID));
 		extension2.addInterface(desc2);
@@ -41,10 +49,10 @@ public class Extensions extends ProgramExtensions {
 	}
 
 	protected void createPropertyTesterExtensions() {
-		String typeId = IPropertyTester.EXTENSION_TYPE_ID;
+		String extensionTypeId = IPropertyTester.EXTENSION_TYPE_ID;
 
 		// DFS Web Application Property Tester
-		Extension extension2 = new Extension(typeId, WebApplicationPropertyTester.ID);
+		Extension extension2 = new Extension(extensionTypeId, WebApplicationPropertyTester.ID);
 		extension2.addInterface(IPropertyTester.class, WebApplicationPropertyTester.class);
 		addExtension(extension2);
 	}

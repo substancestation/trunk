@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexItem;
-import org.orbit.infra.api.indexes.IndexProvider;
+import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
@@ -20,7 +20,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	 * @param indexProvider
 	 * @param service
 	 */
-	public DfsVolumeServiceTimer(IndexProvider indexProvider, DfsVolumeService service) {
+	public DfsVolumeServiceTimer(IndexServiceClient indexProvider, DfsVolumeService service) {
 		super("Index Timer [" + service.getName() + "]", indexProvider);
 		this.service = service;
 		setDebug(true);
@@ -32,14 +32,14 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	}
 
 	@Override
-	public IndexItem getIndex(IndexProvider indexProvider, DfsVolumeService service) throws IOException {
+	public IndexItem getIndex(IndexServiceClient indexProvider, DfsVolumeService service) throws IOException {
 		String name = service.getName();
 
 		return indexProvider.getIndexItem(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE, name);
 	}
 
 	@Override
-	public IndexItem addIndex(IndexProvider indexProvider, DfsVolumeService service) throws IOException {
+	public IndexItem addIndex(IndexServiceClient indexProvider, DfsVolumeService service) throws IOException {
 		String dfsId = service.getDfsId();
 		String dfsVolumeId = service.getDfsVolumeId();
 		String name = service.getName();
@@ -64,7 +64,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	}
 
 	@Override
-	public void updateIndex(IndexProvider indexProvider, DfsVolumeService service, IndexItem indexItem) throws IOException {
+	public void updateIndex(IndexServiceClient indexProvider, DfsVolumeService service, IndexItem indexItem) throws IOException {
 		String dfsId = service.getDfsId();
 		String dfsVolumeId = service.getDfsVolumeId();
 		String name = service.getName();
@@ -90,10 +90,10 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	}
 
 	@Override
-	public void removeIndex(IndexProvider indexProvider, IndexItem indexItem) throws IOException {
+	public void removeIndex(IndexServiceClient indexProvider, IndexItem indexItem) throws IOException {
 		Integer indexItemId = indexItem.getIndexItemId();
 
-		indexProvider.removeIndexItem(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, indexItemId);
+		indexProvider.deleteIndexItem(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, indexItemId);
 	}
 
 }

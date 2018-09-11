@@ -2,7 +2,9 @@ package org.orbit.substance.webconsole.servlet.dfsadmin;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,10 +14,17 @@ import javax.servlet.http.HttpSession;
 
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
+import org.orbit.infra.api.indexes.IndexItemHelper;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
+import org.orbit.substance.api.SubstanceConstants;
+import org.orbit.substance.api.dfs.DfsClient;
+import org.orbit.substance.api.dfs.DfsClientResolver;
+import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.webconsole.WebConstants;
+import org.orbit.substance.webconsole.util.DefaultDfsClientResolver;
 import org.orbit.substance.webconsole.util.DfsAdminUtil;
 import org.orbit.substance.webconsole.util.MessageHelper;
+import org.origin.common.service.WebServiceAwareHelper;
 
 public class DfsListServlet extends HttpServlet {
 
@@ -42,10 +51,35 @@ public class DfsListServlet extends HttpServlet {
 		// Handle data
 		// ---------------------------------------------------------------
 		List<IndexItem> dfsIndexItems = null;
+		Map<String, DfsServiceMetadata> dfsIdToServiceMetadata = new HashMap<String, DfsServiceMetadata>();
+
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
 			dfsIndexItems = DfsAdminUtil.getDfsIndexItems(indexServiceUrl, accessToken);
+
+			DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
+			for (IndexItem dfsIndexItem : dfsIndexItems) {
+				String dfsId = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
+				String currHostUrl = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__HOST_URL);
+				String currContextRoot = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT);
+				String dfsServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(currHostUrl, currContextRoot);
+
+				boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsIndexItem);
+
+				DfsServiceMetadata dfsServiceMetadata = null;
+				if (isOnline) {
+					try {
+						DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+						if (dfsClient != null) {
+							dfsServiceMetadata = dfsClient.getMetadata();
+						}
+					} catch (Exception e) {
+						message = MessageHelper.INSTANCE.add(message, e.getMessage());
+					}
+				}
+				dfsIdToServiceMetadata.put(dfsId, dfsServiceMetadata);
+			}
 
 		} catch (Exception e) {
 			message = MessageHelper.INSTANCE.add(message, "Exception occurs: '" + e.getMessage() + "'.");
@@ -62,6 +96,7 @@ public class DfsListServlet extends HttpServlet {
 			request.setAttribute("message", message);
 		}
 		request.setAttribute("dfsIndexItems", dfsIndexItems);
+		request.setAttribute("dfsIdToServiceMetadata", dfsIdToServiceMetadata);
 
 		request.getRequestDispatcher(contextRoot + "/views/admin_dfs_list.jsp").forward(request, response);
 	}

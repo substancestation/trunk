@@ -21,7 +21,10 @@ public class DfsServiceMetadataImpl extends ServiceMetadataImpl implements DfsSe
 	public long getDataBlockCapacity() {
 		long capacity = -1;
 		if (hasProperty(PROP__BLOCK_CAPACITY)) {
-			capacity = getProperty(PROP__BLOCK_CAPACITY, Long.class);
+			Object value = getProperty(PROP__BLOCK_CAPACITY);
+			if (value != null) {
+				capacity = Long.valueOf(value.toString());
+			}
 		}
 		return capacity;
 	}

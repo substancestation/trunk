@@ -9,7 +9,6 @@ public class DfsVolumeServiceMetadataImpl extends ServiceMetadataImpl implements
 	public static String PROP__DFS_VOLUME_ID = "dfs_volume_id";
 	public static String PROP__VOLUME_CAPACITY = "volume_capacity";
 	public static String PROP__VOLUME_SIZE = "volume_size";
-	public static String PROP__BLOCK_CAPACITY = "block_capacity";
 
 	public DfsVolumeServiceMetadataImpl() {
 	}
@@ -72,3 +71,4 @@ public class DfsVolumeServiceMetadataImpl extends ServiceMetadataImpl implements
 // public static String PROP__FILE_CONTENT_ID = "dfs_content_id"; // file content servece id
 // public static String PROP__TOTAL_CAPACITY = "total_capacity";
 // public static String PROP__TOTAL_SIZE = "total_size";
+// public static String PROP__BLOCK_CAPACITY = "block_capacity";

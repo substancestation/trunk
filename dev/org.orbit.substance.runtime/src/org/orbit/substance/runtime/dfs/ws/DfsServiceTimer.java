@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexItem;
-import org.orbit.infra.api.indexes.IndexProvider;
+import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
@@ -20,7 +20,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 	 * @param indexProvider
 	 * @param service
 	 */
-	public DfsServiceTimer(IndexProvider indexProvider, DfsService service) {
+	public DfsServiceTimer(IndexServiceClient indexProvider, DfsService service) {
 		super("Index Timer [" + service.getName() + "]", indexProvider);
 		this.service = service;
 		setDebug(true);
@@ -32,14 +32,14 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 	}
 
 	@Override
-	public IndexItem getIndex(IndexProvider indexProvider, DfsService service) throws IOException {
+	public IndexItem getIndex(IndexServiceClient indexProvider, DfsService service) throws IOException {
 		String name = service.getName();
 
 		return indexProvider.getIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE, name);
 	}
 
 	@Override
-	public IndexItem addIndex(IndexProvider indexProvider, DfsService service) throws IOException {
+	public IndexItem addIndex(IndexServiceClient indexProvider, DfsService service) throws IOException {
 		String dfsId = service.getDfsId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();
@@ -58,7 +58,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 	}
 
 	@Override
-	public void updateIndex(IndexProvider indexProvider, DfsService service, IndexItem indexItem) throws IOException {
+	public void updateIndex(IndexServiceClient indexProvider, DfsService service, IndexItem indexItem) throws IOException {
 		String dfsId = service.getDfsId();
 		String name = service.getName();
 		String hostURL = service.getHostURL();
@@ -78,10 +78,10 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 	}
 
 	@Override
-	public void removeIndex(IndexProvider indexProvider, IndexItem indexItem) throws IOException {
+	public void removeIndex(IndexServiceClient indexProvider, IndexItem indexItem) throws IOException {
 		Integer indexItemId = indexItem.getIndexItemId();
 
-		indexProvider.removeIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, indexItemId);
+		indexProvider.deleteIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, indexItemId);
 	}
 
 }

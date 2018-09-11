@@ -61,6 +61,14 @@ public class Extensions extends ProgramExtensions {
 	}
 
 	@Override
+	protected String[] getPropertyNames() {
+		return new String[] { //
+				SubstanceConstants.DFS__CONTEXT_ROOT, //
+				SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT, //
+		};
+	}
+
+	@Override
 	public void createExtensions() {
 		LOG.debug("createExtensions()");
 

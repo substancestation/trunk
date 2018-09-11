@@ -16,6 +16,7 @@ import org.orbit.substance.webconsole.servlet.dfs.FileDownloadServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileListServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileUploadServlet;
 import org.orbit.substance.webconsole.servlet.dfsadmin.DfsListServlet;
+import org.orbit.substance.webconsole.servlet.dfsadmin.DfsVolumeListServlet;
 import org.osgi.framework.BundleContext;
 
 public class WebApplication extends PlatformWebApplication {
@@ -74,6 +75,7 @@ public class WebApplication extends PlatformWebApplication {
 
 		// Admin
 		addServlet(new ServletMetadataImpl("/admin/dfslist", new DfsListServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsvolumelist", new DfsVolumeListServlet(), dicts));
 
 		// Add JSPs
 		addJSP(new JspMetadataImpl(bundleContext.getBundle(), "/views", "/WEB-INF", dicts));

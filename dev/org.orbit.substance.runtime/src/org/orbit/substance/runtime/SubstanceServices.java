@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.orbit.infra.api.InfraConstants;
-import org.orbit.infra.api.indexes.IndexProvider;
+import org.orbit.infra.api.indexes.IndexProviderClient;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.ws.DfsServiceAdapter;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
@@ -27,7 +27,7 @@ public class SubstanceServices {
 	}
 
 	protected Map<Object, Object> properties;
-	protected ServiceConnectorAdapter<IndexProvider> indexProviderConnector;
+	protected ServiceConnectorAdapter<IndexProviderClient> indexProviderConnector;
 
 	protected DfsServiceAdapter fileSystemServiceAdapter;
 	protected DfsVolumeServiceAdapter fileContentServiceAdapter;
@@ -41,14 +41,14 @@ public class SubstanceServices {
 		PropertyUtil.loadProperty(bundleContext, properties, InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		this.properties = properties;
 
-		this.indexProviderConnector = new ServiceConnectorAdapter<IndexProvider>(IndexProvider.class) {
+		this.indexProviderConnector = new ServiceConnectorAdapter<IndexProviderClient>(IndexProviderClient.class) {
 			@Override
-			public void connectorAdded(ServiceConnector<IndexProvider> connector) {
+			public void connectorAdded(ServiceConnector<IndexProviderClient> connector) {
 				doStart(bundleContext);
 			}
 
 			@Override
-			public void connectorRemoved(ServiceConnector<IndexProvider> connector) {
+			public void connectorRemoved(ServiceConnector<IndexProviderClient> connector) {
 			}
 		};
 		this.indexProviderConnector.start(bundleContext);

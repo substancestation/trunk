@@ -2,7 +2,7 @@ package org.orbit.substance.runtime.dfsvolume.ws;
 
 import java.util.Map;
 
-import org.orbit.infra.api.indexes.IndexProvider;
+import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.infra.api.indexes.ServiceIndexTimerFactory;
 import org.orbit.infra.api.util.InfraClients;
@@ -52,8 +52,8 @@ public class DfsVolumeServiceAdapter implements LifecycleAware {
 		this.properties = properties;
 	}
 
-	public IndexProvider getIndexProvider() {
-		return InfraClients.getInstance().getIndexProvider(this.properties, true);
+	public IndexServiceClient getIndexProvider() {
+		return InfraClients.getInstance().getIndexService(this.properties, true);
 	}
 
 	public DfsVolumeService getService() {
@@ -116,7 +116,7 @@ public class DfsVolumeServiceAdapter implements LifecycleAware {
 		this.webApp.start(bundleContext);
 
 		// 3. Start indexing timer
-		IndexProvider indexProvider = getIndexProvider();
+		IndexServiceClient indexProvider = getIndexProvider();
 		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID);
 		if (extension != null) {
 			@SuppressWarnings("unchecked")
