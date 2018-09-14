@@ -36,6 +36,8 @@ import org.origin.common.util.ServletUtil;
  * 
  * @see org.apache.felix.webconsole.internal.core.BundlesServlet
  * @see AppUploadServlet
+ * @see https://github.com/codelibs/commons-fileupload-1.2/blob/master/src/java/org/apache/commons/fileupload/FileUploadBase.java
+ * @see https://www.programcreek.com/java-api-examples/?api=com.sun.jersey.multipart.FormDataMultiPart
  */
 public class FileUploadServlet extends HttpServlet {
 
