@@ -19,6 +19,7 @@ import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.WSClientConfiguration;
 import org.origin.common.rest.model.Request;
 import org.origin.common.rest.model.ServiceMetadataDTO;
+import org.origin.common.rest.util.ResponseUtil;
 
 public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsVolumeWSClient> implements DfsVolumeClient {
 
@@ -62,11 +63,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 
 		Request request = new Request(RequestConstants.LIST_ALL_DATA_BLOCKS);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		if (dataBlocks == null) {
 			dataBlocks = EMPTY_DATA_BLOCKS;
 		}
@@ -80,11 +85,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		Request request = new Request(RequestConstants.LIST_DATA_BLOCKS);
 		request.setParameter("account_id", accountId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		if (dataBlocks == null) {
 			dataBlocks = EMPTY_DATA_BLOCKS;
 		}
@@ -101,11 +110,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 			request.setParameter("min_free_space", minFreeSpace);
 		}
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		if (dataBlocks == null) {
 			dataBlocks = EMPTY_DATA_BLOCKS;
 		}
@@ -120,11 +133,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("account_id", accountId);
 		request.setParameter("block_id", blockId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			succeed = ModelConverter.DfsVolume.exists(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				succeed = ModelConverter.DfsVolume.exists(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		return succeed;
 	}
 
@@ -136,11 +153,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("account_id", accountId);
 		request.setParameter("block_id", blockId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		return dataBlock;
 	}
 
@@ -152,11 +173,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("account_id", accountId);
 		request.setParameter("capacity", capacity);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		return dataBlock;
 	}
 
@@ -169,11 +194,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("block_id", blockId);
 		request.setParameter("size_delta", sizeDelta);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			succeed = ModelConverter.DfsVolume.isUpdated(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				succeed = ModelConverter.DfsVolume.isUpdated(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		return succeed;
 	}
 
@@ -185,11 +214,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("account_id", accountId);
 		request.setParameter("block_id", blockId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			succeed = ModelConverter.DfsVolume.isDeleted(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				succeed = ModelConverter.DfsVolume.isDeleted(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		return succeed;
 	}
 
@@ -204,11 +237,15 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("account_id", accountId);
 		request.setParameter("block_id", blockId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			fileContents = ModelConverter.DfsVolume.getFileContents(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				fileContents = ModelConverter.DfsVolume.getFileContents(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
-
 		if (fileContents == null) {
 			fileContents = EMPTY_FILE_CONTENTS;
 		}
@@ -225,9 +262,14 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("file_id", fileId);
 		request.setParameter("part_id", partId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			succeed = ModelConverter.DfsVolume.exists(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				succeed = ModelConverter.DfsVolume.exists(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return succeed;
 	}
@@ -242,9 +284,14 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("file_id", fileId);
 		request.setParameter("part_id", partId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			fileContent = ModelConverter.DfsVolume.getFileContent(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				fileContent = ModelConverter.DfsVolume.getFileContent(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return fileContent;
 	}
@@ -261,9 +308,14 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		request.setParameter("file_id", fileId);
 		request.setParameter("part_id", partId);
 
-		Response response = sendRequest(request);
-		if (response != null) {
-			succeed = ModelConverter.DfsVolume.isDeleted(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				succeed = ModelConverter.DfsVolume.isDeleted(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return succeed;
 	}

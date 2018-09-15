@@ -16,6 +16,7 @@ import org.origin.common.rest.client.ServiceConnector;
 import org.origin.common.rest.client.WSClientConfiguration;
 import org.origin.common.rest.model.Request;
 import org.origin.common.rest.model.ServiceMetadataDTO;
+import org.origin.common.rest.util.ResponseUtil;
 
 public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> implements DfsClient {
 
@@ -78,9 +79,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		Request request = new Request(RequestConstants.LIST_ROOTS);
 
 		FileMetadata[] files = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			files = ModelConverter.Dfs.getFiles(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				files = ModelConverter.Dfs.getFiles(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		if (files == null) {
 			files = EMPTY_FILES;
@@ -96,9 +102,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("parent_file_id", parentFileId);
 
 		FileMetadata[] files = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			files = ModelConverter.Dfs.getFiles(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				files = ModelConverter.Dfs.getFiles(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		if (files == null) {
 			files = EMPTY_FILES;
@@ -114,9 +125,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("parent_path", parentPath.getPathString());
 
 		FileMetadata[] files = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			files = ModelConverter.Dfs.getFiles(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				files = ModelConverter.Dfs.getFiles(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		if (files == null) {
 			files = EMPTY_FILES;
@@ -132,9 +148,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("file_id", fileId);
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -147,9 +168,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -162,9 +188,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("file_id", fileId);
 
 		boolean exists = false;
-		Response response = sendRequest(request);
-		if (response != null) {
-			exists = ModelConverter.Dfs.exists(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				exists = ModelConverter.Dfs.exists(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return exists;
 	}
@@ -177,9 +208,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		boolean exists = false;
-		Response response = sendRequest(request);
-		if (response != null) {
-			exists = ModelConverter.Dfs.exists(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				exists = ModelConverter.Dfs.exists(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return exists;
 	}
@@ -192,9 +228,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -208,9 +249,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("file_name", fileName);
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -223,9 +269,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -266,9 +317,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		}
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -291,9 +347,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		}
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -305,9 +366,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("file_parts", filePartsString);
 
 		boolean isUpdated = false;
-		Response response = sendRequest(request);
-		if (response != null) {
-			isUpdated = ModelConverter.Dfs.isUpdated(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				isUpdated = ModelConverter.Dfs.isUpdated(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return isUpdated;
 	}
@@ -320,9 +386,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -335,9 +406,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("file_id", fileId);
 
 		boolean isDeleted = false;
-		Response response = sendRequest(request);
-		if (response != null) {
-			isDeleted = ModelConverter.Dfs.isDeleted(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				isDeleted = ModelConverter.Dfs.isDeleted(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return isDeleted;
 	}
@@ -350,9 +426,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		boolean isDeleted = false;
-		Response response = sendRequest(request);
-		if (response != null) {
-			isDeleted = ModelConverter.Dfs.isDeleted(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				isDeleted = ModelConverter.Dfs.isDeleted(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return isDeleted;
 	}
@@ -365,9 +446,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("file_id", fileId);
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -380,9 +466,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -395,9 +486,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("file_id", fileId);
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -410,9 +506,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		request.setParameter("path", path.getPathString());
 
 		FileMetadata file = null;
-		Response response = sendRequest(request);
-		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return file;
 	}
@@ -422,9 +523,14 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		Request request = new Request(RequestConstants.EMPTY_TRASH);
 
 		boolean isEmptied = false;
-		Response response = sendRequest(request);
-		if (response != null) {
-			isEmptied = ModelConverter.Dfs.isEmptied(response);
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				isEmptied = ModelConverter.Dfs.isEmptied(response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
 		}
 		return isEmptied;
 	}
