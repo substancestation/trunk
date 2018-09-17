@@ -9,9 +9,9 @@ import org.origin.common.extensions.condition.IPropertyTester;
 import org.origin.common.util.PropertyUtil;
 import org.osgi.framework.BundleContext;
 
-public class FileContentServicePropertyTester implements IPropertyTester {
+public class DfsVolumeServicePropertyTester implements IPropertyTester {
 
-	public static String ID = "org.orbit.substance.runtime.FileContentServicePropertyTester";
+	public static String ID = "org.orbit.substance.runtime.DfsVolumeServicePropertyTester";
 
 	@Override
 	public boolean accept(Object context, Object source, Object target, Map<String, Object> args) {

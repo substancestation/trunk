@@ -59,17 +59,6 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 
 		updateProperties(properties);
 
-		String database = null;
-		try {
-			database = DatabaseUtil.getDatabase(this.databaseProperties);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		assert (database != null) : "database name cannot be retrieved.";
-
-		// this.categoryTableHandler = AppCategoryTableHandler.INSTANCE;
-		// this.appTableHandler = new AppMetadataTableHandler(database);
-
 		initialize();
 
 		Hashtable<String, Object> props = new Hashtable<String, Object>();
@@ -83,11 +72,6 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 			this.serviceRegistry = null;
 		}
 
-		// for (Iterator<String> accountIdItor = this.accountIdToFileSystemMap.keySet().iterator(); accountIdItor.hasNext();) {
-		// String accountId = accountIdItor.next();
-		// FileSystem fileSystem = this.accountIdToFileSystemMap.get(accountId);
-		// fileSystem.dispose();
-		// }
 		this.accountIdToFileSystemMap.clear();
 	}
 
@@ -163,6 +147,14 @@ public class DfsServiceImpl implements DfsService, LifecycleAware {
 	 * Initialize database tables.
 	 */
 	public void initialize() {
+		String database = null;
+		try {
+			database = DatabaseUtil.getDatabase(this.databaseProperties);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		assert (database != null) : "database name cannot be retrieved.";
+
 		Connection conn = null;
 		try {
 			conn = DatabaseUtil.getConnection(this.databaseProperties);

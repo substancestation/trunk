@@ -9,9 +9,9 @@ import org.origin.common.extensions.condition.IPropertyTester;
 import org.origin.common.util.PropertyUtil;
 import org.osgi.framework.BundleContext;
 
-public class FileSystemServicePropertyTester implements IPropertyTester {
+public class DfsServicePropertyTester implements IPropertyTester {
 
-	public static String ID = "org.orbit.substance.runtime.FileSystemServicePropertyTester";
+	public static String ID = "org.orbit.substance.runtime.DfsServicePropertyTester";
 
 	@Override
 	public boolean accept(Object context, Object source, Object target, Map<String, Object> args) {

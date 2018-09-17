@@ -37,10 +37,10 @@ import org.orbit.substance.runtime.dfsvolume.ws.command.ListAllDataBlocksCommand
 import org.orbit.substance.runtime.dfsvolume.ws.command.ListDataBlocksCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.ListFileContentsCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.UpdateDataBlockSizeByDeltaCommand;
-import org.orbit.substance.runtime.extension.FileContentServiceActivator;
-import org.orbit.substance.runtime.extension.FileContentServicePropertyTester;
-import org.orbit.substance.runtime.extension.FileSystemServiceActivator;
-import org.orbit.substance.runtime.extension.FileSystemServicePropertyTester;
+import org.orbit.substance.runtime.extension.DfsVolumeServiceActivator;
+import org.orbit.substance.runtime.extension.DfsVolumeServicePropertyTester;
+import org.orbit.substance.runtime.extension.DfsServiceActivator;
+import org.orbit.substance.runtime.extension.DfsServicePropertyTester;
 import org.origin.common.extensions.Extension;
 import org.origin.common.extensions.InterfaceDescription;
 import org.origin.common.extensions.ProgramExtensions;
@@ -85,15 +85,15 @@ public class Extensions extends ProgramExtensions {
 	protected void createServiceActivatorExtensions() {
 		String extensionTypeId = ServiceActivator.EXTENSION_TYPE_ID;
 
-		Extension extension1 = new Extension(extensionTypeId, FileSystemServiceActivator.ID, "File System Service Activator");
-		InterfaceDescription desc1 = new InterfaceDescription(ServiceActivator.class, FileSystemServiceActivator.class);
-		desc1.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(FileSystemServicePropertyTester.ID));
+		Extension extension1 = new Extension(extensionTypeId, DfsServiceActivator.ID, "DFS Service Activator");
+		InterfaceDescription desc1 = new InterfaceDescription(ServiceActivator.class, DfsServiceActivator.class);
+		desc1.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(DfsServicePropertyTester.ID));
 		extension1.addInterface(desc1);
 		addExtension(extension1);
 
-		Extension extension2 = new Extension(extensionTypeId, FileContentServiceActivator.ID, "File Content Service Activator");
-		InterfaceDescription desc2 = new InterfaceDescription(ServiceActivator.class, FileContentServiceActivator.class);
-		desc2.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(FileContentServicePropertyTester.ID));
+		Extension extension2 = new Extension(extensionTypeId, DfsVolumeServiceActivator.ID, "DFS Volume Service Activator");
+		InterfaceDescription desc2 = new InterfaceDescription(ServiceActivator.class, DfsVolumeServiceActivator.class);
+		desc2.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(DfsVolumeServicePropertyTester.ID));
 		extension2.addInterface(desc2);
 		addExtension(extension2);
 	}
@@ -101,13 +101,13 @@ public class Extensions extends ProgramExtensions {
 	protected void createPropertyTesterExtensions() {
 		String extensionTypeId = IPropertyTester.EXTENSION_TYPE_ID;
 
-		Extension extension1 = new Extension(extensionTypeId, FileSystemServicePropertyTester.ID);
-		InterfaceDescription desc1 = new InterfaceDescription(IPropertyTester.class, FileSystemServicePropertyTester.class);
+		Extension extension1 = new Extension(extensionTypeId, DfsServicePropertyTester.ID);
+		InterfaceDescription desc1 = new InterfaceDescription(IPropertyTester.class, DfsServicePropertyTester.class);
 		extension1.addInterface(desc1);
 		addExtension(extension1);
 
-		Extension extension2 = new Extension(extensionTypeId, FileContentServicePropertyTester.ID);
-		InterfaceDescription desc2 = new InterfaceDescription(IPropertyTester.class, FileContentServicePropertyTester.class);
+		Extension extension2 = new Extension(extensionTypeId, DfsVolumeServicePropertyTester.ID);
+		InterfaceDescription desc2 = new InterfaceDescription(IPropertyTester.class, DfsVolumeServicePropertyTester.class);
 		extension2.addInterface(desc2);
 		addExtension(extension2);
 	}
@@ -115,11 +115,11 @@ public class Extensions extends ProgramExtensions {
 	protected void createIndexProvideExtensions() {
 		String extensionTypeId = ServiceIndexTimerFactory.EXTENSION_TYPE_ID;
 
-		Extension extension1 = new Extension(extensionTypeId, SubstanceConstants.IDX__DFS__INDEXER_ID, "File system service index provider");
+		Extension extension1 = new Extension(extensionTypeId, SubstanceConstants.IDX__DFS__INDEXER_ID, "DFS service index provider");
 		extension1.addInterface(ServiceIndexTimerFactory.class, DfsServiceTimerFactory.class);
 		addExtension(extension1);
 
-		Extension extension2 = new Extension(extensionTypeId, SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, "File content service index provider");
+		Extension extension2 = new Extension(extensionTypeId, SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, "DFS Volume service index provider");
 		extension2.addInterface(ServiceIndexTimerFactory.class, DfsVolumeServiceTimerFactory.class);
 		addExtension(extension2);
 	}

@@ -5,14 +5,14 @@ import java.util.Map;
 import org.orbit.platform.sdk.IPlatformContext;
 import org.orbit.platform.sdk.IProcess;
 import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
-import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
-import org.orbit.substance.runtime.dfsvolume.service.impl.DfsVolumeServiceImpl;
+import org.orbit.substance.runtime.dfs.service.DfsService;
+import org.orbit.substance.runtime.dfs.service.impl.DfsServiceImpl;
 import org.origin.common.rest.util.LifecycleAware;
 import org.osgi.framework.BundleContext;
 
-public class FileContentServiceActivator implements ServiceActivator {
+public class DfsServiceActivator implements ServiceActivator {
 
-	public static final String ID = "org.orbit.substance.runtime.FileContentServiceActivator";
+	public static final String ID = "org.orbit.substance.runtime.DfsServiceActivator";
 
 	@Override
 	public void start(IPlatformContext context, IProcess process) throws Exception {
@@ -20,10 +20,10 @@ public class FileContentServiceActivator implements ServiceActivator {
 		Map<Object, Object> properties = context.getProperties();
 
 		// Start service
-		DfsVolumeServiceImpl service = new DfsVolumeServiceImpl(properties);
+		DfsServiceImpl service = new DfsServiceImpl(properties);
 		service.start(bundleContext);
 
-		process.adapt(DfsVolumeService.class, service);
+		process.adapt(DfsService.class, service);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class FileContentServiceActivator implements ServiceActivator {
 		BundleContext bundleContext = context.getBundleContext();
 
 		// Stop service
-		DfsVolumeService service = process.getAdapter(DfsVolumeService.class);
+		DfsService service = process.getAdapter(DfsService.class);
 		if (service instanceof LifecycleAware) {
 			((LifecycleAware) service).stop(bundleContext);
 		}
