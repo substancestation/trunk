@@ -58,6 +58,13 @@ public class Path implements Comparable<Path> {
 	 * @param child
 	 */
 	public Path(Path parent, Path child) {
+		if (parent == null) {
+			parent = Path.ROOT;
+		}
+		if (child == null) {
+			throw new IllegalArgumentException("child Path is null.");
+		}
+
 		String path1 = parent.getPathString();
 		String path2 = child.getPathString();
 
@@ -258,23 +265,23 @@ public class Path implements Comparable<Path> {
 	}
 
 	public Path getParent() {
-		if (pathString.length() == 0) {
+		if (this.pathString.length() == 0) {
 			// path is empty --- empty path --- doesn't have parent path.
 			return null;
 		}
 
-		int lastSeparatorIndex = pathString.lastIndexOf(SEPARATOR_CHAR);
+		int lastSeparatorIndex = this.pathString.lastIndexOf(SEPARATOR_CHAR);
 		if (lastSeparatorIndex == 0) {
 			// path starts with "/" --- current path is contained by root path.
 			return ROOT;
 		}
 		if (lastSeparatorIndex == -1) {
 			// path does not contain "/" --- relative path --- doesn't have parent path.
-			return null;
+			return ROOT;
 		}
 
 		// now the lastSeparatorIndex must be greater than 1.
-		return new Path(pathString.substring(0, lastSeparatorIndex));
+		return new Path(this.pathString.substring(0, lastSeparatorIndex));
 	}
 
 	@Override

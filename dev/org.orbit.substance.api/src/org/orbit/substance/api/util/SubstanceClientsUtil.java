@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.model.dfs.FileContentAccess;
 import org.orbit.substance.model.dfs.FilePart;
+import org.orbit.substance.model.dfs.Path;
 import org.origin.common.io.ChecksumUtil;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.client.ClientException;
@@ -33,16 +35,29 @@ public class SubstanceClientsUtil {
 
 	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClientsUtil.class);
 
-	public static DfsAdmin DfsAdmin = new DfsAdmin();
 	public static Dfs Dfs = new Dfs();
 	public static DfsVolume DfsVolume = new DfsVolume();
 
-	public static class DfsAdmin {
-
-	}
-
 	public static class Dfs {
 		public FileMetadata[] EMPTY_FILES = new FileMetadata[0];
+
+		/**
+		 * 
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @return
+		 */
+		public DfsClient getDfsClient(String dfsServiceUrl, String accessToken) {
+			DfsClient dfsClient = null;
+			if (dfsServiceUrl != null) {
+				Map<String, Object> properties = new HashMap<String, Object>();
+				properties.put(WSClientConstants.REALM, null);
+				properties.put(WSClientConstants.ACCESS_TOKEN, accessToken);
+				properties.put(WSClientConstants.URL, dfsServiceUrl);
+				dfsClient = SubstanceClients.getInstance().getDfsClient(properties);
+			}
+			return dfsClient;
+		}
 
 		/**
 		 * 
@@ -114,6 +129,42 @@ public class SubstanceClientsUtil {
 		 * @return
 		 * @throws ClientException
 		 */
+		public boolean fileExists(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
+			boolean exists = false;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				exists = dfsClient.exists(fileId);
+			}
+			return exists;
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param path
+		 * @return
+		 * @throws ClientException
+		 */
+		public boolean fileExists(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+			boolean exists = false;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				exists = dfsClient.exists(path);
+			}
+			return exists;
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileId
+		 * @return
+		 * @throws ClientException
+		 */
 		public FileMetadata getFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
 			FileMetadata fileMetadata = null;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
@@ -123,23 +174,23 @@ public class SubstanceClientsUtil {
 			return fileMetadata;
 		}
 
-		// /**
-		// *
-		// * @param dfsClientResolver
-		// * @param dfsServiceUrl
-		// * @param accessToken
-		// * @param path
-		// * @return
-		// * @throws ClientException
-		// */
-		// public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
-		// FileMetadata fileMetadata = null;
-		// DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
-		// if (dfsClient != null) {
-		// fileMetadata = dfsClient.createNewFile(path);
-		// }
-		// return fileMetadata;
-		// }
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param path
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata getFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+			FileMetadata fileMetadata = null;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				fileMetadata = dfsClient.getFile(path);
+			}
+			return fileMetadata;
+		}
 
 		/**
 		 * 
@@ -165,6 +216,24 @@ public class SubstanceClientsUtil {
 		 * @param dfsClientResolver
 		 * @param dfsServiceUrl
 		 * @param accessToken
+		 * @param path
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata createDirectory(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+			FileMetadata fileMetadata = null;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				fileMetadata = dfsClient.createDirectory(path);
+			}
+			return fileMetadata;
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
 		 * @param parentFileId
 		 * @param fileName
 		 * @param size
@@ -179,6 +248,24 @@ public class SubstanceClientsUtil {
 			}
 			return fileMetadata;
 		}
+
+		// /**
+		// *
+		// * @param dfsClientResolver
+		// * @param dfsServiceUrl
+		// * @param accessToken
+		// * @param path
+		// * @return
+		// * @throws ClientException
+		// */
+		// public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+		// FileMetadata fileMetadata = null;
+		// DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+		// if (dfsClient != null) {
+		// fileMetadata = dfsClient.createNewFile(path);
+		// }
+		// return fileMetadata;
+		// }
 
 		/**
 		 * 
@@ -224,10 +311,94 @@ public class SubstanceClientsUtil {
 		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
+		 * @param newName
+		 * @return
+		 * @throws ClientException
+		 * @throws IOException
+		 */
+		public boolean renameFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId, String newName) throws ClientException, IOException {
+			boolean succeed = false;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				succeed = dfsClient.rename(fileId, newName);
+			}
+			return succeed;
+		}
+
+		/**
+		 * Delete file metadata from DFS and delete file content from DFS Volume.
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsVolumeClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileId
+		 * @return
+		 * @throws ClientException
+		 * @throws IOException
+		 */
+		public boolean deleteFile(DfsClientResolver dfsClientResolver, DfsVolumeClientResolver dfsVolumeClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException, IOException {
+			List<FileMetadata> encounteredFiles = new ArrayList<FileMetadata>();
+			FileMetadata fileMetadata = getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			if (fileMetadata == null) {
+				return false;
+			}
+			return doDeleteFile(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileMetadata, encounteredFiles);
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsVolumeClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileMetadata
+		 * @param encounteredFiles
+		 * @return
+		 * @throws ClientException
+		 * @throws IOException
+		 */
+		protected boolean doDeleteFile(DfsClientResolver dfsClientResolver, DfsVolumeClientResolver dfsVolumeClientResolver, String dfsServiceUrl, String accessToken, FileMetadata fileMetadata, List<FileMetadata> encounteredFiles) throws ClientException, IOException {
+			if (fileMetadata == null) {
+				return false;
+			}
+			if (encounteredFiles.contains(fileMetadata)) {
+				return true;
+			}
+			encounteredFiles.add(fileMetadata);
+
+			boolean isDeleted = false;
+			String fileId = fileMetadata.getFileId();
+
+			if (fileMetadata.isDirectory()) {
+				FileMetadata[] memberFiles = listFiles(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+				for (FileMetadata memberFile : memberFiles) {
+					boolean currDeleted = doDeleteFile(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, memberFile, encounteredFiles);
+					if (!currDeleted) {
+						return false;
+					}
+				}
+				isDeleted = deleteFileMetadata(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+
+			} else {
+				DfsVolume.deleteFileContent(dfsVolumeClientResolver, accessToken, fileMetadata);
+				isDeleted = deleteFileMetadata(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			}
+
+			return isDeleted;
+		}
+
+		/**
+		 * Delete file metadata from DFS. Note that this method doesn't delete file content from DFS Volume.
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param fileId
 		 * @return
 		 * @throws ClientException
 		 */
-		public boolean deleteFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
+		public boolean deleteFileMetadata(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
 			boolean isDeleted = false;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
@@ -235,29 +406,29 @@ public class SubstanceClientsUtil {
 			}
 			return isDeleted;
 		}
-
-		/**
-		 * 
-		 * @param dfsServiceUrl
-		 * @param accessToken
-		 * @return
-		 */
-		public DfsClient getDfsClient(String dfsServiceUrl, String accessToken) {
-			DfsClient dfsClient = null;
-			if (dfsServiceUrl != null) {
-				Map<String, Object> properties = new HashMap<String, Object>();
-				properties.put(WSClientConstants.REALM, null);
-				properties.put(WSClientConstants.ACCESS_TOKEN, accessToken);
-				properties.put(WSClientConstants.URL, dfsServiceUrl);
-				dfsClient = SubstanceClients.getInstance().getDfsClient(properties);
-			}
-			return dfsClient;
-		}
 	}
 
 	public static class DfsVolume {
 		public static final DataBlockMetadata[] EMPTY_DATA_BLOCKS = new DataBlockMetadata[0];
 		public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+
+		/**
+		 * 
+		 * @param dfsVolumeServiceUrl
+		 * @param accessToken
+		 * @return
+		 */
+		public DfsVolumeClient getDfsVolumeClient(String dfsVolumeServiceUrl, String accessToken) {
+			DfsVolumeClient dfsVolumeClient = null;
+			if (dfsVolumeServiceUrl != null) {
+				Map<String, Object> properties = new HashMap<String, Object>();
+				properties.put(WSClientConstants.REALM, null);
+				properties.put(WSClientConstants.ACCESS_TOKEN, accessToken);
+				properties.put(WSClientConstants.URL, dfsVolumeServiceUrl);
+				dfsVolumeClient = SubstanceClients.getInstance().getDfsVolumeClient(properties);
+			}
+			return dfsVolumeClient;
+		}
 
 		/**
 		 * 
@@ -387,7 +558,7 @@ public class SubstanceClientsUtil {
 		 * @throws ClientException
 		 * @throws IOException
 		 */
-		public boolean uploadFile(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, File localFile) throws ClientException, IOException {
+		public boolean upload(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, File localFile) throws ClientException, IOException {
 			if (fileMetadata == null) {
 				throw new IllegalArgumentException("fileMetadata is null.");
 			}
@@ -556,12 +727,37 @@ public class SubstanceClientsUtil {
 		 * @param dfsVolumeClientResolver
 		 * @param accessToken
 		 * @param fileMetadata
+		 * @param inputStream
+		 * @return
+		 * @throws ClientException
+		 * @throws IOException
+		 */
+		public boolean upload(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, InputStream inputStream) throws ClientException, IOException {
+			if (fileMetadata == null) {
+				throw new IllegalArgumentException("fileMetadata is null.");
+			}
+			if (inputStream == null) {
+				throw new IllegalArgumentException("inputStream is null.");
+			}
+
+			boolean isUploaded = false;
+
+			inputStream.available();
+
+			return isUploaded;
+		}
+
+		/**
+		 * 
+		 * @param dfsVolumeClientResolver
+		 * @param accessToken
+		 * @param fileMetadata
 		 * @param output
 		 * @return
 		 * @throws ClientException
 		 * @throws IOException
 		 */
-		public boolean downloadFile(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, OutputStream output) throws ClientException, IOException {
+		public boolean download(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, OutputStream output) throws ClientException, IOException {
 			if (fileMetadata == null) {
 				throw new IllegalArgumentException("fileMetadata is null.");
 			}
@@ -721,7 +917,7 @@ public class SubstanceClientsUtil {
 		 * @throws ClientException
 		 * @throws IOException
 		 */
-		public boolean deleteFileContent(DfsVolumeClientResolver dfsVolumeClientResolver, String dfsServiceUrl, String accessToken, FileMetadata fileMetadata) throws ClientException, IOException {
+		public boolean deleteFileContent(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata) throws ClientException, IOException {
 			if (fileMetadata == null) {
 				throw new IllegalArgumentException("fileMetadata is null.");
 			}
@@ -774,24 +970,6 @@ public class SubstanceClientsUtil {
 
 			isDeleted = (hasPartDeleted && !hasPartDeleteFailed) ? true : false;
 			return isDeleted;
-		}
-
-		/**
-		 * 
-		 * @param dfsVolumeServiceUrl
-		 * @param accessToken
-		 * @return
-		 */
-		public DfsVolumeClient getDfsVolumeClient(String dfsVolumeServiceUrl, String accessToken) {
-			DfsVolumeClient dfsVolumeClient = null;
-			if (dfsVolumeServiceUrl != null) {
-				Map<String, Object> properties = new HashMap<String, Object>();
-				properties.put(WSClientConstants.REALM, null);
-				properties.put(WSClientConstants.ACCESS_TOKEN, accessToken);
-				properties.put(WSClientConstants.URL, dfsVolumeServiceUrl);
-				dfsVolumeClient = SubstanceClients.getInstance().getDfsVolumeClient(properties);
-			}
-			return dfsVolumeClient;
 		}
 	}
 

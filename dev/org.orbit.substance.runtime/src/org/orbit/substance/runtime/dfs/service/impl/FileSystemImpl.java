@@ -503,6 +503,23 @@ public class FileSystemImpl implements FileSystem {
 	}
 
 	@Override
+	public FileMetadata mkdirs(Path path) throws IOException {
+		FileMetadata result = null;
+		FileMetadata fileMetadata = getFile(path);
+		if (fileMetadata != null) {
+			if (fileMetadata.isDirectory()) {
+				result = fileMetadata;
+			} else {
+				throw new IOException("Path already exists and is a file.");
+			}
+		}
+		if (result != null) {
+			result.setPath(path);
+		}
+		return result;
+	}
+
+	@Override
 	public FileMetadata createNewFile(Path path, long size) throws IOException {
 		FileMetadata newFileMetadata = null;
 
@@ -857,56 +874,26 @@ public class FileSystemImpl implements FileSystem {
 	}
 
 	@Override
-	public FileMetadata mkdirs(Path path) throws IOException {
-		FileMetadata result = null;
-		FileMetadata fileMetadata = getFile(path);
-		if (fileMetadata != null) {
-			if (fileMetadata.isDirectory()) {
-				result = fileMetadata;
-			} else {
-				throw new IOException("Path already exists and is a file.");
+	public boolean rename(String fileId, String newName) throws IOException {
+		boolean isUpdated = false;
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
+
+			FileMetadata fileMetadata = tableHandler.getByFileId(conn, fileId);
+			if (fileMetadata == null) {
+				throw new IOException("File doesn't exist.");
 			}
-		}
-		if (result != null) {
-			result.setPath(path);
-		}
-		return result;
-	}
 
-	@Override
-	public FileMetadata moveToTrash(String fileId) throws IOException {
-		FileMetadata result = null;
-		if (result != null) {
-			setPath(result);
-		}
-		return result;
-	}
+			isUpdated = tableHandler.updateName(conn, fileId, newName);
 
-	@Override
-	public FileMetadata moveToTrash(Path path) throws IOException {
-		FileMetadata result = null;
-		if (result != null) {
-			result.setPath(path);
+		} catch (SQLException e) {
+			handleSQLException(e);
+		} finally {
+			DatabaseUtil.closeQuietly(conn, true);
 		}
-		return result;
-	}
-
-	@Override
-	public FileMetadata putBackFromTrash(String fileId) throws IOException {
-		FileMetadata result = null;
-		if (result != null) {
-			setPath(result);
-		}
-		return result;
-	}
-
-	@Override
-	public FileMetadata putBackFromTrash(Path path) throws IOException {
-		FileMetadata result = null;
-		if (result != null) {
-			result.setPath(path);
-		}
-		return result;
+		return isUpdated;
 	}
 
 	@Override
@@ -975,6 +962,42 @@ public class FileSystemImpl implements FileSystem {
 		}
 
 		return isFileMetadataDeleted;
+	}
+
+	@Override
+	public FileMetadata moveToTrash(String fileId) throws IOException {
+		FileMetadata result = null;
+		if (result != null) {
+			setPath(result);
+		}
+		return result;
+	}
+
+	@Override
+	public FileMetadata moveToTrash(Path path) throws IOException {
+		FileMetadata result = null;
+		if (result != null) {
+			result.setPath(path);
+		}
+		return result;
+	}
+
+	@Override
+	public FileMetadata putBackFromTrash(String fileId) throws IOException {
+		FileMetadata result = null;
+		if (result != null) {
+			setPath(result);
+		}
+		return result;
+	}
+
+	@Override
+	public FileMetadata putBackFromTrash(Path path) throws IOException {
+		FileMetadata result = null;
+		if (result != null) {
+			result.setPath(path);
+		}
+		return result;
 	}
 
 }

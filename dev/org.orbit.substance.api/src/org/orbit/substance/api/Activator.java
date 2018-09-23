@@ -36,4 +36,12 @@ public class Activator extends AbstractBundleActivator {
 		super.stop(bundleContext);
 	}
 
+	@Override
+	protected String[] getPropertyNames() {
+		String[] propNames = new String[] { //
+				SubstanceConstants.ORBIT_DFS_URL, //
+		};
+		return propNames;
+	}
+
 }

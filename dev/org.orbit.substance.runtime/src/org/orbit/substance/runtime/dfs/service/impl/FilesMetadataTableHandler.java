@@ -402,7 +402,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean updateParentId(Connection conn, int fileId, int parentFileId) throws SQLException {
+	public boolean updateParentId(Connection conn, String fileId, int parentFileId) throws SQLException {
 		String updateSQL = "UPDATE " + getTableName() + " SET parentFileId=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { parentFileId, getCurrentTime(), fileId }, 1);
 	}
@@ -415,7 +415,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean updateName(Connection conn, int fileId, String name) throws SQLException {
+	public boolean updateName(Connection conn, String fileId, String name) throws SQLException {
 		String updateSQL = "UPDATE " + getTableName() + " SET name=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { name, getCurrentTime(), fileId }, 1);
 	}
@@ -428,7 +428,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean updateSize(Connection conn, int fileId, long size) throws SQLException {
+	public boolean updateSize(Connection conn, String fileId, long size) throws SQLException {
 		String updateSQL = "UPDATE " + getTableName() + " SET size=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { size, getCurrentTime(), fileId }, 1);
 	}
@@ -441,7 +441,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean updateIsDirectory(Connection conn, int fileId, boolean isDirectory) throws SQLException {
+	public boolean updateIsDirectory(Connection conn, String fileId, boolean isDirectory) throws SQLException {
 		String updateSQL = "UPDATE " + getTableName() + " SET isDirectory=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { isDirectory, getCurrentTime(), fileId }, 1);
 	}
@@ -454,7 +454,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @return
 	 * @throws SQLException
 	 */
-	public boolean updateIsHidden(Connection conn, int fileId, boolean isHidden) throws SQLException {
+	public boolean updateIsHidden(Connection conn, String fileId, boolean isHidden) throws SQLException {
 		String updateSQL = "UPDATE " + getTableName() + " SET isHidden=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { isHidden, getCurrentTime(), fileId }, 1);
 	}

@@ -262,6 +262,26 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 	}
 
 	@Override
+	public FileMetadata mkdirs(Path path) throws ClientException {
+		checkPath(path);
+
+		Request request = new Request(RequestConstants.MKDIRS);
+		request.setParameter("path", path.getPathString());
+
+		FileMetadata file = null;
+		Response response = null;
+		try {
+			response = sendRequest(request);
+			if (response != null) {
+				file = ModelConverter.Dfs.getFile(this, response);
+			}
+		} finally {
+			ResponseUtil.closeQuietly(response, true);
+		}
+		return file;
+	}
+
+	@Override
 	public FileMetadata createNewFile(Path path) throws ClientException {
 		checkPath(path);
 
@@ -379,23 +399,27 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 	}
 
 	@Override
-	public FileMetadata mkdirs(Path path) throws ClientException {
-		checkPath(path);
+	public boolean rename(String fileId, String newName) throws ClientException {
+		checkFileId(fileId);
+		if (newName == null || newName.isEmpty()) {
+			throw new IllegalArgumentException("New name is empty.");
+		}
 
-		Request request = new Request(RequestConstants.MKDIRS);
-		request.setParameter("path", path.getPathString());
+		Request request = new Request(RequestConstants.RENAME_FILE);
+		request.setParameter("file_id", fileId);
+		request.setParameter("new_name", newName);
 
-		FileMetadata file = null;
+		boolean isRenamed = false;
 		Response response = null;
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				isRenamed = ModelConverter.Dfs.isRenamed(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
 		}
-		return file;
+		return isRenamed;
 	}
 
 	@Override

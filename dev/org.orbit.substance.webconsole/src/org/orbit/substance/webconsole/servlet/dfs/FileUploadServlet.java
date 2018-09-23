@@ -153,7 +153,7 @@ public class FileUploadServlet extends HttpServlet {
 					}
 
 					// (2) Upload file to DFS volumes
-					boolean isUploaded = SubstanceClientsUtil.DfsVolume.uploadFile(dfsVolumeClientResolver, accessToken, fileMetadata, localFile);
+					boolean isUploaded = SubstanceClientsUtil.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, localFile);
 					if (isUploaded) {
 						message = MessageHelper.INSTANCE.add(message, "File '" + localFile.getName() + "' is uploaded to DFS volume.");
 

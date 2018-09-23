@@ -27,9 +27,9 @@ public interface DfsClient extends ServiceClient {
 
 	FileMetadata createDirectory(String parentFileId, String fileName) throws ClientException;
 
-	FileMetadata createNewFile(Path path) throws ClientException;
+	FileMetadata mkdirs(Path path) throws ClientException;
 
-	// FileMetadata createNewFile(Path path, long size) throws ClientException;
+	FileMetadata createNewFile(Path path) throws ClientException;
 
 	FileMetadata createNewFile(String parentFileId, String fileName, long size) throws ClientException;
 
@@ -37,7 +37,7 @@ public interface DfsClient extends ServiceClient {
 
 	boolean updateFileParts(String fileId, String filePartsString) throws ClientException;
 
-	FileMetadata mkdirs(Path path) throws ClientException;
+	boolean rename(String fileId, String newName) throws ClientException;
 
 	boolean delete(String fileId) throws ClientException;
 
@@ -55,4 +55,5 @@ public interface DfsClient extends ServiceClient {
 
 }
 
+// FileMetadata createNewFile(Path path, long size) throws ClientException;
 // File uploadFile(String parentFileId, java.io.File localFile) throws ClientException;

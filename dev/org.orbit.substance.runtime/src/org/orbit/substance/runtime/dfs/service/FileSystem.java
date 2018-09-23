@@ -40,6 +40,8 @@ public interface FileSystem {
 
 	FileMetadata createDirectory(String parentFileId, String fileName) throws IOException;
 
+	FileMetadata mkdirs(Path path) throws IOException;
+
 	FileMetadata createNewFile(Path path, long size) throws IOException;
 
 	FileMetadata createNewFile(String parentFileId, String fileName, long size) throws IOException;
@@ -48,7 +50,11 @@ public interface FileSystem {
 
 	boolean updateFileParts(String fileId, List<FilePart> fileParts) throws IOException;
 
-	FileMetadata mkdirs(Path path) throws IOException;
+	boolean rename(String fileId, String newName) throws IOException;
+
+	boolean delete(String fileId) throws IOException;
+
+	boolean delete(Path path) throws IOException;
 
 	FileMetadata moveToTrash(String fileId) throws IOException;
 
@@ -57,9 +63,5 @@ public interface FileSystem {
 	FileMetadata putBackFromTrash(String fileId) throws IOException;
 
 	FileMetadata putBackFromTrash(Path path) throws IOException;
-
-	boolean delete(String fileId) throws IOException;
-
-	boolean delete(Path path) throws IOException;
 
 }

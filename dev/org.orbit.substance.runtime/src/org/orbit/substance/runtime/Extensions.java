@@ -22,6 +22,7 @@ import org.orbit.substance.runtime.dfs.ws.command.MoveToTrashByIdCommand;
 import org.orbit.substance.runtime.dfs.ws.command.MoveToTrashByPathCommand;
 import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByIdCommand;
 import org.orbit.substance.runtime.dfs.ws.command.PutBackFromTrashByPathCommand;
+import org.orbit.substance.runtime.dfs.ws.command.RenameFileCommand;
 import org.orbit.substance.runtime.dfs.ws.command.UpdateFilePartsCommand;
 import org.orbit.substance.runtime.dfs.ws.command.UploadFileToDirectoryCommand;
 import org.orbit.substance.runtime.dfs.ws.command.UploadFileToFileCommand;
@@ -37,10 +38,10 @@ import org.orbit.substance.runtime.dfsvolume.ws.command.ListAllDataBlocksCommand
 import org.orbit.substance.runtime.dfsvolume.ws.command.ListDataBlocksCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.ListFileContentsCommand;
 import org.orbit.substance.runtime.dfsvolume.ws.command.UpdateDataBlockSizeByDeltaCommand;
-import org.orbit.substance.runtime.extension.DfsVolumeServiceActivator;
-import org.orbit.substance.runtime.extension.DfsVolumeServicePropertyTester;
 import org.orbit.substance.runtime.extension.DfsServiceActivator;
 import org.orbit.substance.runtime.extension.DfsServicePropertyTester;
+import org.orbit.substance.runtime.extension.DfsVolumeServiceActivator;
+import org.orbit.substance.runtime.extension.DfsVolumeServicePropertyTester;
 import org.origin.common.extensions.Extension;
 import org.origin.common.extensions.InterfaceDescription;
 import org.origin.common.extensions.ProgramExtensions;
@@ -247,40 +248,47 @@ public class Extensions extends ProgramExtensions {
 		extension17.addInterface(desc17);
 		addExtension(extension17);
 
-		Extension extension18 = new Extension(extensionTypeId, DeleteFileByIdCommand.ID);
+		Extension extension18 = new Extension(extensionTypeId, RenameFileCommand.ID);
 		extension18.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc18 = new InterfaceDescription(WSCommand.class, DeleteFileByIdCommand.class);
+		InterfaceDescription desc18 = new InterfaceDescription(WSCommand.class, RenameFileCommand.class);
 		desc18.setSingleton(false);
 		extension18.addInterface(desc18);
 		addExtension(extension18);
 
-		Extension extension19 = new Extension(extensionTypeId, DeleteFileByPathCommand.ID);
+		Extension extension19 = new Extension(extensionTypeId, DeleteFileByIdCommand.ID);
 		extension19.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc19 = new InterfaceDescription(WSCommand.class, DeleteFileByPathCommand.class);
+		InterfaceDescription desc19 = new InterfaceDescription(WSCommand.class, DeleteFileByIdCommand.class);
 		desc19.setSingleton(false);
 		extension19.addInterface(desc19);
 		addExtension(extension19);
 
-		Extension extension20 = new Extension(extensionTypeId, UploadFileToFileCommand.ID);
+		Extension extension20 = new Extension(extensionTypeId, DeleteFileByPathCommand.ID);
 		extension20.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc20 = new InterfaceDescription(WSCommand.class, UploadFileToFileCommand.class);
+		InterfaceDescription desc20 = new InterfaceDescription(WSCommand.class, DeleteFileByPathCommand.class);
 		desc20.setSingleton(false);
 		extension20.addInterface(desc20);
 		addExtension(extension20);
 
-		Extension extension21 = new Extension(extensionTypeId, UploadFileToDirectoryCommand.ID);
+		Extension extension21 = new Extension(extensionTypeId, UploadFileToFileCommand.ID);
 		extension21.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc21 = new InterfaceDescription(WSCommand.class, UploadFileToDirectoryCommand.class);
+		InterfaceDescription desc21 = new InterfaceDescription(WSCommand.class, UploadFileToFileCommand.class);
 		desc21.setSingleton(false);
 		extension21.addInterface(desc21);
 		addExtension(extension21);
 
-		Extension extension22 = new Extension(extensionTypeId, DownloadFileCommand.ID);
+		Extension extension22 = new Extension(extensionTypeId, UploadFileToDirectoryCommand.ID);
 		extension22.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
-		InterfaceDescription desc22 = new InterfaceDescription(WSCommand.class, DownloadFileCommand.class);
+		InterfaceDescription desc22 = new InterfaceDescription(WSCommand.class, UploadFileToDirectoryCommand.class);
 		desc22.setSingleton(false);
 		extension22.addInterface(desc22);
 		addExtension(extension22);
+
+		Extension extension23 = new Extension(extensionTypeId, DownloadFileCommand.ID);
+		extension23.setProperty(WSCommand.PROP__SERVICE_NAME, serviceName);
+		InterfaceDescription desc23 = new InterfaceDescription(WSCommand.class, DownloadFileCommand.class);
+		desc23.setSingleton(false);
+		extension23.addInterface(desc23);
+		addExtension(extension23);
 	}
 
 	protected void createEditPolicyCommandExtensions2() {

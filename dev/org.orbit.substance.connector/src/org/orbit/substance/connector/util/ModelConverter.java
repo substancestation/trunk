@@ -203,6 +203,16 @@ public class ModelConverter {
 		 * @return
 		 * @throws ClientException
 		 */
+		public boolean isRenamed(Response response) throws ClientException {
+			return isSucceed(response);
+		}
+
+		/**
+		 * 
+		 * @param response
+		 * @return
+		 * @throws ClientException
+		 */
 		public boolean isDeleted(Response response) throws ClientException {
 			return isSucceed(response);
 		}

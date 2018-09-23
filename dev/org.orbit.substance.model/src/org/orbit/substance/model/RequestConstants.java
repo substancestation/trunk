@@ -15,21 +15,22 @@ public interface RequestConstants {
 	public static String PATH_EXISTS = "path_exists";
 	public static String IS_DIRECTORY = "is_directory";
 	public static String CREATE_DIRECTORY = "create_directory";
+	public static String MKDIRS = "mkdirs";
 	public static String CREATE_NEW_FILE = "create_new_file";
 	public static String ALLOCATE_VOLUMES = "allocate_volumes";
 	public static String UPDATE_FILE_PARTS = "update_file_parts";
-	public static String MKDIRS = "mkdirs";
+	public static String UPLOAD_FILE_TO_FILE = "upload_file_to_file";
+	public static String UPLOAD_FILE_TO_DIRECTORY = "upload_file_to_directory";
+	public static String DOWNLOAD_FILE = "download_file";
+	public static String RENAME_FILE = "rename_file";
+	public static String DELETE_BY_ID = "delete_by_id";
+	public static String DELETE_BY_PATH = "delete_by_path";
+
 	public static String MOVE_TO_TRASH_BY_ID = "move_to_trash_by_id";
 	public static String MOVE_TO_TRASH_BY_PATH = "move_to_trash_by_path";
 	public static String PUT_BACK_FROM_TRASH_BY_ID = "put_back_from_trash_by_id";
 	public static String PUT_BACK_FROM_TRASH_BY_PATH = "put_back_from_trash_by_path";
 	public static String EMPTY_TRASH = "empty_trash";
-	public static String DELETE_BY_ID = "delete_by_id";
-	public static String DELETE_BY_PATH = "delete_by_path";
-
-	public static String UPLOAD_FILE_TO_FILE = "upload_file_to_file";
-	public static String UPLOAD_FILE_TO_DIRECTORY = "upload_file_to_directory";
-	public static String DOWNLOAD_FILE = "download_file";
 
 	// ---------------------------------------------------------------
 	// File content service request constants
@@ -53,4 +54,3 @@ public interface RequestConstants {
 
 // public static String GET_FILE_CONTENT = "get_file_content";
 // public static String SET_FILE_CONTENT = "set_file_content";
-

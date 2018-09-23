@@ -98,7 +98,7 @@ public class FileDownloadServlet extends HttpServlet {
 
 			output = new FileOutputStream(localFile);
 
-			SubstanceClientsUtil.DfsVolume.downloadFile(dfsVolumeClientResolver, accessToken, fileMetadata, output);
+			SubstanceClientsUtil.DfsVolume.download(dfsVolumeClientResolver, accessToken, fileMetadata, output);
 
 			if (localFile.exists()) {
 				String fileType = MimeTypes.get().getByFileName(localFile.getName());
