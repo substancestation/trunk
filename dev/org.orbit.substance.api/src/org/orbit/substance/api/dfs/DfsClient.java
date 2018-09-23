@@ -29,9 +29,9 @@ public interface DfsClient extends ServiceClient {
 
 	FileMetadata mkdirs(Path path) throws ClientException;
 
-	FileMetadata createNewFile(Path path) throws ClientException;
-
 	FileMetadata createNewFile(String parentFileId, String fileName, long size) throws ClientException;
+
+	FileMetadata createNewFile(Path path, long size) throws ClientException;
 
 	FileMetadata allocateVolumes(String fileId, long size) throws ClientException;
 

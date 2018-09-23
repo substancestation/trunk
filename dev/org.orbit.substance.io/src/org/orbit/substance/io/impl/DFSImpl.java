@@ -177,34 +177,7 @@ public class DFSImpl extends DFS {
 
 		FileMetadata fileMetadata = null;
 		try {
-			boolean exists = SubstanceClientsUtil.Dfs.fileExists(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, path);
-			if (exists) {
-				throw new IOException("File already exists. Path is '" + path.getPathString() + "'.");
-			}
-
-			String parentFileId = "-1";
-			Path parentPath = path.getParent();
-			if (parentPath != null && !parentPath.isRoot()) {
-				DFile parentFile = getFile(parentPath);
-				if (parentFile.exists()) {
-					// File exists
-					// - cannot be file. must be directory.
-					if (!parentFile.isDirectory()) {
-						throw new IOException("Parent file is not directory. Parent file path: '" + parentPath.getPathString() + "'.");
-					}
-				} else {
-					// File doesn't exist
-					// - create parent directory
-					parentFile.mkdir();
-					if (!parentFile.exists() || !parentFile.isDirectory()) {
-						throw new IOException("Parent directory cannot be created. Parent file path: '" + parentPath.getPathString() + "'.");
-					}
-				}
-				parentFileId = parentFile.getFileId();
-			}
-
-			String fileName = path.getLastSegment();
-			fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, parentFileId, fileName, size);
+			fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, path, size);
 
 		} catch (ClientException e) {
 			handle(e);
@@ -398,3 +371,48 @@ public class DFSImpl extends DFS {
 // }
 // }.start();
 // return pipeInput;
+
+// @Override
+// public FileMetadata createNewFile(Path path, long size) throws IOException {
+// if (path == null) {
+// throw new IllegalArgumentException("path is null.");
+// }
+//
+// FileMetadata fileMetadata = null;
+// try {
+// fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, path, size);
+//
+// boolean exists = SubstanceClientsUtil.Dfs.fileExists(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, path);
+// if (exists) {
+// throw new IOException("File already exists. Path is '" + path.getPathString() + "'.");
+// }
+//
+// String parentFileId = "-1";
+// Path parentPath = path.getParent();
+// if (parentPath != null && !parentPath.isRoot()) {
+// DFile parentFile = getFile(parentPath);
+// if (parentFile.exists()) {
+// // File exists
+// // - cannot be file. must be directory.
+// if (!parentFile.isDirectory()) {
+// throw new IOException("Parent file is not directory. Parent file path: '" + parentPath.getPathString() + "'.");
+// }
+// } else {
+// // File doesn't exist
+// // - create parent directory
+// parentFile.mkdir();
+// if (!parentFile.exists() || !parentFile.isDirectory()) {
+// throw new IOException("Parent directory cannot be created. Parent file path: '" + parentPath.getPathString() + "'.");
+// }
+// }
+// parentFileId = parentFile.getFileId();
+// }
+//
+// String fileName = path.getLastSegment();
+// fileMetadata = SubstanceClientsUtil.Dfs.createNewFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, parentFileId, fileName, size);
+//
+// } catch (ClientException e) {
+// handle(e);
+// }
+// return fileMetadata;
+// }

@@ -521,11 +521,10 @@ public class FileSystemImpl implements FileSystem {
 
 	@Override
 	public FileMetadata createNewFile(Path path, long size) throws IOException {
-		FileMetadata newFileMetadata = null;
-
 		if (path == null || path.isEmpty()) {
 			throw new IOException("Path is empty.");
 		}
+
 		FileMetadata existingFileMetadata = getFile(path);
 		if (existingFileMetadata != null) {
 			if (existingFileMetadata.isDirectory()) {
@@ -535,26 +534,31 @@ public class FileSystemImpl implements FileSystem {
 			}
 		}
 
+		FileMetadata newFileMetadata = null;
 		Connection conn = null;
 		try {
 			conn = getConnection();
 			FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
 
-			String parentFileId = null;
+			String parentFileId = "-1";
 			Path parentPath = path.getParent();
-			if (parentPath == null || parentPath.isRoot()) {
-				parentFileId = "-1";
-
-			} else {
-				FileMetadata parentFileMetadata = getFile(parentPath);
-				if (parentFileMetadata == null) {
-					throw new IOException("Parent directory doesn't exist.");
+			if (parentPath != null && !parentPath.isRoot()) {
+				FileMetadata parentFile = getFile(parentPath);
+				if (parentFile != null) {
+					// File exists
+					// - cannot be file. must be directory.
+					if (!parentFile.isDirectory()) {
+						throw new IOException("Parent file is not directory. Parent file path: '" + parentPath.getPathString() + "'.");
+					}
 				} else {
-					if (!parentFileMetadata.isDirectory()) {
-						throw new IOException("Parent file is not a directory.");
+					// File doesn't exist
+					// - create parent directory
+					parentFile = createDirectory(parentPath);
+					if (parentFile == null || !parentFile.isDirectory()) {
+						throw new IOException("Parent directory cannot be created. Parent file path: '" + parentPath.getPathString() + "'.");
 					}
 				}
-				parentFileId = parentFileMetadata.getFileId();
+				parentFileId = parentFile.getFileId();
 			}
 
 			String fileId = generateFileId();

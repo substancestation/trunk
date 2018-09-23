@@ -70,8 +70,3 @@ public class DFileOutputStream extends PipedOutputStream {
 	}
 
 }
-
-// FileMetadata fileMetadata0 = SubstanceClientsUtil.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
-// if (fileMetadata0.isDirectory()) {
-// throw new IOException("File is directory.");
-// }

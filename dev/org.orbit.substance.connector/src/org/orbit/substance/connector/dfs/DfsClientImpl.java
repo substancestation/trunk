@@ -282,45 +282,25 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 	}
 
 	@Override
-	public FileMetadata createNewFile(Path path) throws ClientException {
+	public FileMetadata createNewFile(Path path, long size) throws ClientException {
 		checkPath(path);
 
 		Request request = new Request(RequestConstants.CREATE_NEW_FILE);
 		request.setParameter("path", path.getPathString());
 
+		if (size > 0) {
+			// file size is optional
+			// - if specified, the volumes will be allocated using it, by the DFS.
+			request.setParameter("size", size);
+		}
+
 		FileMetadata file = null;
-		Response response = null;
-		try {
-			response = sendRequest(request);
-			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
-			}
-		} finally {
-			ResponseUtil.closeQuietly(response, true);
+		Response response = sendRequest(request);
+		if (response != null) {
+			file = ModelConverter.Dfs.getFile(this, response);
 		}
 		return file;
 	}
-
-	// @Override
-	// public FileMetadata createNewFile(Path path, long size) throws ClientException {
-	// checkPath(path);
-	//
-	// Request request = new Request(RequestConstants.CREATE_NEW_FILE);
-	// request.setParameter("path", path.getPathString());
-	//
-	// if (size > 0) {
-	// // file size is optional
-	// // - if specified, the volumes will be allocated using it, by the DFS.
-	// request.setParameter("size", size);
-	// }
-	//
-	// FileMetadata file = null;
-	// Response response = sendRequest(request);
-	// if (response != null) {
-	// file = ModelConverter.Dfs.getFile(this, response);
-	// }
-	// return file;
-	// }
 
 	@Override
 	public FileMetadata createNewFile(String parentFileId, String fileName, long size) throws ClientException {

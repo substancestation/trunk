@@ -249,23 +249,24 @@ public class SubstanceClientsUtil {
 			return fileMetadata;
 		}
 
-		// /**
-		// *
-		// * @param dfsClientResolver
-		// * @param dfsServiceUrl
-		// * @param accessToken
-		// * @param path
-		// * @return
-		// * @throws ClientException
-		// */
-		// public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
-		// FileMetadata fileMetadata = null;
-		// DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
-		// if (dfsClient != null) {
-		// fileMetadata = dfsClient.createNewFile(path);
-		// }
-		// return fileMetadata;
-		// }
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @param path
+		 * @param size
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path, long size) throws ClientException {
+			FileMetadata fileMetadata = null;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				fileMetadata = dfsClient.createNewFile(path, size);
+			}
+			return fileMetadata;
+		}
 
 		/**
 		 * 

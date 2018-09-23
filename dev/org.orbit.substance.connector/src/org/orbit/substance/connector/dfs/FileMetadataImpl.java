@@ -217,116 +217,125 @@ public class FileMetadataImpl implements FileMetadata {
 		}
 	}
 
-	@Override
-	public boolean createNewFile() throws IOException {
-		boolean succeed = false;
-		try {
-			FileMetadata newFile = this.fsClient.createNewFile(this.path);
-			if (newFile != null) {
-				succeed = true;
-				update(newFile);
-			}
-		} catch (ClientException e) {
-			handleException(e);
-		}
-		return succeed;
-	}
-
-	@Override
-	public boolean mkdirs() throws IOException {
-		boolean succeed = false;
-		try {
-			FileMetadata newFile = this.fsClient.mkdirs(this.path);
-			if (newFile != null) {
-				succeed = true;
-				update(newFile);
-			}
-		} catch (ClientException e) {
-			handleException(e);
-		}
-		return succeed;
-	}
-
-	@Override
-	public boolean moveToTrash() throws IOException {
-		boolean succeed = false;
-		try {
-			if (this.fileId == null && this.path != null) {
-				FileMetadata file = this.fsClient.getFile(this.path);
-				if (file != null) {
-					update(file);
-				}
-			}
-			if (this.fileId == null) {
-				throw new IOException("File does not exist.");
-			}
-
-			if (inTrash()) {
-				throw new IOException("File is already in trash.");
-			}
-
-			FileMetadata newFile = this.fsClient.moveToTrash(this.fileId);
-			if (newFile != null) {
-				succeed = true;
-				update(newFile);
-			}
-		} catch (ClientException e) {
-			handleException(e);
-		}
-		return succeed;
-	}
-
-	@Override
-	public boolean putBackFromTrash() throws IOException {
-		boolean succeed = false;
-		try {
-			if (this.fileId == null && this.path != null) {
-				FileMetadata file = this.fsClient.getFile(this.path);
-				if (file != null) {
-					update(file);
-				}
-			}
-			if (this.fileId == null) {
-				throw new IOException("File does not exist.");
-			}
-
-			if (!inTrash()) {
-				throw new IOException("File is not in trash.");
-			}
-
-			FileMetadata newFile = this.fsClient.moveOutOfTrash(this.fileId);
-			if (newFile != null) {
-				succeed = true;
-				update(newFile);
-			}
-		} catch (ClientException e) {
-			handleException(e);
-		}
-		return succeed;
-	}
-
-	@Override
-	public boolean delete() throws IOException {
-		boolean succeed = false;
-		try {
-			if (this.fileId == null && this.path != null) {
-				FileMetadata file = this.fsClient.getFile(this.path);
-				if (file != null) {
-					update(file);
-				}
-			}
-			if (this.fileId == null) {
-				throw new IOException("File does not exist.");
-			}
-
-			succeed = this.fsClient.delete(this.fileId);
-
-		} catch (ClientException e) {
-			handleException(e);
-		}
-		return succeed;
-	}
-
 }
 
 // protected String name;
+
+// ------------------------------------------------------
+// Actions
+// ------------------------------------------------------
+// boolean createNewFile() throws IOException;
+// boolean mkdirs() throws IOException;
+// boolean moveToTrash() throws IOException;
+// boolean putBackFromTrash() throws IOException;
+// boolean delete() throws IOException;
+
+// @Override
+// public boolean createNewFile() throws IOException {
+// boolean succeed = false;
+// try {
+// FileMetadata newFile = this.fsClient.createNewFile(this.path);
+// if (newFile != null) {
+// succeed = true;
+// update(newFile);
+// }
+// } catch (ClientException e) {
+// handleException(e);
+// }
+// return succeed;
+// }
+//
+// @Override
+// public boolean mkdirs() throws IOException {
+// boolean succeed = false;
+// try {
+// FileMetadata newFile = this.fsClient.mkdirs(this.path);
+// if (newFile != null) {
+// succeed = true;
+// update(newFile);
+// }
+// } catch (ClientException e) {
+// handleException(e);
+// }
+// return succeed;
+// }
+//
+// @Override
+// public boolean moveToTrash() throws IOException {
+// boolean succeed = false;
+// try {
+// if (this.fileId == null && this.path != null) {
+// FileMetadata file = this.fsClient.getFile(this.path);
+// if (file != null) {
+// update(file);
+// }
+// }
+// if (this.fileId == null) {
+// throw new IOException("File does not exist.");
+// }
+//
+// if (inTrash()) {
+// throw new IOException("File is already in trash.");
+// }
+//
+// FileMetadata newFile = this.fsClient.moveToTrash(this.fileId);
+// if (newFile != null) {
+// succeed = true;
+// update(newFile);
+// }
+// } catch (ClientException e) {
+// handleException(e);
+// }
+// return succeed;
+// }
+//
+// @Override
+// public boolean putBackFromTrash() throws IOException {
+// boolean succeed = false;
+// try {
+// if (this.fileId == null && this.path != null) {
+// FileMetadata file = this.fsClient.getFile(this.path);
+// if (file != null) {
+// update(file);
+// }
+// }
+// if (this.fileId == null) {
+// throw new IOException("File does not exist.");
+// }
+//
+// if (!inTrash()) {
+// throw new IOException("File is not in trash.");
+// }
+//
+// FileMetadata newFile = this.fsClient.moveOutOfTrash(this.fileId);
+// if (newFile != null) {
+// succeed = true;
+// update(newFile);
+// }
+// } catch (ClientException e) {
+// handleException(e);
+// }
+// return succeed;
+// }
+//
+// @Override
+// public boolean delete() throws IOException {
+// boolean succeed = false;
+// try {
+// if (this.fileId == null && this.path != null) {
+// FileMetadata file = this.fsClient.getFile(this.path);
+// if (file != null) {
+// update(file);
+// }
+// }
+// if (this.fileId == null) {
+// throw new IOException("File does not exist.");
+// }
+//
+// succeed = this.fsClient.delete(this.fileId);
+//
+// } catch (ClientException e) {
+// handleException(e);
+// }
+// return succeed;
+// }
