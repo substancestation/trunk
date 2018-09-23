@@ -40,12 +40,10 @@ public class DFileOutputStream extends PipedOutputStream {
 			final DfsClientResolver dfsClientResolver = dfs.getDfsClientResolver();
 			final DfsVolumeClientResolver dfsVolumeClientResolver = dfs.getDfsVolumeClientResolver();
 
-			final FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			final FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, size);
 			if (fileMetadata.isDirectory()) {
 				throw new IOException("File is directory.");
 			}
-
-			SubstanceClientsUtil.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, size);
 
 			final PipedInputStream pipeInput = new PipedInputStream();
 			connect(pipeInput);
@@ -72,3 +70,8 @@ public class DFileOutputStream extends PipedOutputStream {
 	}
 
 }
+
+// FileMetadata fileMetadata0 = SubstanceClientsUtil.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+// if (fileMetadata0.isDirectory()) {
+// throw new IOException("File is directory.");
+// }

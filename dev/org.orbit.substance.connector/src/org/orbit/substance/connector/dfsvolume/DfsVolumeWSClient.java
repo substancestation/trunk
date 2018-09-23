@@ -35,16 +35,20 @@ public class DfsVolumeWSClient extends WSClient {
 	}
 
 	/**
-	 * Upload a file to a parent directory (by parent file id) to dfs server. Parent directory need to be existing file.
+	 * Upload a file to a parent directory (by parent file id) to DFS server. Parent directory need to be existing file.
 	 * 
 	 * URL (POST): {scheme}://{host}:{port}/{contextRoot}/file/content (FormData: InputStream and FormDataContentDisposition)
 	 * 
-	 * @param parentFileId
+	 * @param accountId
+	 * @param blockId
+	 * @param fileId
+	 * @param partId
 	 * @param file
+	 * @param checksum
 	 * @return
 	 * @throws ClientException
 	 */
-	public Response upload(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException {
+	public Response upload(String accountId, String blockId, String fileId, int partId, File file, long checksum) throws ClientException {
 		if (file == null || !file.exists()) {
 			throw new ClientException(401, "File doesn't exist.");
 		}
@@ -52,7 +56,6 @@ public class DfsVolumeWSClient extends WSClient {
 			throw new ClientException(401, "File " + file.getAbsolutePath() + " is not a single file.");
 		}
 
-		int partId = 0;
 		long size = file.length();
 
 		Response response = null;
@@ -94,38 +97,32 @@ public class DfsVolumeWSClient extends WSClient {
 	}
 
 	/**
-	 * Upload a file to a parent directory (by parent file id) to dfs server. Parent directory need to be existing file.
+	 * Upload a file to a parent directory (by parent file id) to DFS server. Parent directory need to be existing file.
 	 * 
 	 * URL (POST): {scheme}://{host}:{port}/{contextRoot}/file/content (FormData: InputStream and FormDataContentDisposition)
 	 * 
-	 * @param parentFileId
-	 * @param file
+	 * @param accountId
+	 * @param blockId
+	 * @param fileId
+	 * @param partId
+	 * @param inputStream
+	 * @param size
+	 * @param checksum
 	 * @return
 	 * @throws ClientException
 	 */
-	public Response upload(String accountId, String blockId, String fileId, int partId, long size, long checksum, InputStream inputStream) throws ClientException {
-		// if (file == null || !file.exists()) {
-		// throw new ClientException(401, "File doesn't exist.");
-		// }
-		// if (!file.isFile()) {
-		// throw new ClientException(401, "File " + file.getAbsolutePath() + " is not a single file.");
-		// }
+	public Response upload(String accountId, String blockId, String fileId, int partId, InputStream inputStream, long size, long checksum) throws ClientException {
+		if (inputStream == null) {
+			throw new IllegalArgumentException("inputStream is null.");
+		}
+		if (size <= 0) {
+			throw new IllegalArgumentException("size is invalid.");
+		}
 
 		Response response = null;
-		// boolean succeed = false;
-		// FileMetadataDTO newFileDTO = null;
 		try {
 			MultiPart multipart = new FormDataMultiPart();
 			{
-				// FileDataBodyPart filePart = new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE);
-				// {
-				// FormDataContentDisposition.FormDataContentDispositionBuilder formBuilder = FormDataContentDisposition.name("file");
-				// formBuilder.fileName(URLEncoder.encode(file.getName(), "UTF-8"));
-				// formBuilder.size(file.length());
-				// formBuilder.modificationDate(new Date(file.lastModified()));
-				// filePart.setFormDataContentDisposition(formBuilder.build());
-				// }
-				// multipart.bodyPart(filePart);
 				StreamDataBodyPart streamPart = new StreamDataBodyPart("file", inputStream);
 				multipart.bodyPart(streamPart);
 			}
@@ -144,8 +141,6 @@ public class DfsVolumeWSClient extends WSClient {
 			MediaType requestContentType = multipart.getMediaType(); // multipart/form-data
 			response = updateHeaders(builder).post(Entity.entity(multipart, requestContentType));
 			checkResponse(target, response);
-
-			// newFileDTO = response.readEntity(FileMetadataDTO.class);
 
 		} catch (ClientException e) {
 			handleException(e);

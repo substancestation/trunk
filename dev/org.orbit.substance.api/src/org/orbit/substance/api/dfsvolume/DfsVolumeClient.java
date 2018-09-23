@@ -45,9 +45,9 @@ public interface DfsVolumeClient extends ServiceClient {
 	// ----------------------------------------------------------------------
 	// Upload and download
 	// ----------------------------------------------------------------------
-	FileContentMetadata uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException;
+	FileContentMetadata uploadFile(String accountId, String blockId, String fileId, int partId, File file, long checksum) throws ClientException;
 
-	FileContentMetadata uploadFile(String accountId, String blockId, String fileId, int partId, long size, long checksum, InputStream inputStream) throws ClientException;
+	FileContentMetadata uploadFile(String accountId, String blockId, String fileId, int partId, InputStream inputStream, long size, long checksum) throws ClientException;
 
 	boolean downloadFile(String accountId, String blockId, String fileId, int partId, OutputStream output) throws ClientException;
 

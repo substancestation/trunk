@@ -324,9 +324,9 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	// Upload and download
 	// ----------------------------------------------------------------------
 	@Override
-	public FileContentMetadata uploadFile(String accountId, String blockId, String fileId, long checksum, File file) throws ClientException {
+	public FileContentMetadata uploadFile(String accountId, String blockId, String fileId, int partId, File file, long checksum) throws ClientException {
 		FileContentMetadata fileContent = null;
-		Response response = getWSClient().upload(accountId, blockId, fileId, checksum, file);
+		Response response = getWSClient().upload(accountId, blockId, fileId, partId, file, checksum);
 		if (response != null) {
 			fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 		}
@@ -334,9 +334,9 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	}
 
 	@Override
-	public FileContentMetadata uploadFile(String accountId, String blockId, String fileId, int partId, long size, long checksum, InputStream inputStream) throws ClientException {
+	public FileContentMetadata uploadFile(String accountId, String blockId, String fileId, int partId, InputStream inputStream, long size, long checksum) throws ClientException {
 		FileContentMetadata fileContent = null;
-		Response response = getWSClient().upload(accountId, blockId, fileId, partId, size, checksum, inputStream);
+		Response response = getWSClient().upload(accountId, blockId, fileId, partId, inputStream, size, checksum);
 		if (response != null) {
 			fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 		}

@@ -601,7 +601,7 @@ public class SubstanceClientsUtil {
 							throw new IOException("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'");
 						}
 
-						FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, partChecksum, localFile);
+						FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, 0, localFile, partChecksum);
 						if (fileContent != null) {
 							if (blockId == null || blockId.isEmpty() || "-1".equals(blockId)) {
 								String newBlockId = fileContent.getBlockId();
@@ -684,7 +684,7 @@ public class SubstanceClientsUtil {
 										throw new IOException("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'");
 									}
 
-									FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, partId, currSize, partChecksum, partInputStream);
+									FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, partId, partInputStream, currSize, partChecksum);
 									if (fileContent != null) {
 										if (blockId == null || blockId.isEmpty() || "-1".equals(blockId)) {
 											String newBlockId = fileContent.getBlockId();
@@ -742,7 +742,157 @@ public class SubstanceClientsUtil {
 
 			boolean isUploaded = false;
 
-			inputStream.available();
+			String fileId = fileMetadata.getFileId();
+			List<FilePart> fileParts = fileMetadata.getFileParts();
+			if (fileParts.isEmpty()) {
+				throw new ClientException(500, "File parts is empty. fileId='" + fileId + "'");
+			}
+
+			if (fileParts.size() == 1) {
+				// The input stream has only one part.
+				// - A data block has enough space to keep the whole input stream.
+				// - Upload the input stream to a data block of a dfs volume.
+				FilePart filePart = fileParts.get(0);
+
+				byte[] partBytes = IOUtil.toByteArray(inputStream);
+				long size = partBytes.length;
+				long partChecksum = ChecksumUtil.getChecksum(partBytes);
+
+				boolean isPartUploaded = false;
+				boolean isPartUploadFailed = false;
+
+				List<FileContentAccess> fileContentAccessList = filePart.getContentAccess();
+				for (FileContentAccess fileContentAccess : fileContentAccessList) {
+					InputStream partInputStream = null;
+					try {
+						partInputStream = new ByteArrayInputStream(partBytes);
+
+						String dfsId = fileContentAccess.getDfsId();
+						String dfsVolumeId = fileContentAccess.getDfsVolumeId();
+						String blockId = fileContentAccess.getBlockId();
+
+						DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
+						if (dfsVolumeClient == null) {
+							throw new IOException("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'");
+						}
+
+						FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, 0, partInputStream, size, partChecksum);
+						if (fileContent != null) {
+							if (blockId == null || blockId.isEmpty() || "-1".equals(blockId)) {
+								String newBlockId = fileContent.getBlockId();
+								fileContentAccess.setBlockId(newBlockId);
+							}
+
+							isPartUploaded = true;
+							break;
+						} else {
+							isPartUploadFailed = true;
+						}
+					} catch (IOException e) {
+						throw e;
+					} finally {
+						IOUtil.closeQuietly(partInputStream, true);
+					}
+				}
+
+				isUploaded = (isPartUploaded && !isPartUploadFailed) ? true : false;
+				if (isUploaded) {
+					filePart.setChecksum(partChecksum);
+				}
+
+			} else {
+				// The input stream has multiple parts
+				// - One data block (e.g. 100MB) doesn't have enough space to keep the whole input stream (e.g. 125MB, 275MB, etc).
+				// - Upload file parts to data blocks of various dfs volumes.
+				try {
+					byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+
+					for (FilePart filePart : fileParts) {
+						int partId = filePart.getPartId();
+						long startIndex = filePart.getStartIndex();
+						long endIndex = filePart.getEndIndex();
+						long currSize = endIndex - startIndex;
+						long lengthLeft = currSize;
+
+						ByteArrayOutputStream partOutputStream = null;
+						try {
+							partOutputStream = new ByteArrayOutputStream();
+
+							int lengthToRead = buffer.length;
+							if (lengthLeft < lengthToRead) {
+								lengthToRead = (int) lengthLeft;
+							}
+							int read;
+							while (lengthLeft > 0) {
+								read = inputStream.read(buffer, 0, lengthToRead);
+								if (read <= 0) {
+									// end of stream
+									break;
+								}
+								partOutputStream.write(buffer, 0, read);
+								lengthLeft -= read;
+
+								lengthToRead = buffer.length;
+								if (lengthLeft < lengthToRead) {
+									lengthToRead = (int) lengthLeft;
+								}
+							}
+
+							byte[] partBytes = partOutputStream.toByteArray();
+							long partChecksum = ChecksumUtil.getChecksum(partBytes);
+
+							boolean isPartUploaded = false;
+							boolean isPartUploadFailed = false;
+
+							List<FileContentAccess> fileContentAccessList = filePart.getContentAccess();
+							for (FileContentAccess fileContentAccess : fileContentAccessList) {
+								InputStream partInputStream = null;
+								try {
+									partInputStream = new ByteArrayInputStream(partBytes);
+
+									String dfsId = fileContentAccess.getDfsId();
+									String dfsVolumeId = fileContentAccess.getDfsVolumeId();
+									String blockId = fileContentAccess.getBlockId();
+
+									DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
+									if (dfsVolumeClient == null) {
+										throw new IOException("DfsVolumeClient is not found. dfsId='" + dfsId + "', dfsVolumeId='" + dfsVolumeId + "'");
+									}
+
+									FileContentMetadata fileContent = dfsVolumeClient.uploadFile(null, blockId, fileId, partId, partInputStream, currSize, partChecksum);
+									if (fileContent != null) {
+										if (blockId == null || blockId.isEmpty() || "-1".equals(blockId)) {
+											String newBlockId = fileContent.getBlockId();
+											fileContentAccess.setBlockId(newBlockId);
+										}
+
+										isPartUploaded = true;
+										break;
+									} else {
+										isPartUploadFailed = true;
+									}
+
+								} catch (IOException e) {
+									throw e;
+								} finally {
+									IOUtil.closeQuietly(partInputStream, true);
+								}
+							}
+
+							isUploaded = (isPartUploaded && !isPartUploadFailed) ? true : false;
+							if (isUploaded) {
+								filePart.setChecksum(partChecksum);
+							}
+
+						} finally {
+							IOUtil.closeQuietly(partOutputStream, true);
+						}
+					} // FileParts loop
+
+				} finally {
+					// IOUtil.closeQuietly(fileInputStream, true);
+				}
+			}
 
 			return isUploaded;
 		}
