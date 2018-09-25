@@ -14,6 +14,8 @@ public class URIHandlerDFileImpl extends URIHandlerImpl {
 
 	public static URIHandlerDFileImpl INSTANCE = new URIHandlerDFileImpl();
 
+	public static final String PROTOCOL = "dfs";
+
 	public void register() {
 		if (!URIConverterImpl.DEFAULT_HANDLERS.contains(URIHandlerDFileImpl.INSTANCE)) {
 			URIConverterImpl.DEFAULT_HANDLERS.add(URIHandlerDFileImpl.INSTANCE);
@@ -38,7 +40,7 @@ public class URIHandlerDFileImpl extends URIHandlerImpl {
 
 	@Override
 	public boolean isSupported(URI uri) {
-		return ("dfs".equalsIgnoreCase(uri.getScheme())) ? true : false;
+		return (PROTOCOL.equalsIgnoreCase(uri.getScheme())) ? true : false;
 	}
 
 	@Override
@@ -83,7 +85,7 @@ public class URIHandlerDFileImpl extends URIHandlerImpl {
 		}
 		OutputStream outputStream = null;
 		if (file != null) {
-			outputStream = file.getOutputStream(0);
+			outputStream = file.getOutputStream();
 		}
 		return outputStream;
 	}

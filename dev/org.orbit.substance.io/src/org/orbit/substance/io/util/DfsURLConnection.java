@@ -88,7 +88,7 @@ public class DfsURLConnection extends URLConnection {
 		connect();
 		if (this.isConnected) {
 			if (this.file.exists() && !this.file.isDirectory()) {
-				outputStream = file.getOutputStream(0);
+				outputStream = file.getOutputStream();
 			}
 		}
 
