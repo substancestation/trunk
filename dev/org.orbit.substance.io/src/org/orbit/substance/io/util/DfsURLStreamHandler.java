@@ -1,4 +1,4 @@
-package org.orbit.substance.io;
+package org.orbit.substance.io.util;
 
 import java.io.IOException;
 import java.net.URL;

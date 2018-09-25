@@ -20,9 +20,9 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
+import org.orbit.substance.io.util.DefaultDfsVolumeClientResolver;
+import org.orbit.substance.io.util.DfsIndexUtil;
 import org.orbit.substance.webconsole.WebConstants;
-import org.orbit.substance.webconsole.util.DefaultDfsVolumeClientResolver;
-import org.orbit.substance.webconsole.util.DfsAdminUtil;
 import org.orbit.substance.webconsole.util.MessageHelper;
 import org.origin.common.util.ServletUtil;
 
@@ -60,9 +60,9 @@ public class DfsVolumeListServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				dfsIndexItem = DfsAdminUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
+				dfsIndexItem = DfsIndexUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
 
-				dfsVolumeIndexItems = DfsAdminUtil.getDfsVolumeIndexItems(indexServiceUrl, accessToken, dfsId);
+				dfsVolumeIndexItems = DfsIndexUtil.getDfsVolumeIndexItems(indexServiceUrl, accessToken, dfsId);
 
 				DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
 

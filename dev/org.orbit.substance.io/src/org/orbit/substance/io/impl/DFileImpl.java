@@ -1,8 +1,11 @@
 package org.orbit.substance.io.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.io.DFS;
@@ -45,6 +48,51 @@ public class DFileImpl implements DFile {
 		this.dfs = dfs;
 		this.fileId = fileId;
 		this.path = path;
+	}
+
+	/*
+	 * Examples:
+	 * 
+	 * dfs://dfs1/path/to/file.txt
+	 * 
+	 * dfs://dfs1/path/to/dir/
+	 * 
+	 * @return
+	 * 
+	 * @throws IOException
+	 */
+	@Override
+	public URI toURI() throws IOException {
+		try {
+			String uriScheme = "dfs";
+			String uriHost = this.dfs.getDfsId();
+			String uriPath = this.path.getPathString();
+			if (isDirectory()) {
+				if (!uriPath.endsWith("/")) {
+					uriPath = uriPath + "/";
+				}
+			}
+			if (!uriPath.startsWith("/")) {
+				uriPath = "/" + uriPath;
+			}
+			String uriFragment = null;
+
+			return new URI(uriScheme, uriHost, uriPath, uriFragment);
+
+		} catch (URISyntaxException x) {
+			throw new Error(x); // Can't happen
+		}
+	}
+
+	protected static String slashify(String path, boolean isDirectory) {
+		String p = path;
+		if (File.separatorChar != '/')
+			p = p.replace(File.separatorChar, '/');
+		if (!p.startsWith("/"))
+			p = "/" + p;
+		if (!p.endsWith("/") && isDirectory)
+			p = p + "/";
+		return p;
 	}
 
 	@Override
@@ -203,6 +251,14 @@ public class DFileImpl implements DFile {
 	}
 
 	@Override
+	public synchronized long getLength() throws IOException {
+		if (!exists()) {
+			throw new IOException("File doesn't exists.");
+		}
+		return this.dfs.getLength(this.fileId);
+	}
+
+	@Override
 	public synchronized InputStream getInputStream() throws IOException {
 		if (!exists()) {
 			throw new IOException("File doesn't exists.");
@@ -211,6 +267,17 @@ public class DFileImpl implements DFile {
 			throw new IOException("File is directory.");
 		}
 		return new DFileInputStream(this);
+	}
+
+	@Override
+	public synchronized OutputStream getOutputStream() throws IOException {
+		if (!exists()) {
+			throw new IOException("File doesn't exists.");
+		}
+		if (isDirectory()) {
+			throw new IOException("File is directory.");
+		}
+		return new DFileOutputStream(this);
 	}
 
 	@Override
@@ -265,4 +332,20 @@ public class DFileImpl implements DFile {
 		return succeed;
 	}
 
+	public static void main(String[] args) {
+		try {
+			URI uri1 = new URI("dfs", "dfs1", "/path/to/file1.txt", null);
+			URI uri2 = new URI("dfs", "dfs1", "/path/to/file3.txt", null);
+			URI uri3 = new URI("dfs", "dfs1", "/path/to/dir/", null);
+			URI uri4 = new URI("dfs", "dfs1", "/path/to/dir", null);
+
+			System.out.println(uri1);
+			System.out.println(uri2);
+			System.out.println(uri3);
+			System.out.println(uri4);
+
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
 }

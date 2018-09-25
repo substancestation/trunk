@@ -3,10 +3,13 @@ package org.orbit.substance.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 
 import org.orbit.substance.model.dfs.Path;
 
 public interface DFile {
+
+	URI toURI() throws IOException;
 
 	DFS getDFS();
 
@@ -30,7 +33,11 @@ public interface DFile {
 
 	boolean create(byte[] bytes) throws IOException;
 
+	long getLength() throws IOException;
+
 	InputStream getInputStream() throws IOException;
+
+	OutputStream getOutputStream() throws IOException;
 
 	OutputStream getOutputStream(long size) throws IOException;
 

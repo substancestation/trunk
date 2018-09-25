@@ -1,4 +1,4 @@
-package org.orbit.substance.io;
+package org.orbit.substance.io.util;
 
 import java.net.URL;
 import java.net.URLStreamHandler;

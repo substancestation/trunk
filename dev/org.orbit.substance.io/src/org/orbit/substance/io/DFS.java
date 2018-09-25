@@ -99,6 +99,8 @@ public abstract class DFS {
 		return this.dfsVolumeClientResolver;
 	}
 
+	public abstract String getDfsId() throws IOException;
+
 	public abstract DFile getFileById(String fileId) throws IOException;
 
 	public abstract DFile getFile(String pathString) throws IOException;
@@ -121,8 +123,12 @@ public abstract class DFS {
 
 	public abstract FileMetadata create(Path path, byte[] bytes) throws IOException;
 
+	public abstract long getLength(String fileId) throws IOException;
+
 	public abstract InputStream getInputStream(String fileId) throws IOException;
 
+	public abstract OutputStream getOutputStream(String fileId) throws IOException;
+	
 	public abstract OutputStream getOutputStream(String fileId, long size) throws IOException;
 
 	public abstract void setContents(String fileId, InputStream inputStream) throws IOException;

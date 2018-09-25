@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.DFS;
@@ -17,6 +18,8 @@ import org.origin.common.rest.client.ClientException;
 
 public class DFSImpl extends DFS {
 
+	protected String dfsId;
+
 	/**
 	 * 
 	 * @param dfsServiceUrl
@@ -25,6 +28,35 @@ public class DFSImpl extends DFS {
 	 */
 	public DFSImpl(String dfsServiceUrl, String indexServiceUrl, String accessToken) {
 		super(dfsServiceUrl, indexServiceUrl, accessToken);
+	}
+
+	/**
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	protected void handle(Exception e) throws IOException {
+		if (e instanceof IOException) {
+			throw (IOException) e;
+		}
+		throw new IOException(e);
+	}
+
+	@Override
+	public synchronized String getDfsId() throws IOException {
+		if (this.dfsId == null) {
+			DfsServiceMetadata metadata = null;
+			try {
+				metadata = SubstanceClientsUtil.Dfs.getDfsMetadata(dfsClientResolver, dfsServiceUrl, accessToken);
+			} catch (ClientException e) {
+				handle(e);
+			}
+			if (metadata == null) {
+				throw new IOException("Cannot get DFS metadata.");
+			}
+			this.dfsId = metadata.getDfsId();
+		}
+		return this.dfsId;
 	}
 
 	@Override
@@ -226,6 +258,28 @@ public class DFSImpl extends DFS {
 	}
 
 	@Override
+	public long getLength(String fileId) throws IOException {
+		if (fileId == null) {
+			throw new IllegalArgumentException("fileId is null.");
+		}
+		DFile file = getFileById(fileId);
+		if (file == null) {
+			throw new IOException("File is not found. fileId is '" + fileId + "'.");
+		}
+
+		long length = 0;
+		try {
+			FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, fileId);
+			if (fileMetadata != null) {
+				length = fileMetadata.getSize();
+			}
+		} catch (ClientException e) {
+			handle(e);
+		}
+		return length;
+	}
+
+	@Override
 	public InputStream getInputStream(String fileId) throws IOException {
 		if (fileId == null) {
 			throw new IllegalArgumentException("fileId is null.");
@@ -235,6 +289,18 @@ public class DFSImpl extends DFS {
 			throw new IOException("File is not found. fileId is '" + fileId + "'.");
 		}
 		return new DFileInputStream(file);
+	}
+
+	@Override
+	public OutputStream getOutputStream(String fileId) throws IOException {
+		if (fileId == null) {
+			throw new IllegalArgumentException("fileId is null.");
+		}
+		DFile file = getFileById(fileId);
+		if (file == null) {
+			throw new IOException("File is not found. fileId is '" + fileId + "'.");
+		}
+		return new DFileOutputStream(file);
 	}
 
 	@Override
@@ -260,8 +326,8 @@ public class DFSImpl extends DFS {
 
 		OutputStream outputStream = null;
 		try {
-			long size = inputStream.available();
-			outputStream = getOutputStream(fileId, size);
+			// long size = inputStream.available();
+			outputStream = getOutputStream(fileId);
 
 			IOUtil.copy(inputStream, outputStream);
 
@@ -326,18 +392,6 @@ public class DFSImpl extends DFS {
 			handle(e);
 		}
 		return succeed;
-	}
-
-	/**
-	 * 
-	 * @param e
-	 * @throws IOException
-	 */
-	protected void handle(Exception e) throws IOException {
-		if (e instanceof IOException) {
-			throw (IOException) e;
-		}
-		throw new IOException(e);
 	}
 
 }

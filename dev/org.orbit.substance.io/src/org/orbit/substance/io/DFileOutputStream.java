@@ -1,5 +1,7 @@
 package org.orbit.substance.io;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -21,15 +23,27 @@ public class DFileOutputStream extends PipedOutputStream {
 	/**
 	 * 
 	 * @param file
+	 * @throws IOException
+	 */
+	public DFileOutputStream(final DFile file) throws IOException {
+		this(file, 0);
+	}
+
+	/**
+	 * 
+	 * @param file
 	 * @param size
 	 * @throws IOException
 	 */
-	public DFileOutputStream(final DFile file, long size) throws IOException {
+	public DFileOutputStream(final DFile file, final long size) throws IOException {
 		if (file == null) {
 			throw new IllegalArgumentException("file is null.");
 		}
 		if (!file.exists()) {
 			throw new IOException("File doesn't exists.");
+		}
+		if (file.isDirectory()) {
+			throw new IOException("File is directory.");
 		}
 
 		try {
@@ -40,26 +54,54 @@ public class DFileOutputStream extends PipedOutputStream {
 			final DfsClientResolver dfsClientResolver = dfs.getDfsClientResolver();
 			final DfsVolumeClientResolver dfsVolumeClientResolver = dfs.getDfsVolumeClientResolver();
 
-			final FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, size);
-			if (fileMetadata.isDirectory()) {
-				throw new IOException("File is directory.");
-			}
-
 			final PipedInputStream pipeInput = new PipedInputStream();
 			connect(pipeInput);
-			new Thread() {
-				@Override
-				public void run() {
-					try {
-						SubstanceClientsUtil.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pipeInput);
 
-					} catch (Exception e) {
-						e.printStackTrace();
-					} finally {
-						IOUtil.closeQuietly(pipeInput, true);
+			if (size > 0) {
+				new Thread() {
+					@Override
+					public void run() {
+						try {
+							FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, size);
+							SubstanceClientsUtil.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pipeInput);
+
+						} catch (Exception e) {
+							e.printStackTrace();
+
+						} finally {
+							IOUtil.closeQuietly(pipeInput, true);
+						}
 					}
-				}
-			}.start();
+				}.start();
+
+			} else {
+				new Thread() {
+					@Override
+					public void run() {
+						ByteArrayOutputStream byteOutput = null;
+						ByteArrayInputStream byteInput = null;
+						try {
+							byteOutput = new ByteArrayOutputStream();
+							IOUtil.copy(pipeInput, byteOutput);
+							byte[] bytes = byteOutput.toByteArray();
+
+							long length = bytes.length;
+							FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, length);
+
+							byteInput = new ByteArrayInputStream(bytes);
+							SubstanceClientsUtil.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, byteInput);
+
+						} catch (Exception e) {
+							e.printStackTrace();
+
+						} finally {
+							IOUtil.closeQuietly(byteInput, true);
+							IOUtil.closeQuietly(byteOutput, true);
+							IOUtil.closeQuietly(pipeInput, true);
+						}
+					}
+				}.start();
+			}
 
 		} catch (Exception e) {
 			if (e instanceof IOException) {
