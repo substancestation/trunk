@@ -1,6 +1,5 @@
 package org.orbit.substance.io.util;
 
-import java.net.URL;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 import java.util.Hashtable;
@@ -24,7 +23,7 @@ public class DfsURLStreamHandlerFactory implements URLStreamHandlerFactory {
 	protected ServiceRegistration<?> urlHandlerRegistration;
 
 	public void register() {
-		URL.setURLStreamHandlerFactory(this);
+		// URL.setURLStreamHandlerFactory(this);
 	}
 
 	public void register(BundleContext bundleContext) {

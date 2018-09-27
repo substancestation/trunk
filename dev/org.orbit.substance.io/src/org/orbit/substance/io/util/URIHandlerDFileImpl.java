@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.orbit.substance.io.DFile;
-import org.origin.common.resource.impl.URIConverterImpl;
+import org.origin.common.resource.ResourceFactoryRegistry;
 import org.origin.common.resource.impl.URIHandlerImpl;
 
 public class URIHandlerDFileImpl extends URIHandlerImpl {
@@ -17,14 +17,20 @@ public class URIHandlerDFileImpl extends URIHandlerImpl {
 	public static final String PROTOCOL = "dfs";
 
 	public void register() {
-		if (!URIConverterImpl.DEFAULT_HANDLERS.contains(URIHandlerDFileImpl.INSTANCE)) {
-			URIConverterImpl.DEFAULT_HANDLERS.add(URIHandlerDFileImpl.INSTANCE);
+		// if (!URIConverterImpl.DEFAULT_HANDLERS.contains(URIHandlerDFileImpl.INSTANCE)) {
+		// URIConverterImpl.DEFAULT_HANDLERS.add(URIHandlerDFileImpl.INSTANCE);
+		// }
+		if (!ResourceFactoryRegistry.INSTANCE.getDefaultURIConverter().getURIHandlers().contains(URIHandlerDFileImpl.INSTANCE)) {
+			ResourceFactoryRegistry.INSTANCE.getDefaultURIConverter().getURIHandlers().add(URIHandlerDFileImpl.INSTANCE);
 		}
 	}
 
 	public void unregister() {
-		if (URIConverterImpl.DEFAULT_HANDLERS.contains(URIHandlerDFileImpl.INSTANCE)) {
-			URIConverterImpl.DEFAULT_HANDLERS.remove(URIHandlerDFileImpl.INSTANCE);
+		// if (URIConverterImpl.DEFAULT_HANDLERS.contains(URIHandlerDFileImpl.INSTANCE)) {
+		// URIConverterImpl.DEFAULT_HANDLERS.remove(URIHandlerDFileImpl.INSTANCE);
+		// }
+		if (ResourceFactoryRegistry.INSTANCE.getDefaultURIConverter().getURIHandlers().contains(URIHandlerDFileImpl.INSTANCE)) {
+			ResourceFactoryRegistry.INSTANCE.getDefaultURIConverter().getURIHandlers().remove(URIHandlerDFileImpl.INSTANCE);
 		}
 	}
 
