@@ -2,6 +2,7 @@
 <%@ page import="java.io.*,java.util.*, javax.servlet.*"%>
 <%@ page import="org.origin.common.service.*"%>
 <%@ page import="org.origin.common.util.*"%>
+<%@ page import="org.orbit.platform.api.*"%>
 <%@ page import="org.orbit.infra.api.indexes.*"%>
 <%@ page import="org.orbit.substance.api.*"%>
 <%@ page import="org.orbit.substance.api.dfs.*"%>
@@ -25,9 +26,14 @@
 		dfsVolumeIndexItems = new ArrayList<IndexItem>();
 	}
 
-	Map<String, DfsVolumeServiceMetadata> dfsVolumeIdToServiceMetadata = (Map<String, DfsVolumeServiceMetadata>) request.getAttribute("dfsVolumeIdToServiceMetadata");
+	Map<String, DfsVolumeMetadata> dfsVolumeIdToServiceMetadata = (Map<String, DfsVolumeMetadata>) request.getAttribute("dfsVolumeIdToServiceMetadata");
+	Map<String, PlatformMetadata> dfsVolumeIdToPlatformMetadata = (Map<String, PlatformMetadata>) request.getAttribute("dfsVolumeIdToPlatformMetadata");
+
 	if (dfsVolumeIdToServiceMetadata == null) {
-		dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeServiceMetadata>();
+		dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeMetadata>();
+	}
+	if (dfsVolumeIdToPlatformMetadata == null) {
+		dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
 	}
 
 	String dfsLabel = (dfsName != null) ? dfsName : dfsId;
@@ -59,17 +65,18 @@
 		</div>
 		<table class="main_table01">
 			<tr>
+				<th class="th1" width="100">JVM</th>
 				<th class="th1" width="100">Volume Id</th>
 				<th class="th1" width="100">Name</th>
 				<th class="th1" width="200">URL</th>
 				<th class="th1" width="100">Status</th>
-				<th class="th1" width="300">Metadata</th>
+				<th class="th1" width="250">Metadata</th>
 			</tr>
 			<%
 				if (dfsVolumeIndexItems.isEmpty()) {
 			%>
 			<tr>
-				<td colspan="5">(n/a)</td>
+				<td colspan="6">(n/a)</td>
 			</tr>
 			<%
 				} else {
@@ -88,7 +95,7 @@
 						String metadataStr = "";
 						String propStr = "";
 
-						DfsVolumeServiceMetadata serviceMetadata = dfsVolumeIdToServiceMetadata.get(dfsVolumeId);
+						DfsVolumeMetadata serviceMetadata = dfsVolumeIdToServiceMetadata.get(dfsVolumeId);
 						if (serviceMetadata != null) {
 							String currDfsId = serviceMetadata.getDfsId();
 							String currDfsVolumeId = serviceMetadata.getDfsVolumeId();
@@ -129,8 +136,18 @@
 								}
 							}
 						}
+
+						String jvmName = null;
+						PlatformMetadata platformMetadata = dfsVolumeIdToPlatformMetadata.get(dfsVolumeId);
+						if (platformMetadata != null) {
+							jvmName = platformMetadata.getJvmName();
+						}
+						if (jvmName == null) {
+							jvmName = "";
+						}
 			%>
 			<tr>
+				<td class="td1"><%=jvmName%></td>
 				<td class="td1"><%=dfsVolumeId%></td>
 				<td class="td1"><%=name%></td>
 				<td class="td1"><%=dfsVolumeServiceUrl%></td>

@@ -10,7 +10,7 @@ import org.origin.common.rest.client.ServiceClient;
 public interface DfsVolumeClient extends ServiceClient {
 
 	@Override
-	DfsVolumeServiceMetadata getMetadata() throws ClientException;
+	DfsVolumeMetadata getMetadata() throws ClientException;
 
 	// ----------------------------------------------------------------------
 	// Data blocks

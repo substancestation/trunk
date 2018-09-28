@@ -15,15 +15,19 @@ import javax.servlet.http.HttpSession;
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexItemHelper;
+import org.orbit.platform.api.PlatformClient;
+import org.orbit.platform.api.PlatformConstants;
+import org.orbit.platform.api.PlatformMetadata;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeMetadata;
 import org.orbit.substance.io.util.DefaultDfsVolumeClientResolver;
 import org.orbit.substance.io.util.DfsIndexUtil;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.MessageHelper;
+import org.orbit.substance.webconsole.util.OrbitClientHelper;
 import org.origin.common.util.ServletUtil;
 
 public class DfsVolumeListServlet extends HttpServlet {
@@ -54,7 +58,8 @@ public class DfsVolumeListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		IndexItem dfsIndexItem = null;
 		List<IndexItem> dfsVolumeIndexItems = null;
-		Map<String, DfsVolumeServiceMetadata> dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeServiceMetadata>();
+		Map<String, DfsVolumeMetadata> dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeMetadata>();
+		Map<String, PlatformMetadata> dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
 
 		if (!dfsId.isEmpty()) {
 			try {
@@ -71,7 +76,8 @@ public class DfsVolumeListServlet extends HttpServlet {
 
 					boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
 
-					DfsVolumeServiceMetadata dfsVolumeServiceMetadata = null;
+					DfsVolumeMetadata dfsVolumeServiceMetadata = null;
+					PlatformMetadata platformMetadata = null;
 					if (isOnline) {
 						try {
 							DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
@@ -81,10 +87,28 @@ public class DfsVolumeListServlet extends HttpServlet {
 						} catch (Exception e) {
 							message = MessageHelper.INSTANCE.add(message, e.getMessage());
 						}
+
+						try {
+							String platformId = (String) dfsVolumeIndexItem.getProperties().get(PlatformConstants.PLATFORM_ID);
+							if (platformId != null) {
+								IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(indexServiceUrl, accessToken, platformId);
+								if (platformIndexItem != null) {
+									PlatformClient dfsPlatformClient = OrbitClientHelper.INSTANCE.getPlatformClient(accessToken, platformIndexItem);
+									if (dfsPlatformClient != null) {
+										platformMetadata = dfsPlatformClient.getMetadata();
+									}
+								}
+							}
+						} catch (Exception e) {
+							// message = MessageHelper.INSTANCE.add(message, e.getMessage());
+						}
 					}
 
 					if (dfsVolumeServiceMetadata != null) {
 						dfsVolumeIdToServiceMetadata.put(dfsVolumeId, dfsVolumeServiceMetadata);
+					}
+					if (platformMetadata != null) {
+						dfsVolumeIdToPlatformMetadata.put(dfsVolumeId, platformMetadata);
 					}
 				}
 
@@ -110,6 +134,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 		}
 		request.setAttribute("dfsVolumeIndexItems", dfsVolumeIndexItems);
 		request.setAttribute("dfsVolumeIdToServiceMetadata", dfsVolumeIdToServiceMetadata);
+		request.setAttribute("dfsVolumeIdToPlatformMetadata", dfsVolumeIdToPlatformMetadata);
 
 		request.getRequestDispatcher(contextRoot + "/views/admin_dfs_volume_list.jsp").forward(request, response);
 	}

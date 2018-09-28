@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
-import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeMetadata;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.connector.util.ModelConverter;
 import org.orbit.substance.model.RequestConstants;
@@ -42,8 +42,8 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 	}
 
 	@Override
-	public DfsVolumeServiceMetadata getMetadata() throws ClientException {
-		DfsVolumeServiceMetadataImpl metadata = new DfsVolumeServiceMetadataImpl();
+	public DfsVolumeMetadata getMetadata() throws ClientException {
+		DfsVolumeMetadataImpl metadata = new DfsVolumeMetadataImpl();
 		ServiceMetadataDTO metadataDTO = getWSClient().getMetadata();
 		if (metadataDTO != null) {
 			Map<String, Object> properties = metadataDTO.getProperties();

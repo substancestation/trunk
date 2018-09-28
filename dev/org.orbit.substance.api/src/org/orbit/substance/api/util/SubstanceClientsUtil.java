@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
-import org.orbit.substance.api.dfs.DfsServiceMetadata;
+import org.orbit.substance.api.dfs.DfsMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
@@ -68,8 +68,8 @@ public class SubstanceClientsUtil {
 		 * @return
 		 * @throws ClientException
 		 */
-		public DfsServiceMetadata getDfsMetadata(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
-			DfsServiceMetadata metadata = null;
+		public DfsMetadata getDfsMetadata(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
+			DfsMetadata metadata = null;
 			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
 			if (dfsClient != null) {
 				metadata = dfsClient.getMetadata();

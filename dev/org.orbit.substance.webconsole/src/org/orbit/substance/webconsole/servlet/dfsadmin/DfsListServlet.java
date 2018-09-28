@@ -15,15 +15,19 @@ import javax.servlet.http.HttpSession;
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexItemHelper;
+import org.orbit.platform.api.PlatformClient;
+import org.orbit.platform.api.PlatformConstants;
+import org.orbit.platform.api.PlatformMetadata;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
-import org.orbit.substance.api.dfs.DfsServiceMetadata;
+import org.orbit.substance.api.dfs.DfsMetadata;
 import org.orbit.substance.io.util.DefaultDfsClientResolver;
 import org.orbit.substance.io.util.DfsIndexUtil;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.MessageHelper;
+import org.orbit.substance.webconsole.util.OrbitClientHelper;
 import org.origin.common.service.WebServiceAwareHelper;
 
 public class DfsListServlet extends HttpServlet {
@@ -51,7 +55,8 @@ public class DfsListServlet extends HttpServlet {
 		// Handle data
 		// ---------------------------------------------------------------
 		List<IndexItem> dfsIndexItems = null;
-		Map<String, DfsServiceMetadata> dfsIdToServiceMetadata = new HashMap<String, DfsServiceMetadata>();
+		Map<String, DfsMetadata> dfsIdToServiceMetadata = new HashMap<String, DfsMetadata>();
+		Map<String, PlatformMetadata> dfsIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
 
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
@@ -67,7 +72,8 @@ public class DfsListServlet extends HttpServlet {
 
 				boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsIndexItem);
 
-				DfsServiceMetadata dfsServiceMetadata = null;
+				DfsMetadata dfsServiceMetadata = null;
+				PlatformMetadata platformMetadata = null;
 				if (isOnline) {
 					try {
 						DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
@@ -77,8 +83,29 @@ public class DfsListServlet extends HttpServlet {
 					} catch (Exception e) {
 						message = MessageHelper.INSTANCE.add(message, e.getMessage());
 					}
+
+					try {
+						String platformId = (String) dfsIndexItem.getProperties().get(PlatformConstants.PLATFORM_ID);
+						if (platformId != null) {
+							IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(indexServiceUrl, accessToken, platformId);
+							if (platformIndexItem != null) {
+								PlatformClient dfsPlatformClient = OrbitClientHelper.INSTANCE.getPlatformClient(accessToken, platformIndexItem);
+								if (dfsPlatformClient != null) {
+									platformMetadata = dfsPlatformClient.getMetadata();
+								}
+							}
+						}
+					} catch (Exception e) {
+						// message = MessageHelper.INSTANCE.add(message, e.getMessage());
+					}
 				}
-				dfsIdToServiceMetadata.put(dfsId, dfsServiceMetadata);
+
+				if (dfsServiceMetadata != null) {
+					dfsIdToServiceMetadata.put(dfsId, dfsServiceMetadata);
+				}
+				if (platformMetadata != null) {
+					dfsIdToPlatformMetadata.put(dfsId, platformMetadata);
+				}
 			}
 
 		} catch (Exception e) {
@@ -97,6 +124,7 @@ public class DfsListServlet extends HttpServlet {
 		}
 		request.setAttribute("dfsIndexItems", dfsIndexItems);
 		request.setAttribute("dfsIdToServiceMetadata", dfsIdToServiceMetadata);
+		request.setAttribute("dfsIdToPlatformMetadata", dfsIdToPlatformMetadata);
 
 		request.getRequestDispatcher(contextRoot + "/views/admin_dfs_list.jsp").forward(request, response);
 	}

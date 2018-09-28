@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.orbit.substance.api.dfs.DfsServiceMetadata;
+import org.orbit.substance.api.dfs.DfsMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.DFS;
@@ -45,7 +45,7 @@ public class DFSImpl extends DFS {
 	@Override
 	public synchronized String getDfsId() throws IOException {
 		if (this.dfsId == null) {
-			DfsServiceMetadata metadata = null;
+			DfsMetadata metadata = null;
 			try {
 				metadata = SubstanceClientsUtil.Dfs.getDfsMetadata(dfsClientResolver, dfsServiceUrl, accessToken);
 			} catch (ClientException e) {

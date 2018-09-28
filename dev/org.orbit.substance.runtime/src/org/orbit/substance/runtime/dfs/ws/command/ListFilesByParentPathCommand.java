@@ -29,7 +29,7 @@ public class ListFilesByParentPathCommand extends AbstractDfsCommand<DfsService>
 	@Override
 	public boolean isSupported(Request request) {
 		String requestName = request.getRequestName();
-		if (RequestConstants.LIST_FILES_BY_PARENT_ID.equalsIgnoreCase(requestName)) {
+		if (RequestConstants.LIST_FILES_BY_PARENT_PATH.equalsIgnoreCase(requestName)) {
 			return true;
 		}
 		return false;

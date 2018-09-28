@@ -126,8 +126,8 @@ Main
 Table
 ---------------------------------------------------------------*/
 .th1 {
-	border: 1px solid black;
-	padding: 3px;
+	border: 1px solid #cccccc;
+	padding: 2px;
 	padding-left: 4px;
 	padding-right: 4px;
 }
@@ -135,16 +135,16 @@ Table
 .td1 {
 	text-align: center;
 	vertical-align: center;
-	border: 1px solid black;
-	padding: 2px;
+	border: 1px solid #cccccc;
+	padding: 1px;
 	padding-left: 4px;
 	padding-right: 4px;
 }
 
 .td2 {
 	vertical-align: center;
-	border: 1px solid black;
-	padding: 2px;
+	border: 1px solid #cccccc;
+	padding: 1px;
 	padding-left: 4px;
 	padding-right: 4px;
 }
@@ -157,8 +157,8 @@ th {
 	width: 100%;
 	border-collapse: collapse;
 	margin: auto;
-	border: 1px solid black;
-	font-size: 14px;
+	border: 1px solid #cccccc;
+	font-size: 12px;
 }
 
 /*

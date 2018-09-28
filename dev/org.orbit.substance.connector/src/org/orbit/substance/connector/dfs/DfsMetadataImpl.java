@@ -1,9 +1,9 @@
 package org.orbit.substance.connector.dfs;
 
-import org.orbit.substance.api.dfs.DfsServiceMetadata;
+import org.orbit.substance.api.dfs.DfsMetadata;
 import org.origin.common.rest.model.ServiceMetadataImpl;
 
-public class DfsServiceMetadataImpl extends ServiceMetadataImpl implements DfsServiceMetadata {
+public class DfsMetadataImpl extends ServiceMetadataImpl implements DfsMetadata {
 
 	public static String PROP__DFS_ID = "dfs_id";
 	public static String PROP__BLOCK_CAPACITY = "block_capacity";

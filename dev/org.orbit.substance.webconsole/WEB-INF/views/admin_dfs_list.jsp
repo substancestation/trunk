@@ -2,6 +2,7 @@
 <%@ page import="java.io.*,java.util.*, javax.servlet.*"%>
 <%@ page import="org.origin.common.service.*"%>
 <%@ page import="org.origin.common.util.*"%>
+<%@ page import="org.orbit.platform.api.*"%>
 <%@ page import="org.orbit.infra.api.indexes.*"%>
 <%@ page import="org.orbit.substance.api.*"%>
 <%@ page import="org.orbit.substance.api.dfs.*"%>
@@ -16,9 +17,14 @@
 		dfsIndexItems = new ArrayList<IndexItem>();
 	}
 
-	Map<String, DfsServiceMetadata> dfsIdToServiceMetadata = (Map<String, DfsServiceMetadata>) request.getAttribute("dfsIdToServiceMetadata");
+	Map<String, DfsMetadata> dfsIdToServiceMetadata = (Map<String, DfsMetadata>) request.getAttribute("dfsIdToServiceMetadata");
+	Map<String, PlatformMetadata> dfsIdToPlatformMetadata = (Map<String, PlatformMetadata>) request.getAttribute("dfsIdToPlatformMetadata");
+
 	if (dfsIdToServiceMetadata == null) {
-		dfsIdToServiceMetadata = new HashMap<String, DfsServiceMetadata>();
+		dfsIdToServiceMetadata = new HashMap<String, DfsMetadata>();
+	}
+	if (dfsIdToPlatformMetadata == null) {
+		dfsIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
 	}
 
 %>
@@ -44,6 +50,7 @@
 		</div>
 		<table class="main_table01">
 			<tr>
+				<th class="th1" width="100">JVM</th>
 				<th class="th1" width="100">Id</th>
 				<th class="th1" width="100">Name</th>
 				<th class="th1" width="200">URL</th>
@@ -55,7 +62,7 @@
 				if (dfsIndexItems.isEmpty()) {
 			%>
 			<tr>
-				<td colspan="6">(n/a)</td>
+				<td colspan="7">(n/a)</td>
 			</tr>
 			<%
 				} else {
@@ -72,7 +79,7 @@
 
 						String metadataStr = "";
 						String propStr = "";
-						DfsServiceMetadata serviceMetadata = dfsIdToServiceMetadata.get(dfsId);
+						DfsMetadata serviceMetadata = dfsIdToServiceMetadata.get(dfsId);
 						if (serviceMetadata != null) {
 							String currDfsId = serviceMetadata.getDfsId();
 							long currDefaultBlockCapacity = serviceMetadata.getDataBlockCapacity();
@@ -109,8 +116,18 @@
 								}
 							}
 						}
+						
+						String jvmName = null;
+						PlatformMetadata platformMetadata = dfsIdToPlatformMetadata.get(dfsId);
+						if (platformMetadata != null) {
+							jvmName = platformMetadata.getJvmName();
+						}
+						if (jvmName == null) {
+							jvmName = "";
+						}
 			%>
 			<tr>
+				<td class="td1"><%=jvmName%></td>
 				<td class="td1"><%=dfsId%></td>
 				<td class="td1"><%=name%></td>
 				<td class="td1"><%=dfsServiceUrl%></td>

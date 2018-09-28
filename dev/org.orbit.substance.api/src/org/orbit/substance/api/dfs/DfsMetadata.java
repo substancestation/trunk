@@ -2,7 +2,7 @@ package org.orbit.substance.api.dfs;
 
 import org.origin.common.rest.model.ServiceMetadata;
 
-public interface DfsServiceMetadata extends ServiceMetadata {
+public interface DfsMetadata extends ServiceMetadata {
 
 	String getDfsId();
 
