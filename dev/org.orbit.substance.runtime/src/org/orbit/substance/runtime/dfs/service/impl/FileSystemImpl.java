@@ -17,7 +17,7 @@ import org.orbit.platform.sdk.util.ExtensionUtil;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.dfsvolume.DfsVolumeMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.model.dfs.FileContentAccessImpl;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.FilePartImpl;
@@ -727,10 +727,10 @@ public class FileSystemImpl implements FileSystem {
 
 		// 2. There is no existing datablock, which is big enough to hold the whole file content alone.
 		// - New data block(s) are needed for the file content.
-		Map<DfsVolumeClient, DfsVolumeMetadata> serviceMetadataMap = new HashMap<DfsVolumeClient, DfsVolumeMetadata>();
+		Map<DfsVolumeClient, DfsVolumeServiceMetadata> serviceMetadataMap = new HashMap<DfsVolumeClient, DfsVolumeServiceMetadata>();
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
 			try {
-				DfsVolumeMetadata serviceMetadata = dfsVolumeClient.getMetadata();
+				DfsVolumeServiceMetadata serviceMetadata = dfsVolumeClient.getMetadata();
 				serviceMetadataMap.put(dfsVolumeClient, serviceMetadata);
 			} catch (ClientException e) {
 				e.printStackTrace();
@@ -752,7 +752,7 @@ public class FileSystemImpl implements FileSystem {
 
 			while (sizeLeft > 0) {
 				for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
-					DfsVolumeMetadata serviceMetadata = serviceMetadataMap.get(dfsVolumeClient);
+					DfsVolumeServiceMetadata serviceMetadata = serviceMetadataMap.get(dfsVolumeClient);
 					String dfsVolumeId = serviceMetadata.getDfsVolumeId();
 
 					long volumeCapacity = serviceMetadata.getVolumeCapacity();

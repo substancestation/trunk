@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
-import org.orbit.substance.api.dfsvolume.DfsVolumeMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.origin.common.util.BaseComparator;
 
@@ -14,16 +14,16 @@ public class Comparators {
 	public static DfsVolumeIndexItemComparatorByVolumeId DfsVolumeIndexItemComparatorByVolumeId_DESC = new DfsVolumeIndexItemComparatorByVolumeId(BaseComparator.SORT_DESC);
 
 	public static class DfsVolumeClientComparatorByFreeSpace extends BaseComparator<DfsVolumeClient> {
-		protected Map<DfsVolumeClient, DfsVolumeMetadata> serviceMetadataMap;
+		protected Map<DfsVolumeClient, DfsVolumeServiceMetadata> serviceMetadataMap;
 
-		public DfsVolumeClientComparatorByFreeSpace(Map<DfsVolumeClient, DfsVolumeMetadata> serviceMetadataMap) {
+		public DfsVolumeClientComparatorByFreeSpace(Map<DfsVolumeClient, DfsVolumeServiceMetadata> serviceMetadataMap) {
 			this.serviceMetadataMap = serviceMetadataMap;
 		}
 
 		@Override
 		public int compare(DfsVolumeClient client1, DfsVolumeClient client2) {
-			DfsVolumeMetadata metadata1 = this.serviceMetadataMap.get(client1);
-			DfsVolumeMetadata metadata2 = this.serviceMetadataMap.get(client2);
+			DfsVolumeServiceMetadata metadata1 = this.serviceMetadataMap.get(client1);
+			DfsVolumeServiceMetadata metadata2 = this.serviceMetadataMap.get(client2);
 
 			long freeSpace1 = 0;
 			long freeSpace2 = 0;

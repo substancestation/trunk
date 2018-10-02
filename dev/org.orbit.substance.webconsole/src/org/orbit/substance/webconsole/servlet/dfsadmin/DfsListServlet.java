@@ -22,9 +22,9 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
-import org.orbit.substance.api.dfs.DfsMetadata;
+import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.io.util.DefaultDfsClientResolver;
-import org.orbit.substance.io.util.DfsIndexUtil;
+import org.orbit.substance.io.util.DfsUtil;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.MessageHelper;
 import org.orbit.substance.webconsole.util.OrbitClientHelper;
@@ -40,7 +40,7 @@ public class DfsListServlet extends HttpServlet {
 		// Get parameters
 		// ---------------------------------------------------------------
 		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = null;
 		HttpSession session = request.getSession(false);
@@ -55,13 +55,13 @@ public class DfsListServlet extends HttpServlet {
 		// Handle data
 		// ---------------------------------------------------------------
 		List<IndexItem> dfsIndexItems = null;
-		Map<String, DfsMetadata> dfsIdToServiceMetadata = new HashMap<String, DfsMetadata>();
+		Map<String, DfsServiceMetadata> dfsIdToServiceMetadata = new HashMap<String, DfsServiceMetadata>();
 		Map<String, PlatformMetadata> dfsIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
 
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			dfsIndexItems = DfsIndexUtil.getDfsIndexItems(indexServiceUrl, accessToken);
+			dfsIndexItems = DfsUtil.getDfsIndexItems(indexServiceUrl, accessToken);
 
 			DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
 			for (IndexItem dfsIndexItem : dfsIndexItems) {
@@ -72,7 +72,7 @@ public class DfsListServlet extends HttpServlet {
 
 				boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsIndexItem);
 
-				DfsMetadata dfsServiceMetadata = null;
+				DfsServiceMetadata dfsServiceMetadata = null;
 				PlatformMetadata platformMetadata = null;
 				if (isOnline) {
 					try {

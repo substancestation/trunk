@@ -5,10 +5,7 @@ public class WebConstants {
 	public static String PLATFORM_WEB_CONSOLE_AUTOSTART = "platform.web_console.autostart";
 	public static String PLATFORM_WEB_CONSOLE_CONTEXT_ROOT = "platform.web_console.context_root";
 
-	public static String DFS__WEB_CONSOLE_AUTOSTART = "dfs.web_console.autostart";
-	public static String DFS__WEB_CONSOLE_CONTEXT_ROOT = "dfs.web_console.context_root";
-
-	public static String DFS_VOLUME__WEB_CONSOLE_AUTOSTART = "dfs_volume.web_console.autostart";
-	public static String DFS_VOLUME__WEB_CONSOLE_CONTEXT_ROOT = "dfs_volume.web_console.context_root";
+	public static String SUBSTANCE__WEB_CONSOLE_AUTOSTART = "substance.web_console.autostart";
+	public static String SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT = "substance.web_console.context_root";
 
 }

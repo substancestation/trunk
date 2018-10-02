@@ -34,7 +34,7 @@ public class FileDeleteServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
-		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String parentFileId = ServletUtil.getParameter(request, "parentFileId", "-1");
 		String[] fileIds = ServletUtil.getParameterValues(request, "fileId", EMPTY_IDS);

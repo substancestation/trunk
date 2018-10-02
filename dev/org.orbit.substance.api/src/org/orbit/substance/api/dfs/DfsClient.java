@@ -7,7 +7,7 @@ import org.origin.common.rest.client.ServiceClient;
 public interface DfsClient extends ServiceClient {
 
 	@Override
-	DfsMetadata getMetadata() throws ClientException;
+	DfsServiceMetadata getMetadata() throws ClientException;
 
 	FileMetadata[] listRoots() throws ClientException;
 

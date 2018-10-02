@@ -15,7 +15,7 @@ import org.orbit.substance.io.Activator;
 import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 
-public class DfsIndexUtil {
+public class DfsUtil {
 
 	/**
 	 * 
@@ -36,9 +36,9 @@ public class DfsIndexUtil {
 		String dfsServiceUrl = null;
 		String indexServiceUrl = Activator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		if (indexServiceUrl != null) {
-			IndexItem dfsIndexItem = DfsIndexUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
+			IndexItem dfsIndexItem = DfsUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
 			if (dfsIndexItem != null) {
-				dfsServiceUrl = DfsIndexUtil.getDfsServiceUrl(dfsIndexItem);
+				dfsServiceUrl = DfsUtil.getDfsServiceUrl(dfsIndexItem);
 			}
 		}
 		if (dfsServiceUrl != null && indexServiceUrl != null) {
@@ -67,9 +67,9 @@ public class DfsIndexUtil {
 		String dfsServiceUrl = null;
 		String indexServiceUrl = Activator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		if (indexServiceUrl != null) {
-			IndexItem dfsIndexItem = DfsIndexUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
+			IndexItem dfsIndexItem = DfsUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
 			if (dfsIndexItem != null) {
-				dfsServiceUrl = DfsIndexUtil.getDfsServiceUrl(dfsIndexItem);
+				dfsServiceUrl = DfsUtil.getDfsServiceUrl(dfsIndexItem);
 			}
 		}
 		if (dfsServiceUrl != null && indexServiceUrl != null) {

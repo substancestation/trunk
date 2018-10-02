@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.orbit.substance.api.dfs.DfsClient;
-import org.orbit.substance.api.dfs.DfsMetadata;
+import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.connector.util.ModelConverter;
 import org.orbit.substance.model.RequestConstants;
@@ -62,8 +62,8 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 	}
 
 	@Override
-	public DfsMetadata getMetadata() throws ClientException {
-		DfsMetadataImpl metadata = new DfsMetadataImpl();
+	public DfsServiceMetadata getMetadata() throws ClientException {
+		DfsServiceMetadataImpl metadata = new DfsServiceMetadataImpl();
 		ServiceMetadataDTO metadataDTO = getWSClient().getMetadata();
 		if (metadataDTO != null) {
 			Map<String, Object> properties = metadataDTO.getProperties();

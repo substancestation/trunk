@@ -41,7 +41,7 @@ public class URIHandlerDFileImpl extends URIHandlerImpl {
 	 * @throws IOException
 	 */
 	protected DFile getFile(URI uri) throws IOException {
-		return DfsIndexUtil.getFile(uri);
+		return DfsUtil.getFile(uri);
 	}
 
 	@Override

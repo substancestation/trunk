@@ -10,18 +10,18 @@
 <%@ page import="org.orbit.substance.webconsole.*"%>
 <%
 	String platformContextRoot = getServletConfig().getInitParameter(WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT);
-	String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+	String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 	
 	List<IndexItem> dfsIndexItems = (List<IndexItem>) request.getAttribute("dfsIndexItems");
 	if (dfsIndexItems == null) {
 		dfsIndexItems = new ArrayList<IndexItem>();
 	}
 
-	Map<String, DfsMetadata> dfsIdToServiceMetadata = (Map<String, DfsMetadata>) request.getAttribute("dfsIdToServiceMetadata");
+	Map<String, DfsServiceMetadata> dfsIdToServiceMetadata = (Map<String, DfsServiceMetadata>) request.getAttribute("dfsIdToServiceMetadata");
 	Map<String, PlatformMetadata> dfsIdToPlatformMetadata = (Map<String, PlatformMetadata>) request.getAttribute("dfsIdToPlatformMetadata");
 
 	if (dfsIdToServiceMetadata == null) {
-		dfsIdToServiceMetadata = new HashMap<String, DfsMetadata>();
+		dfsIdToServiceMetadata = new HashMap<String, DfsServiceMetadata>();
 	}
 	if (dfsIdToPlatformMetadata == null) {
 		dfsIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
@@ -32,7 +32,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>File System</title>
+<title>Substance</title>
 <link rel="stylesheet" href="<%=contextRoot + "/views/css/style.css"%>">
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -79,7 +79,7 @@
 
 						String metadataStr = "";
 						String propStr = "";
-						DfsMetadata serviceMetadata = dfsIdToServiceMetadata.get(dfsId);
+						DfsServiceMetadata serviceMetadata = dfsIdToServiceMetadata.get(dfsId);
 						if (serviceMetadata != null) {
 							String currDfsId = serviceMetadata.getDfsId();
 							long currDefaultBlockCapacity = serviceMetadata.getDataBlockCapacity();

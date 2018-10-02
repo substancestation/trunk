@@ -6,7 +6,7 @@
 <%@ page import="org.orbit.substance.webconsole.*"%>
 <%
 	String platformContextRoot = getServletConfig().getInitParameter(WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT);
-	String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+	String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 	String parentFileId = (String) request.getAttribute("parentFileId");
 	FileMetadata[] files = (FileMetadata[]) request.getAttribute("files");

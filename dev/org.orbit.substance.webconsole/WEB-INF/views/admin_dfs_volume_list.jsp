@@ -11,7 +11,7 @@
 <%@ page import="org.orbit.substance.webconsole.*"%>
 <%
 	String platformContextRoot = getServletConfig().getInitParameter(WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT);
-	String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+	String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 	String dfsId = (String) request.getAttribute("dfsId");
 
@@ -26,11 +26,11 @@
 		dfsVolumeIndexItems = new ArrayList<IndexItem>();
 	}
 
-	Map<String, DfsVolumeMetadata> dfsVolumeIdToServiceMetadata = (Map<String, DfsVolumeMetadata>) request.getAttribute("dfsVolumeIdToServiceMetadata");
+	Map<String, DfsVolumeServiceMetadata> dfsVolumeIdToServiceMetadata = (Map<String, DfsVolumeServiceMetadata>) request.getAttribute("dfsVolumeIdToServiceMetadata");
 	Map<String, PlatformMetadata> dfsVolumeIdToPlatformMetadata = (Map<String, PlatformMetadata>) request.getAttribute("dfsVolumeIdToPlatformMetadata");
 
 	if (dfsVolumeIdToServiceMetadata == null) {
-		dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeMetadata>();
+		dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeServiceMetadata>();
 	}
 	if (dfsVolumeIdToPlatformMetadata == null) {
 		dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
@@ -42,7 +42,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>File System</title>
+<title>Substance</title>
 <link rel="stylesheet" href="<%=contextRoot + "/views/css/style.css"%>">
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -95,7 +95,7 @@
 						String metadataStr = "";
 						String propStr = "";
 
-						DfsVolumeMetadata serviceMetadata = dfsVolumeIdToServiceMetadata.get(dfsVolumeId);
+						DfsVolumeServiceMetadata serviceMetadata = dfsVolumeIdToServiceMetadata.get(dfsVolumeId);
 						if (serviceMetadata != null) {
 							String currDfsId = serviceMetadata.getDfsId();
 							String currDfsVolumeId = serviceMetadata.getDfsVolumeId();

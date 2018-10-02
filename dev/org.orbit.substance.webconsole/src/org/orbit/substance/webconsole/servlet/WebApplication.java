@@ -35,8 +35,7 @@ public class WebApplication extends PlatformWebApplication {
 				InfraConstants.ORBIT_INDEX_SERVICE_URL, //
 				InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
 				WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT, //
-				WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT, //
-				WebConstants.DFS_VOLUME__WEB_CONSOLE_CONTEXT_ROOT, //
+				WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT, //
 				SubstanceConstants.ORBIT_DFS_URL, //
 		};
 		return propNames;
@@ -44,8 +43,8 @@ public class WebApplication extends PlatformWebApplication {
 
 	@Override
 	public String getContextRoot() {
-		// e.g. "/orbit/webconsole/dfs"
-		String contextRoot = (String) this.getProperties().get(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+		// e.g. "/orbit/webconsole/substance"
+		String contextRoot = (String) this.getProperties().get(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 		return contextRoot;
 	}
 

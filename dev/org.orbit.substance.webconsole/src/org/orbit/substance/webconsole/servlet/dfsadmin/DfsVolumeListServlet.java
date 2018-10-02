@@ -22,9 +22,9 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.dfsvolume.DfsVolumeMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.io.util.DefaultDfsVolumeClientResolver;
-import org.orbit.substance.io.util.DfsIndexUtil;
+import org.orbit.substance.io.util.DfsUtil;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.MessageHelper;
 import org.orbit.substance.webconsole.util.OrbitClientHelper;
@@ -40,7 +40,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 		// Get parameters
 		// ---------------------------------------------------------------
 		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = null;
 		HttpSession session = request.getSession(false);
@@ -58,16 +58,16 @@ public class DfsVolumeListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		IndexItem dfsIndexItem = null;
 		List<IndexItem> dfsVolumeIndexItems = null;
-		Map<String, DfsVolumeMetadata> dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeMetadata>();
+		Map<String, DfsVolumeServiceMetadata> dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeServiceMetadata>();
 		Map<String, PlatformMetadata> dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
 
 		if (!dfsId.isEmpty()) {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				dfsIndexItem = DfsIndexUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
+				dfsIndexItem = DfsUtil.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
 
-				dfsVolumeIndexItems = DfsIndexUtil.getDfsVolumeIndexItems(indexServiceUrl, accessToken, dfsId);
+				dfsVolumeIndexItems = DfsUtil.getDfsVolumeIndexItems(indexServiceUrl, accessToken, dfsId);
 
 				DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
 
@@ -76,7 +76,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 
 					boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
 
-					DfsVolumeMetadata dfsVolumeServiceMetadata = null;
+					DfsVolumeServiceMetadata dfsVolumeServiceMetadata = null;
 					PlatformMetadata platformMetadata = null;
 					if (isOnline) {
 						try {

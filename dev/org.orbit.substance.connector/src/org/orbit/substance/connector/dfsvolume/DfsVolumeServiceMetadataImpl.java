@@ -1,16 +1,16 @@
 package org.orbit.substance.connector.dfsvolume;
 
-import org.orbit.substance.api.dfsvolume.DfsVolumeMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.origin.common.rest.model.ServiceMetadataImpl;
 
-public class DfsVolumeMetadataImpl extends ServiceMetadataImpl implements DfsVolumeMetadata {
+public class DfsVolumeServiceMetadataImpl extends ServiceMetadataImpl implements DfsVolumeServiceMetadata {
 
 	public static String PROP__DFS_ID = "dfs_id";
 	public static String PROP__DFS_VOLUME_ID = "dfs_volume_id";
 	public static String PROP__VOLUME_CAPACITY = "volume_capacity";
 	public static String PROP__VOLUME_SIZE = "volume_size";
 
-	public DfsVolumeMetadataImpl() {
+	public DfsVolumeServiceMetadataImpl() {
 	}
 
 	@Override

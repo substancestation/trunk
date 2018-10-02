@@ -24,8 +24,8 @@ public class WebApplicationPropertyTester implements IPropertyTester {
 		}
 		if (bundleContext != null) {
 			Map<Object, Object> properties = new Hashtable<Object, Object>();
-			PropertyUtil.loadProperty(bundleContext, properties, WebConstants.DFS__WEB_CONSOLE_AUTOSTART);
-			String autoStart = (String) properties.get(WebConstants.DFS__WEB_CONSOLE_AUTOSTART);
+			PropertyUtil.loadProperty(bundleContext, properties, WebConstants.SUBSTANCE__WEB_CONSOLE_AUTOSTART);
+			String autoStart = (String) properties.get(WebConstants.SUBSTANCE__WEB_CONSOLE_AUTOSTART);
 			if ("true".equalsIgnoreCase(autoStart)) {
 				return true;
 			}

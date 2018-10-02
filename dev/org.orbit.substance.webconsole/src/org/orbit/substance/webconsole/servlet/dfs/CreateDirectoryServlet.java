@@ -29,7 +29,7 @@ public class CreateDirectoryServlet extends HttpServlet {
 		// Get parameters
 		// ---------------------------------------------------------------
 		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
-		String contextRoot = getServletConfig().getInitParameter(WebConstants.DFS__WEB_CONSOLE_CONTEXT_ROOT);
+		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String parentFileId = ServletUtil.getParameter(request, "parentFileId", "-1");
 		String fileName = ServletUtil.getParameter(request, "name", "");
