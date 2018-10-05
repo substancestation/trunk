@@ -15,7 +15,7 @@ import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.util.DefaultDfsClientResolver;
 import org.orbit.substance.webconsole.WebConstants;
-import org.orbit.substance.webconsole.util.MessageHelper;
+import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
 
 public class FileListServlet extends HttpServlet {

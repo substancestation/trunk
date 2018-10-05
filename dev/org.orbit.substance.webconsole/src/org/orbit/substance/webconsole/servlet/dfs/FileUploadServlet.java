@@ -27,7 +27,7 @@ import org.orbit.substance.io.util.DefaultDfsClientResolver;
 import org.orbit.substance.io.util.DefaultDfsVolumeClientResolver;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.webconsole.WebConstants;
-import org.orbit.substance.webconsole.util.MessageHelper;
+import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.DiskSpaceUnit;
 import org.origin.common.util.ServletUtil;
 

@@ -8,7 +8,7 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.origin.common.util.BaseComparator;
 
-public class Comparators {
+public class SubstanceComparators {
 
 	public static DfsVolumeIndexItemComparatorByVolumeId DfsVolumeIndexItemComparatorByVolumeId_ASC = new DfsVolumeIndexItemComparatorByVolumeId(BaseComparator.SORT_ASC);
 	public static DfsVolumeIndexItemComparatorByVolumeId DfsVolumeIndexItemComparatorByVolumeId_DESC = new DfsVolumeIndexItemComparatorByVolumeId(BaseComparator.SORT_DESC);

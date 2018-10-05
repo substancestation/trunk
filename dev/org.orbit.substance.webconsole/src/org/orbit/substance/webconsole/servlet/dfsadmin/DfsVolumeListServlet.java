@@ -26,8 +26,8 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.io.util.DefaultDfsVolumeClientResolver;
 import org.orbit.substance.io.util.DfsUtil;
 import org.orbit.substance.webconsole.WebConstants;
-import org.orbit.substance.webconsole.util.MessageHelper;
 import org.orbit.substance.webconsole.util.OrbitClientHelper;
+import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
 
 public class DfsVolumeListServlet extends HttpServlet {

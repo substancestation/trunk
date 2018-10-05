@@ -15,7 +15,7 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 
-public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
+public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 
 	protected String indexServiceUrl;
 
@@ -23,7 +23,7 @@ public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
 	 * 
 	 * @param indexServiceUrl
 	 */
-	public DefaultDfsVolumeClientResolver(String indexServiceUrl) {
+	public DfsVolumeClientResolverImpl(String indexServiceUrl) {
 		this.indexServiceUrl = indexServiceUrl;
 	}
 

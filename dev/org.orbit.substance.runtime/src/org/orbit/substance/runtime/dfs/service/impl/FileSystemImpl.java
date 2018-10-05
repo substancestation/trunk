@@ -26,8 +26,8 @@ import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.util.Comparators.DfsVolumeClientComparatorByFreeSpace;
-import org.orbit.substance.runtime.util.DefaultDfsVolumeClientResolver;
+import org.orbit.substance.runtime.util.SubstanceComparators.DfsVolumeClientComparatorByFreeSpace;
+import org.orbit.substance.runtime.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.annotation.Secured;
@@ -687,7 +687,7 @@ public class FileSystemImpl implements FileSystem {
 		// 1. Get a dfs volumes of the dfs.
 		// Note:
 		// - Dfs volumes are sorted by volume id (asc)
-		DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
+		DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
 
 		DfsVolumeClient[] dfsVolumeClients = ModelConverter.DfsVolume.getDfsVolumeClient(dfsVolumeClientResolver, dfsAccessToken, dfsId);
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {

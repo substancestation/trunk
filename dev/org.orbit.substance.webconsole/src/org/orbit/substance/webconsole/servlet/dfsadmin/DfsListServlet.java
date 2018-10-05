@@ -26,9 +26,9 @@ import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.io.util.DefaultDfsClientResolver;
 import org.orbit.substance.io.util.DfsUtil;
 import org.orbit.substance.webconsole.WebConstants;
-import org.orbit.substance.webconsole.util.MessageHelper;
 import org.orbit.substance.webconsole.util.OrbitClientHelper;
 import org.origin.common.service.WebServiceAwareHelper;
+import org.origin.common.servlet.MessageHelper;
 
 public class DfsListServlet extends HttpServlet {
 

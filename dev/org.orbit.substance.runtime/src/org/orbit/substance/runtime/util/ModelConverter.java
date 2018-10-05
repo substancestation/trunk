@@ -257,7 +257,7 @@ public class ModelConverter {
 		 * @throws IOException
 		 */
 		public DfsVolumeClient[] getDfsVolumeClient(DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, String dfsId) throws IOException {
-			DfsVolumeClient[] dfsVolumeClients = dfsVolumeClientResolver.resolve(dfsId, accessToken, Comparators.DfsVolumeIndexItemComparatorByVolumeId_ASC);
+			DfsVolumeClient[] dfsVolumeClients = dfsVolumeClientResolver.resolve(dfsId, accessToken, SubstanceComparators.DfsVolumeIndexItemComparatorByVolumeId_ASC);
 			return dfsVolumeClients;
 		}
 	}
