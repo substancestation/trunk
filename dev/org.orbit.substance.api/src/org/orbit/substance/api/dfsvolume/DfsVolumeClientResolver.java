@@ -7,13 +7,21 @@ public interface DfsVolumeClientResolver {
 
 	/**
 	 * 
+	 * @param dfsVolumeServiceUrl
+	 * @param accessToken
+	 * @return
+	 */
+	DfsVolumeClient resolve(String dfsVolumeServiceUrl, String accessToken);
+
+	/**
+	 * 
 	 * @param dfsId
 	 * @param dfsVolumeId
 	 * @param accessToken
 	 * @return
 	 * @throws IOException
 	 */
-	String getDfsVolumeServiceUrl(String dfsId, String dfsVolumeId, String accessToken) throws IOException;
+	String getURL(String dfsId, String dfsVolumeId, String accessToken) throws IOException;
 
 	/**
 	 * 
@@ -34,13 +42,5 @@ public interface DfsVolumeClientResolver {
 	 * @throws IOException
 	 */
 	DfsVolumeClient resolve(String dfsId, String dfsVolumeId, String accessToken) throws IOException;
-
-	/**
-	 * 
-	 * @param dfsVolumeServiceUrl
-	 * @param accessToken
-	 * @return
-	 */
-	DfsVolumeClient resolve(String dfsVolumeServiceUrl, String accessToken);
 
 }

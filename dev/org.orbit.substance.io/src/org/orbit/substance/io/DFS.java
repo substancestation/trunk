@@ -13,8 +13,8 @@ import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.io.impl.DFSImpl;
-import org.orbit.substance.io.util.DefaultDfsClientResolver;
-import org.orbit.substance.io.util.DefaultDfsVolumeClientResolver;
+import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.model.dfs.Path;
 
 public abstract class DFS {
@@ -75,8 +75,8 @@ public abstract class DFS {
 		this.indexServiceUrl = indexServiceUrl;
 		this.accessToken = accessToken;
 
-		this.dfsClientResolver = new DefaultDfsClientResolver();
-		this.dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
+		this.dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
+		this.dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
 	}
 
 	protected String getDfsServiceUrl() {
@@ -128,7 +128,7 @@ public abstract class DFS {
 	public abstract InputStream getInputStream(String fileId) throws IOException;
 
 	public abstract OutputStream getOutputStream(String fileId) throws IOException;
-	
+
 	public abstract OutputStream getOutputStream(String fileId, long size) throws IOException;
 
 	public abstract void setContents(String fileId, InputStream inputStream) throws IOException;

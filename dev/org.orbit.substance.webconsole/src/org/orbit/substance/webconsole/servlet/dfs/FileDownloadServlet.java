@@ -20,8 +20,8 @@ import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
-import org.orbit.substance.io.util.DefaultDfsClientResolver;
-import org.orbit.substance.io.util.DefaultDfsVolumeClientResolver;
+import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.client.ClientException;
@@ -59,8 +59,8 @@ public class FileDownloadServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
-			DfsVolumeClientResolver dfsVolumeClientResolver = new DefaultDfsVolumeClientResolver(indexServiceUrl);
+			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
+			DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
 
 			FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
 			if (fileMetadata == null) {

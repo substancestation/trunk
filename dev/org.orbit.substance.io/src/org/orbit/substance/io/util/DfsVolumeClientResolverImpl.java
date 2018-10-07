@@ -7,15 +7,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.orbit.infra.api.indexes.IndexItem;
-import org.orbit.infra.api.indexes.IndexItemHelper;
 import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.util.InfraClientsUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.origin.common.service.WebServiceAwareHelper;
 
-public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
+public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 
 	protected String indexServiceUrl;
 
@@ -23,20 +23,32 @@ public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
 	 * 
 	 * @param indexServiceUrl
 	 */
-	public DefaultDfsVolumeClientResolver(String indexServiceUrl) {
+	public DfsVolumeClientResolverImpl(String indexServiceUrl) {
+		if (indexServiceUrl == null || indexServiceUrl.isEmpty()) {
+			throw new IllegalArgumentException("indexServiceUrl is empty.");
+		}
+
 		this.indexServiceUrl = indexServiceUrl;
 	}
 
 	@Override
-	public String getDfsVolumeServiceUrl(String dfsId, String dfsVolumeId, String accessToken) throws IOException {
-		if (dfsId == null || dfsId.isEmpty()) {
-			throw new IllegalArgumentException("dfsId is null.");
-		}
-		if (dfsVolumeId == null || dfsVolumeId.isEmpty()) {
-			throw new IllegalArgumentException("dfsVolumeId is null.");
+	public DfsVolumeClient resolve(String dfsVolumeServiceUrl, String accessToken) {
+		if (dfsVolumeServiceUrl == null || dfsVolumeServiceUrl.isEmpty()) {
+			throw new IllegalArgumentException("dfsVolumeServiceUrl is empty.");
 		}
 
-		String dfsVolumeServiceUrl = null;
+		DfsVolumeClient dfsVolumeClient = SubstanceClientsUtil.DfsVolume.getDfsVolumeClient(dfsVolumeServiceUrl, accessToken);
+		return dfsVolumeClient;
+	}
+
+	@Override
+	public String getURL(String dfsId, String dfsVolumeId, String accessToken) throws IOException {
+		if (dfsId == null || dfsId.isEmpty()) {
+			throw new IllegalArgumentException("dfsId is empty.");
+		}
+		if (dfsVolumeId == null || dfsVolumeId.isEmpty()) {
+			throw new IllegalArgumentException("dfsVolumeId is empty.");
+		}
 
 		IndexItem dfsVolumeIndexItem = null;
 		IndexServiceClient indexService = InfraClientsUtil.Indexes.getIndexServiceClient(this.indexServiceUrl, accessToken);
@@ -50,32 +62,20 @@ public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
 			}
 		}
 
+		String serviceURL = null;
 		if (dfsVolumeIndexItem != null) {
-			String hostUrl = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
+			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
 			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
-
-			if (hostUrl != null && contextRoot != null) {
-				dfsVolumeServiceUrl = hostUrl;
-				if (!hostUrl.endsWith("/") && !contextRoot.startsWith("/")) {
-					dfsVolumeServiceUrl += "/";
-				}
-				dfsVolumeServiceUrl += contextRoot;
-			}
-
-			boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
-			if (!isOnline) {
-				throw new IllegalStateException("DFS volume service '" + dfsVolumeServiceUrl + "' is not online.");
-			}
+			serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
 		}
-
-		return dfsVolumeServiceUrl;
+		return serviceURL;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public DfsVolumeClient[] resolve(String dfsId, String accessToken, Comparator<?> indexItemsComparator) throws IOException {
-		if (dfsId == null) {
-			throw new IllegalArgumentException("dfsId is null.");
+		if (dfsId == null || dfsId.isEmpty()) {
+			throw new IllegalArgumentException("dfsId is empty.");
 		}
 
 		List<DfsVolumeClient> dfsVolumeClients = new ArrayList<DfsVolumeClient>();
@@ -95,22 +95,15 @@ public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
 		}
 
 		for (IndexItem dfsVolumeIndexItem : dfsVolumesIndexItems) {
-			boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
-			if (isOnline) {
-				String hostUrl = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
-				String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
+			// boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
+			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
+			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
 
-				if (hostUrl != null && contextRoot != null) {
-					String dfsVolumeServiceUrl = hostUrl;
-					if (!hostUrl.endsWith("/") && !contextRoot.startsWith("/")) {
-						dfsVolumeServiceUrl += "/";
-					}
-					dfsVolumeServiceUrl += contextRoot;
-
-					DfsVolumeClient dfsVolumeClient = resolve(dfsVolumeServiceUrl, accessToken);
-					if (dfsVolumeClient != null) {
-						dfsVolumeClients.add(dfsVolumeClient);
-					}
+			String serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
+			if (serviceURL != null) {
+				DfsVolumeClient dfsVolumeClient = resolve(serviceURL, accessToken);
+				if (dfsVolumeClient != null) {
+					dfsVolumeClients.add(dfsVolumeClient);
 				}
 			}
 		}
@@ -120,17 +113,18 @@ public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
 
 	@Override
 	public DfsVolumeClient resolve(String dfsId, String dfsVolumeId, String accessToken) throws IOException {
-		DfsVolumeClient dfsVolumeClient = null;
-		String dfsVolumeServiceUrl = getDfsVolumeServiceUrl(dfsId, dfsVolumeId, accessToken);
-		if (dfsVolumeServiceUrl != null) {
-			dfsVolumeClient = resolve(dfsVolumeServiceUrl, accessToken);
+		if (dfsId == null || dfsId.isEmpty()) {
+			throw new IllegalArgumentException("dfsId is empty.");
 		}
-		return dfsVolumeClient;
-	}
+		if (dfsVolumeId == null || dfsVolumeId.isEmpty()) {
+			throw new IllegalArgumentException("dfsVolumeId is empty.");
+		}
 
-	@Override
-	public DfsVolumeClient resolve(String dfsVolumeServiceUrl, String accessToken) {
-		DfsVolumeClient dfsVolumeClient = SubstanceClientsUtil.DfsVolume.getDfsVolumeClient(dfsVolumeServiceUrl, accessToken);
+		DfsVolumeClient dfsVolumeClient = null;
+		String serviceURL = getURL(dfsId, dfsVolumeId, accessToken);
+		if (serviceURL != null) {
+			dfsVolumeClient = resolve(serviceURL, accessToken);
+		}
 		return dfsVolumeClient;
 	}
 
@@ -142,3 +136,15 @@ public class DefaultDfsVolumeClientResolver implements DfsVolumeClientResolver {
 // properties.put(WSClientConstants.URL, dfsVolumeServiceUrl);
 // DfsVolumeClient dfsVolumeClient = SubstanceClients.getInstance().getDfsVolumeClient(properties);
 // dfsVolumeClients.add(dfsVolumeClient);
+
+// if (hostUrl != null && contextRoot != null) {
+// dfsVolumeServiceUrl = hostUrl;
+// if (!hostUrl.endsWith("/") && !contextRoot.startsWith("/")) {
+// dfsVolumeServiceUrl += "/";
+// }
+// dfsVolumeServiceUrl += contextRoot;
+// }
+// boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
+// if (!isOnline) {
+// throw new IllegalStateException("DFS volume service '" + dfsVolumeServiceUrl + "' is not online.");
+// }

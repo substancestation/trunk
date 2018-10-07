@@ -8,12 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
-import org.orbit.substance.io.util.DefaultDfsClientResolver;
+import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.servlet.MessageHelper;
@@ -28,6 +29,7 @@ public class CreateDirectoryServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Get parameters
 		// ---------------------------------------------------------------
+		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
@@ -47,7 +49,7 @@ public class CreateDirectoryServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
+				DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
 
 				FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.createDirectory(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, fileName);
 				if (fileMetadata != null) {

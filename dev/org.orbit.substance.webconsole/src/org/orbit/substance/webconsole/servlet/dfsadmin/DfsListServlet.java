@@ -23,7 +23,7 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
-import org.orbit.substance.io.util.DefaultDfsClientResolver;
+import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.io.util.DfsUtil;
 import org.orbit.substance.webconsole.WebConstants;
 import org.orbit.substance.webconsole.util.OrbitClientHelper;
@@ -63,7 +63,7 @@ public class DfsListServlet extends HttpServlet {
 
 			dfsIndexItems = DfsUtil.getDfsIndexItems(indexServiceUrl, accessToken);
 
-			DfsClientResolver dfsClientResolver = new DefaultDfsClientResolver();
+			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
 			for (IndexItem dfsIndexItem : dfsIndexItems) {
 				String dfsId = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
 				String currHostUrl = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__HOST_URL);
