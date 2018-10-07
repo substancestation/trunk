@@ -28,9 +28,9 @@ public class SubstanceConstants {
 	public static String DFS__JDBC_PASSWORD = "substance.dfs.jdbc.password";
 	public static String DFS__BLOCK_CAPACITY_MB = "substance.dfs.block_capacity_mb";
 
-	// EditPolicy values
-	public static String DFS__EDITPOLICY_ID = "substance.dfs.editpolicy";
-	public static String DFS__SERVICE_NAME = "substance.dfs.service";
+	// Index item values
+	public static String IDX__DFS__INDEXER_ID = "substance.dfs.indexer";
+	public static String IDX__DFS__TYPE = "DFS";
 
 	// Index item properties
 	public static String IDX_PROP__DFS__ID = "dfs.id";
@@ -38,9 +38,9 @@ public class SubstanceConstants {
 	public static String IDX_PROP__DFS__HOST_URL = "dfs.host.url";
 	public static String IDX_PROP__DFS__CONTEXT_ROOT = "dfs.context_root";
 
-	// Index item values
-	public static String IDX__DFS__INDEXER_ID = "substance.dfs.indexer";
-	public static String IDX__DFS__TYPE = "DFS";
+	// EditPolicy values
+	public static String DFS__EDITPOLICY_ID = "substance.dfs.editpolicy";
+	public static String DFS__SERVICE_NAME = "substance.dfs.service";
 
 	// ----------------------------------------------------------------------------------------
 	// Dfs volume service
@@ -59,9 +59,9 @@ public class SubstanceConstants {
 	public static String DFS_VOLUME__VOLUME_CAPACITY_GB = "substance.dfs_volume.volume_capacity_gb";
 	public static String DFS_VOLUME__BLOCK_CAPACITY_MB = "substance.dfs_volume.block_capacity_mb";
 
-	// EditPolicy values
-	public static String DFS_VOLUME__EDITPOLICY_ID = "substance.dfs_volume.editpolicy";
-	public static String DFS_VOLUME__SERVICE_NAME = "substance.dfs_volume.service";
+	// Index item values
+	public static String IDX__DFS_VOLUME__INDEXER_ID = "substance.dfs_volume.indexer";
+	public static String IDX__DFS_VOLUME__TYPE = "Volume";
 
 	// Index item properties
 	public static String IDX_PROP__DFS_VOLUME__DFS_ID = "dfs_volume.dfs_id";
@@ -72,9 +72,9 @@ public class SubstanceConstants {
 	public static String IDX_PROP__DFS_VOLUME__VOLUME_CAPACITY = "dfs_volume.volume_capacity";
 	public static String IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY = "dfs_volume.block_capacity";
 
-	// Index item values
-	public static String IDX__DFS_VOLUME__INDEXER_ID = "substance.dfs_volume.indexer";
-	public static String IDX__DFS_VOLUME__TYPE = "Volume";
+	// EditPolicy values
+	public static String DFS_VOLUME__EDITPOLICY_ID = "substance.dfs_volume.editpolicy";
+	public static String DFS_VOLUME__SERVICE_NAME = "substance.dfs_volume.service";
 
 	// // ----------------------------------------------------------------------------------------
 	// // DMS Metadata
