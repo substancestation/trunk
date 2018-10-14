@@ -17,7 +17,7 @@ import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexItemHelper;
 import org.orbit.platform.api.PlatformClient;
 import org.orbit.platform.api.PlatformConstants;
-import org.orbit.platform.api.PlatformMetadata;
+import org.orbit.platform.api.PlatformServiceMetadata;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
@@ -25,8 +25,8 @@ import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.io.util.DfsUtil;
+import org.orbit.substance.io.util.OrbitClientHelper;
 import org.orbit.substance.webconsole.WebConstants;
-import org.orbit.substance.webconsole.util.OrbitClientHelper;
 import org.origin.common.service.WebServiceAwareHelper;
 import org.origin.common.servlet.MessageHelper;
 
@@ -56,7 +56,7 @@ public class DfsListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		List<IndexItem> dfsIndexItems = null;
 		Map<String, DfsServiceMetadata> dfsIdToServiceMetadata = new HashMap<String, DfsServiceMetadata>();
-		Map<String, PlatformMetadata> dfsIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
+		Map<String, PlatformServiceMetadata> dfsIdToPlatformMetadata = new HashMap<String, PlatformServiceMetadata>();
 
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
@@ -73,7 +73,7 @@ public class DfsListServlet extends HttpServlet {
 				boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsIndexItem);
 
 				DfsServiceMetadata dfsServiceMetadata = null;
-				PlatformMetadata platformMetadata = null;
+				PlatformServiceMetadata platformMetadata = null;
 				if (isOnline) {
 					try {
 						DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);

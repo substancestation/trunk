@@ -1,4 +1,4 @@
-package org.orbit.substance.webconsole.util;
+package org.orbit.substance.io.util;
 
 import java.io.IOException;
 

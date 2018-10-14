@@ -28,5 +28,4 @@ Require-Bundle: org.origin.common;bundle-version="[1.0.0,2.0.0)",
 Export-Package: org.orbit.substance.webconsole;version="1.0.0",
  org.orbit.substance.webconsole.extension;version="1.0.0",
  org.orbit.substance.webconsole.servlet;version="1.0.0",
- org.orbit.substance.webconsole.servlet.dfs;version="1.0.0",
- org.orbit.substance.webconsole.util;version="1.0.0"
+ org.orbit.substance.webconsole.servlet.dfs;version="1.0.0"

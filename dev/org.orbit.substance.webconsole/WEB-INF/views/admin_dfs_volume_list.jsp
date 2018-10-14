@@ -27,13 +27,13 @@
 	}
 
 	Map<String, DfsVolumeServiceMetadata> dfsVolumeIdToServiceMetadata = (Map<String, DfsVolumeServiceMetadata>) request.getAttribute("dfsVolumeIdToServiceMetadata");
-	Map<String, PlatformMetadata> dfsVolumeIdToPlatformMetadata = (Map<String, PlatformMetadata>) request.getAttribute("dfsVolumeIdToPlatformMetadata");
+	Map<String, PlatformServiceMetadata> dfsVolumeIdToPlatformMetadata = (Map<String, PlatformServiceMetadata>) request.getAttribute("dfsVolumeIdToPlatformMetadata");
 
 	if (dfsVolumeIdToServiceMetadata == null) {
 		dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeServiceMetadata>();
 	}
 	if (dfsVolumeIdToPlatformMetadata == null) {
-		dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
+		dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformServiceMetadata>();
 	}
 
 	String dfsLabel = (dfsName != null) ? dfsName : dfsId;
@@ -138,7 +138,7 @@
 						}
 
 						String jvmName = null;
-						PlatformMetadata platformMetadata = dfsVolumeIdToPlatformMetadata.get(dfsVolumeId);
+						PlatformServiceMetadata platformMetadata = dfsVolumeIdToPlatformMetadata.get(dfsVolumeId);
 						if (platformMetadata != null) {
 							jvmName = platformMetadata.getJvmName();
 						}

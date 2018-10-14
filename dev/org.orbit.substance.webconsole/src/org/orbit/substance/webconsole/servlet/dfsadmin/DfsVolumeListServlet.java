@@ -17,16 +17,16 @@ import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexItemHelper;
 import org.orbit.platform.api.PlatformClient;
 import org.orbit.platform.api.PlatformConstants;
-import org.orbit.platform.api.PlatformMetadata;
+import org.orbit.platform.api.PlatformServiceMetadata;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
+import org.orbit.substance.io.util.OrbitClientHelper;
 import org.orbit.substance.io.util.DfsUtil;
 import org.orbit.substance.webconsole.WebConstants;
-import org.orbit.substance.webconsole.util.OrbitClientHelper;
 import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
 
@@ -59,7 +59,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 		IndexItem dfsIndexItem = null;
 		List<IndexItem> dfsVolumeIndexItems = null;
 		Map<String, DfsVolumeServiceMetadata> dfsVolumeIdToServiceMetadata = new HashMap<String, DfsVolumeServiceMetadata>();
-		Map<String, PlatformMetadata> dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformMetadata>();
+		Map<String, PlatformServiceMetadata> dfsVolumeIdToPlatformMetadata = new HashMap<String, PlatformServiceMetadata>();
 
 		if (!dfsId.isEmpty()) {
 			try {
@@ -77,7 +77,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 					boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
 
 					DfsVolumeServiceMetadata dfsVolumeServiceMetadata = null;
-					PlatformMetadata platformMetadata = null;
+					PlatformServiceMetadata platformMetadata = null;
 					if (isOnline) {
 						try {
 							DfsVolumeClient dfsVolumeClient = dfsVolumeClientResolver.resolve(dfsId, dfsVolumeId, accessToken);
