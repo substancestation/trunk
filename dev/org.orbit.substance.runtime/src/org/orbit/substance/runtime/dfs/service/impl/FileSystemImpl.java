@@ -370,7 +370,7 @@ public class FileSystemImpl implements FileSystem {
 
 	@Override
 	public boolean exists(String fileId) throws IOException {
-		FileMetadata fileMetadata = this.getFile(fileId);
+		FileMetadata fileMetadata = getFile(fileId);
 		if (fileMetadata != null) {
 			return true;
 		}
