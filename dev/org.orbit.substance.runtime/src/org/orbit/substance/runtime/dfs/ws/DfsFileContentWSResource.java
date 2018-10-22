@@ -109,11 +109,11 @@ public class DfsFileContentWSResource extends AbstractWSApplicationResource {
 			FileSystem fileSystem = getService().getFileSystem(accountId);
 
 			String parentFileId = null;
-			org.orbit.substance.model.dfs.Path parentPath = null;
+			org.origin.common.resource.Path parentPath = null;
 			if ("fileId".equals(parentType)) {
 				parentFileId = parentValue;
 			} else if ("path".equals(parentType)) {
-				parentPath = new org.orbit.substance.model.dfs.Path(parentValue);
+				parentPath = new org.origin.common.resource.Path(parentValue);
 			}
 
 			boolean isRootDir = ("-1".equals(parentFileId)) ? true : false;
@@ -160,8 +160,8 @@ public class DfsFileContentWSResource extends AbstractWSApplicationResource {
 				index++;
 			}
 
-			org.orbit.substance.model.dfs.Path theParentPath = isRootDir ? org.orbit.substance.model.dfs.Path.ROOT : parentFile.getPath();
-			org.orbit.substance.model.dfs.Path newFilePath = new org.orbit.substance.model.dfs.Path(theParentPath, newFileName);
+			org.origin.common.resource.Path theParentPath = isRootDir ? org.origin.common.resource.Path.ROOT : parentFile.getPath();
+			org.origin.common.resource.Path newFilePath = new org.origin.common.resource.Path(theParentPath, newFileName);
 
 			newFile = fileSystem.createNewFile(newFilePath, 0);
 			if (newFile == null) {
@@ -232,12 +232,12 @@ public class DfsFileContentWSResource extends AbstractWSApplicationResource {
 			FileSystem fileSystem = getService().getFileSystem(accountId);
 
 			FileMetadata file = null;
-			org.orbit.substance.model.dfs.Path path = null;
+			org.origin.common.resource.Path path = null;
 			if ("fileId".equals(type)) {
 				String fileId = value;
 				file = fileSystem.getFile(fileId);
 			} else if ("path".equals(type)) {
-				path = new org.orbit.substance.model.dfs.Path(value);
+				path = new org.origin.common.resource.Path(value);
 				file = fileSystem.getFile(path);
 			}
 

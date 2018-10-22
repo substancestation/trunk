@@ -17,7 +17,6 @@ import org.orbit.substance.connector.dfsvolume.DataBlockMetadataImpl;
 import org.orbit.substance.connector.dfsvolume.FileContentMetadataImpl;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.model.dfs.FilePart;
-import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.orbit.substance.model.dfsvolume.PendingFile;
@@ -26,6 +25,7 @@ import org.orbit.substance.model.util.FilePartsWriter;
 import org.orbit.substance.model.util.PendingFilesReader;
 import org.orbit.substance.model.util.PendingFilesWriter;
 import org.origin.common.json.JSONUtil;
+import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.util.ResponseUtil;
 

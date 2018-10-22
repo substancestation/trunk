@@ -9,7 +9,7 @@ import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.connector.util.ModelConverter;
 import org.orbit.substance.model.RequestConstants;
-import org.orbit.substance.model.dfs.Path;
+import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.ServiceClientImpl;
 import org.origin.common.rest.client.ServiceConnector;

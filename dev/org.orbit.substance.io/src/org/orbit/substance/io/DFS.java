@@ -15,7 +15,7 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.io.impl.DFSImpl;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
-import org.orbit.substance.model.dfs.Path;
+import org.origin.common.resource.Path;
 
 public abstract class DFS {
 

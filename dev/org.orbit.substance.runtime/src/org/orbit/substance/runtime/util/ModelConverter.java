@@ -9,7 +9,6 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.model.dfs.FilePart;
-import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.model.dfsvolume.FileContentMetadataDTO;
 import org.orbit.substance.model.dfsvolume.PendingFile;
@@ -21,6 +20,7 @@ import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
 import org.origin.common.json.JSONUtil;
+import org.origin.common.resource.Path;
 
 public class ModelConverter {
 

@@ -1,6 +1,6 @@
 package org.orbit.substance.api.dfs;
 
-import org.orbit.substance.model.dfs.Path;
+import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.ServiceClient;
 

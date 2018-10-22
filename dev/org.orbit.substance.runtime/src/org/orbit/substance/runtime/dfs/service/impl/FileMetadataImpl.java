@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbit.substance.model.dfs.FilePart;
-import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.util.ModelConverter;
+import org.origin.common.resource.Path;
 
 public class FileMetadataImpl implements FileMetadata {
 

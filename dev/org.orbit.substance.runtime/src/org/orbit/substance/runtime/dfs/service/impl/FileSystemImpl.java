@@ -21,7 +21,6 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.model.dfs.FileContentAccessImpl;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.FilePartImpl;
-import org.orbit.substance.model.dfs.Path;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
@@ -30,6 +29,7 @@ import org.orbit.substance.runtime.util.SubstanceComparators.DfsVolumeClientComp
 import org.orbit.substance.runtime.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.origin.common.jdbc.DatabaseUtil;
+import org.origin.common.resource.Path;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.server.ServerException;

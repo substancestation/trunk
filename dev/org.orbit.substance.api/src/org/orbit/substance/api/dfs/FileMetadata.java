@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbit.substance.model.dfs.FilePart;
-import org.orbit.substance.model.dfs.Path;
+import org.origin.common.resource.Path;
 
 public interface FileMetadata {
 

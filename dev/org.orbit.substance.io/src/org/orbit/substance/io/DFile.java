@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
-import org.orbit.substance.model.dfs.Path;
+import org.origin.common.resource.Path;
 
 public interface DFile {
 

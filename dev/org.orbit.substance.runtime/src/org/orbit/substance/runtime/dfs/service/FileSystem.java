@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.orbit.substance.model.dfs.FilePart;
-import org.orbit.substance.model.dfs.Path;
+import org.origin.common.resource.Path;
 
 public interface FileSystem {
 

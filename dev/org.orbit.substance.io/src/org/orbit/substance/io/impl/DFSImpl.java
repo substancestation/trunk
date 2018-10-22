@@ -12,8 +12,8 @@ import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
 import org.orbit.substance.io.DFileOutputStream;
-import org.orbit.substance.model.dfs.Path;
 import org.origin.common.io.IOUtil;
+import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 
 public class DFSImpl extends DFS {
