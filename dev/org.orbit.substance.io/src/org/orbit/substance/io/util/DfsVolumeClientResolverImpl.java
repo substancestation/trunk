@@ -51,7 +51,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 		}
 
 		IndexItem dfsVolumeIndexItem = null;
-		IndexServiceClient indexService = InfraClientsUtil.Indexes.getIndexServiceClient(this.indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(this.indexServiceUrl, accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID);
@@ -81,7 +81,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 		List<DfsVolumeClient> dfsVolumeClients = new ArrayList<DfsVolumeClient>();
 
 		List<IndexItem> dfsVolumesIndexItems = new ArrayList<IndexItem>();
-		IndexServiceClient indexService = InfraClientsUtil.Indexes.getIndexServiceClient(indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(indexServiceUrl, accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID);

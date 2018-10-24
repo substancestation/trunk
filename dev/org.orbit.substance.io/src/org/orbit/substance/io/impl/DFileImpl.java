@@ -65,7 +65,7 @@ public class DFileImpl implements DFile {
 	public URI toURI() throws IOException {
 		try {
 			String uriScheme = "dfs";
-			String uriHost = this.dfs.getDfsId();
+			String uriHost = this.dfs.getServiceMetadata().getDfsId();
 			String uriPath = this.path.getPathString();
 			if (isDirectory()) {
 				if (!uriPath.endsWith("/")) {

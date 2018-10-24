@@ -69,7 +69,7 @@ public class OrbitClientHelper {
 	protected IndexServiceClient getIndexService(String indexServiceUrl, String accessToken) {
 		IndexServiceClient indexService = null;
 		if (indexServiceUrl != null) {
-			indexService = InfraClientsUtil.Indexes.getIndexServiceClient(indexServiceUrl, accessToken);
+			indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(indexServiceUrl, accessToken);
 		}
 		return indexService;
 	}

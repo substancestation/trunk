@@ -10,6 +10,7 @@ import org.orbit.infra.api.InfraConstants;
 import org.orbit.substance.api.Activator;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
+import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.io.impl.DFSImpl;
@@ -99,7 +100,13 @@ public abstract class DFS {
 		return this.dfsVolumeClientResolver;
 	}
 
-	public abstract String getDfsId() throws IOException;
+	public abstract DfsServiceMetadata getServiceMetadata() throws IOException;
+
+	public abstract DFile[] listRoot() throws IOException;
+
+	public abstract DFile[] listFiles(String parentFileId) throws IOException;
+
+	public abstract DFile[] listFiles(Path parentPath) throws IOException;
 
 	public abstract DFile getFileById(String fileId) throws IOException;
 
@@ -140,3 +147,5 @@ public abstract class DFS {
 	public abstract boolean delete(String fileId) throws IOException;
 
 }
+
+// public abstract String getDfsId() throws IOException;

@@ -123,6 +123,27 @@ public class SubstanceClientsUtil {
 		 * @param dfsClientResolver
 		 * @param dfsServiceUrl
 		 * @param accessToken
+		 * @param parentPath
+		 * @return
+		 * @throws ClientException
+		 */
+		public FileMetadata[] listFiles(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path parentPath) throws ClientException {
+			FileMetadata[] memberFileMetadatas = null;
+			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				memberFileMetadatas = dfsClient.listFiles(parentPath);
+			}
+			if (memberFileMetadatas == null) {
+				memberFileMetadatas = EMPTY_FILES;
+			}
+			return memberFileMetadatas;
+		}
+
+		/**
+		 * 
+		 * @param dfsClientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
 		 * @param fileId
 		 * @return
 		 * @throws ClientException

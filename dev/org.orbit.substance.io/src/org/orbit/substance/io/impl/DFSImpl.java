@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
@@ -17,8 +19,6 @@ import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 
 public class DFSImpl extends DFS {
-
-	protected String dfsId;
 
 	/**
 	 * 
@@ -43,20 +43,77 @@ public class DFSImpl extends DFS {
 	}
 
 	@Override
-	public synchronized String getDfsId() throws IOException {
-		if (this.dfsId == null) {
-			DfsServiceMetadata metadata = null;
-			try {
-				metadata = SubstanceClientsUtil.Dfs.getDfsMetadata(dfsClientResolver, dfsServiceUrl, accessToken);
-			} catch (ClientException e) {
-				handle(e);
-			}
-			if (metadata == null) {
-				throw new IOException("Cannot get DFS metadata.");
-			}
-			this.dfsId = metadata.getDfsId();
+	public DfsServiceMetadata getServiceMetadata() throws IOException {
+		DfsServiceMetadata metadata = null;
+		try {
+			metadata = SubstanceClientsUtil.Dfs.getDfsMetadata(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken);
+		} catch (ClientException e) {
+			handle(e);
 		}
-		return this.dfsId;
+		if (metadata == null) {
+			throw new IOException("Cannot get DFS metadata.");
+		}
+		return metadata;
+	}
+
+	@Override
+	public DFile[] listRoot() throws IOException {
+		List<DFile> files = new ArrayList<DFile>();
+		try {
+			FileMetadata[] fileMetadatas = SubstanceClientsUtil.Dfs.listRoots(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken);
+			if (fileMetadatas != null) {
+				for (FileMetadata fileMetadata : fileMetadatas) {
+					String fileId = fileMetadata.getFileId();
+					Path path = fileMetadata.getPath();
+
+					DFile file = new DFileImpl(this, fileId, path);
+					files.add(file);
+				}
+			}
+		} catch (ClientException e) {
+			handle(e);
+		}
+		return files.toArray(new DFile[files.size()]);
+	}
+
+	@Override
+	public DFile[] listFiles(String parentFileId) throws IOException {
+		List<DFile> files = new ArrayList<DFile>();
+		try {
+			FileMetadata[] fileMetadatas = SubstanceClientsUtil.Dfs.listFiles(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, parentFileId);
+			if (fileMetadatas != null) {
+				for (FileMetadata fileMetadata : fileMetadatas) {
+					String fileId = fileMetadata.getFileId();
+					Path path = fileMetadata.getPath();
+
+					DFile file = new DFileImpl(this, fileId, path);
+					files.add(file);
+				}
+			}
+		} catch (ClientException e) {
+			handle(e);
+		}
+		return files.toArray(new DFile[files.size()]);
+	}
+
+	@Override
+	public DFile[] listFiles(Path parentPath) throws IOException {
+		List<DFile> files = new ArrayList<DFile>();
+		try {
+			FileMetadata[] fileMetadatas = SubstanceClientsUtil.Dfs.listFiles(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, parentPath);
+			if (fileMetadatas != null) {
+				for (FileMetadata fileMetadata : fileMetadatas) {
+					String fileId = fileMetadata.getFileId();
+					Path path = fileMetadata.getPath();
+
+					DFile file = new DFileImpl(this, fileId, path);
+					files.add(file);
+				}
+			}
+		} catch (ClientException e) {
+			handle(e);
+		}
+		return files.toArray(new DFile[files.size()]);
 	}
 
 	@Override
@@ -397,6 +454,25 @@ public class DFSImpl extends DFS {
 }
 
 // FileMetadata fileMetadata = null;
+// protected String dfsId;
+
+// @Override
+// public synchronized String getDfsId() throws IOException {
+// if (this.dfsId == null) {
+// DfsServiceMetadata metadata = null;
+// try {
+// metadata = SubstanceClientsUtil.Dfs.getDfsMetadata(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken);
+// } catch (ClientException e) {
+// handle(e);
+// }
+// if (metadata == null) {
+// throw new IOException("Cannot get DFS metadata.");
+// }
+// this.dfsId = metadata.getDfsId();
+// }
+// return this.dfsId;
+// }
+
 // try {
 // fileMetadata = SubstanceClientsUtil.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, fileId);
 // } catch (ClientException e) {

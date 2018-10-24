@@ -88,7 +88,7 @@ public class DfsUtil {
 	 */
 	public static List<IndexItem> getDfsIndexItems(String indexServiceUrl, String accessToken) throws IOException {
 		List<IndexItem> dfsIndexItems = null;
-		IndexServiceClient indexService = InfraClientsUtil.Indexes.getIndexServiceClient(indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(indexServiceUrl, accessToken);
 		if (indexService != null) {
 			dfsIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 		}
@@ -107,7 +107,7 @@ public class DfsUtil {
 	 */
 	public static IndexItem getDfsIndexItem(String indexServiceUrl, String accessToken, String dfsId) throws IOException {
 		IndexItem dfsIndexItem = null;
-		IndexServiceClient indexService = InfraClientsUtil.Indexes.getIndexServiceClient(indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(indexServiceUrl, accessToken);
 		if (indexService != null) {
 			List<IndexItem> dfsIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 			if (dfsIndexItems != null) {
@@ -155,7 +155,7 @@ public class DfsUtil {
 	 */
 	public static List<IndexItem> getDfsVolumeIndexItems(String indexServiceUrl, String accessToken, String dfsId) throws IOException {
 		List<IndexItem> dfsVolumeIndexItems = new ArrayList<IndexItem>();
-		IndexServiceClient indexService = InfraClientsUtil.Indexes.getIndexServiceClient(indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(indexServiceUrl, accessToken);
 		if (indexService != null) {
 			List<IndexItem> allDfsVolumeIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 

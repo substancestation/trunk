@@ -45,7 +45,7 @@ public class DfsClientResolverImpl implements DfsClientResolver {
 		}
 
 		IndexItem dfsIndexItem = null;
-		IndexServiceClient indexService = InfraClientsUtil.Indexes.getIndexServiceClient(this.indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(this.indexServiceUrl, accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
