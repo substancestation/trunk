@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.origin.common.rest.annotation.Secured;
-import org.origin.common.rest.editpolicy.EditPoliciesAwareService;
+import org.origin.common.rest.editpolicy.EditPoliciesAware;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -48,10 +48,10 @@ public class DfsVolumeWSResource extends AbstractWSApplicationResource {
 	@Path("request")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response request(@Context HttpHeaders httpHeaders, Request request) {
-		EditPoliciesAwareService editPoliciesAwareService = null;
+		EditPoliciesAware editPoliciesAwareService = null;
 		Object service = getService();
-		if (service instanceof EditPoliciesAwareService) {
-			editPoliciesAwareService = (EditPoliciesAwareService) service;
+		if (service instanceof EditPoliciesAware) {
+			editPoliciesAwareService = (EditPoliciesAware) service;
 		}
 
 		if (editPoliciesAwareService == null) {

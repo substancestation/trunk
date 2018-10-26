@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.origin.common.jdbc.ConnectionAware;
-import org.origin.common.rest.editpolicy.EditPoliciesAwareService;
+import org.origin.common.rest.editpolicy.EditPoliciesAware;
 import org.origin.common.rest.server.ServerException;
 import org.origin.common.service.PropertiesAware;
 import org.origin.common.service.WebServiceAware;
 
-public interface DfsVolumeService extends WebServiceAware, PropertiesAware, ConnectionAware, EditPoliciesAwareService {
+public interface DfsVolumeService extends WebServiceAware, PropertiesAware, ConnectionAware, EditPoliciesAware {
 
 	// ----------------------------------------------------------------------
 	// Methods about service
