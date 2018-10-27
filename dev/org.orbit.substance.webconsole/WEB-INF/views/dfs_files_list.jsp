@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*, javax.servlet.*"%>
 <%@ page import="org.origin.common.util.*"%>
+<%@ page import="org.origin.common.resource.*"%>
 <%@ page import="org.orbit.substance.api.dfs.*"%>
 <%@ page import="org.orbit.substance.model.dfs.*"%>
 <%@ page import="org.orbit.substance.webconsole.*"%>
