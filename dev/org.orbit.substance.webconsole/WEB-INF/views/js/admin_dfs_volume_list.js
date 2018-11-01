@@ -18,8 +18,7 @@ $(document).on("click", "#actionAddNode", function() {
 });
 
 $(document).on("click", "#okAddNode", function() {
-	var form = document.getElementById("new_form");
-	form.submit();
+	document.getElementById("new_form").submit();
 });
 
 $(document).on("click", "#cancelAddNode", function() {
@@ -30,9 +29,9 @@ $(document).on("click", "#cancelAddNode", function() {
 //-----------------------------------------------------------------------
 // Change node
 //-----------------------------------------------------------------------
-function changeNode(elementId, dfsId, name, enabled) {
+function changeNode(elementId, dfsVolumeId, name, enabled) {
 	document.getElementById("node__elementId").setAttribute('value', elementId);
-	document.getElementById("node__dfs_id").setAttribute('value', dfsId);
+	document.getElementById("node__dfs_volume_id").setAttribute('value', dfsVolumeId);
 	document.getElementById("node__name").setAttribute('value', name);
 
 	if (enabled) {
@@ -71,14 +70,14 @@ function onNodeAction(action, formActionUrl) {
 
 	if (action == "enable") {
 		dialogTitle = "Enable Nodes";
-		dialogMessage = "Are you sure you want to enable the DFS nodes?";
+		dialogMessage = "Are you sure you want to enable the nodes?";
 
 	} else if (action == "disable") {
 		dialogTitle = "Disable Nodes";
-		dialogMessage = "Are you sure you want to disable the DFS nodes?";
+		dialogMessage = "Are you sure you want to disable the nodes?";
 
 	} else {
-		dialogTitle = action + " DFS Nodes";
+		dialogTitle = action + " Nodes";
 		dialogMessage = "Are you sure you want to '" + action + "' the programs?";
 	}
 

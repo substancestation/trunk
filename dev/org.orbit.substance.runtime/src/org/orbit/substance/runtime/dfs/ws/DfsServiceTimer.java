@@ -10,6 +10,7 @@ import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
+import org.origin.common.service.WebServiceAwareHelper;
 
 public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 
@@ -44,6 +45,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		String name = service.getName();
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();
+		String url = WebServiceAwareHelper.INSTANCE.getURL(service);
 
 		Date now = new Date();
 
@@ -52,6 +54,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		props.put(SubstanceConstants.IDX_PROP__DFS__NAME, name);
 		props.put(SubstanceConstants.IDX_PROP__DFS__HOST_URL, hostURL);
 		props.put(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT, contextRoot);
+		props.put(SubstanceConstants.IDX_PROP__DFS__BASE_URL, url);
 		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
 
 		return indexProvider.addIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE, name, props);
@@ -63,6 +66,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		String name = service.getName();
 		String hostURL = service.getHostURL();
 		String contextRoot = service.getContextRoot();
+		String url = WebServiceAwareHelper.INSTANCE.getURL(service);
 
 		Date now = new Date();
 
@@ -72,6 +76,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		props.put(SubstanceConstants.IDX_PROP__DFS__NAME, name);
 		props.put(SubstanceConstants.IDX_PROP__DFS__HOST_URL, hostURL);
 		props.put(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT, contextRoot);
+		props.put(SubstanceConstants.IDX_PROP__DFS__BASE_URL, url);
 		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
 
 		indexProvider.setProperties(SubstanceConstants.IDX__DFS__INDEXER_ID, indexItemId, props);

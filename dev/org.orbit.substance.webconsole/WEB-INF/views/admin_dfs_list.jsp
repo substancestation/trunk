@@ -1,32 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*, javax.servlet.*"%>
-<%@ page import="org.origin.common.service.*"%>
 <%@ page import="org.origin.common.util.*"%>
-<%@ page import="org.orbit.platform.api.*"%>
 <%@ page import="org.orbit.infra.api.indexes.*"%>
+<%@ page import="org.orbit.infra.io.*"%>
 <%@ page import="org.orbit.substance.api.*"%>
 <%@ page import="org.orbit.substance.api.dfs.*"%>
-<%@ page import="org.orbit.substance.model.dfs.*"%>
 <%@ page import="org.orbit.substance.webconsole.*"%>
 <%
 	String platformContextRoot = getServletConfig().getInitParameter(WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT);
 	String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
-	
-	List<IndexItem> dfsIndexItems = (List<IndexItem>) request.getAttribute("dfsIndexItems");
-	if (dfsIndexItems == null) {
-		dfsIndexItems = new ArrayList<IndexItem>();
-	}
 
-	Map<String, DfsServiceMetadata> dfsIdToServiceMetadata = (Map<String, DfsServiceMetadata>) request.getAttribute("dfsIdToServiceMetadata");
-	Map<String, PlatformServiceMetadata> dfsIdToPlatformMetadata = (Map<String, PlatformServiceMetadata>) request.getAttribute("dfsIdToPlatformMetadata");
-
-	if (dfsIdToServiceMetadata == null) {
-		dfsIdToServiceMetadata = new HashMap<String, DfsServiceMetadata>();
+	IConfigElement[] configElements = (IConfigElement[]) request.getAttribute("configElements");
+	if (configElements == null) {
+		configElements = new IConfigElement[] {};
 	}
-	if (dfsIdToPlatformMetadata == null) {
-		dfsIdToPlatformMetadata = new HashMap<String, PlatformServiceMetadata>();
-	}
-
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -44,105 +31,210 @@
 	<jsp:include page="<%=platformContextRoot + "/top_message"%>" />
 
 	<div class="main_div01">
-		<h2>DFS List</h2>
+		<h2>DFS Nodes</h2>
 		<div class="top_tools_div01">
+			<a id="actionAddNode" class="button02">Create</a>
+			<a id="actionEnableNodes" class="button02" onClick="onNodeAction('enable', '<%=contextRoot + "/admin/dfsaction"%>')">Enable</a> 
+			<a id="actionDisableNodes" class="button02" onClick="onNodeAction('disable', '<%=contextRoot + "/admin/dfsaction"%>')">Disable</a>
+			<a id="actionDeleteNodes" class="button02">Delete</a>
 			<a class="button02" href="<%=contextRoot + "/admin/dfslist"%>">Refresh</a>
 		</div>
 		<table class="main_table01">
+			<form id="main_list" method="post">
+			<input id ="main_list__action" type="hidden" name="action" value="">
 			<tr>
-				<th class="th1" width="100">JVM</th>
-				<th class="th1" width="100">Id</th>
+				<th class="th1" width="20">
+					<input type="checkbox" onClick="toggleSelection(this, 'elementId')" />
+				</th>
+				<th class="th1" width="120">JVM</th>
 				<th class="th1" width="100">Name</th>
-				<th class="th1" width="200">URL</th>
-				<th class="th1" width="100">Status</th>
-				<th class="th1" width="200">Metadata</th>
+				<th class="th1" width="100">DFS Id</th>
+				<th class="th1" width="50">Enabled</th>
+				<th class="th1" width="180">URL</th>
+				<th class="th1" width="50">Status</th>
+				<th class="th1" width="180">Metadata</th>
 				<th class="th1" width="100">Action</th>
 			</tr>
 			<%
-				if (dfsIndexItems.isEmpty()) {
+				if (configElements.length == 0) {
 			%>
 			<tr>
-				<td colspan="7">(n/a)</td>
+				<td colspan="9">(n/a)</td>
 			</tr>
 			<%
 				} else {
-					for (IndexItem dfsIndexItem : dfsIndexItems) {
-						String dfsId = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
-						String name = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__NAME);
-						String hostUrl = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__HOST_URL);
-						String dfsContextRoot = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT);
-						String dfsServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(hostUrl, dfsContextRoot);
+					for (IConfigElement configElement : configElements) {
+						String elementId = configElement.getElementId();
+						boolean enabled = configElement.getAttribute("enabled", Boolean.class);
+						String dfsId = configElement.getAttribute(SubstanceConstants.IDX_PROP__DFS__ID, String.class);
 
-						boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsIndexItem);
-						String statusText = isOnline ? "Online" : "Offline";
-						String statusColor = isOnline ? "#2eb82e" : "#cccccc";
-
+						String name = "";
+						String serviceUrl = "";
+						boolean isOnline = false;
 						String metadataStr = "";
 						String propStr = "";
-						DfsServiceMetadata serviceMetadata = dfsIdToServiceMetadata.get(dfsId);
-						if (serviceMetadata != null) {
-							String currDfsId = serviceMetadata.getDfsId();
-							long currDefaultBlockCapacity = serviceMetadata.getDataBlockCapacity();
-							Map<String, Object> metadataProperties = serviceMetadata.getProperties();
+						String jvmName = "";
 
-							String currName = serviceMetadata.getName();
-							String currHostUrl = serviceMetadata.getHostURL();
-							String currContextRoot = serviceMetadata.getContextRoot();
-							long currServerTime = serviceMetadata.getServerTime();
+						IndexItem indexItem = configElement.getAdapter(IndexItem.class);
+						if (indexItem != null) {
+							name = (String) indexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__NAME);
+							serviceUrl = (String) indexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__BASE_URL);
+							isOnline = IndexItemHelper.INSTANCE.isOnline(indexItem);
+
+							// config name overrides index setting
+							if (configElement.getName() != null) {
+								name = configElement.getName();
+							}
+
+						} else {
+							name = configElement.getName();
+						}
+
+						DfsServiceMetadata metadata = configElement.getAdapter(DfsServiceMetadata.class);
+						if (metadata != null) {
+							long currServerTime = metadata.getServerTime();
 							String currServerTimeStr = DateUtil.toString(DateUtil.toDate(currServerTime), DateUtil.SIMPLE_DATE_FORMAT2);
+							jvmName = metadata.getJvmName();
 
+							// String currDfsId = metadata.getDfsId();
+							// String currName = metadata.getName();
+							// String currHostUrl = metadata.getHostURL();
+							// String currContextRoot = metadata.getContextRoot();
 							// metadataStr += "dfs_id = " + currDfsId + "<br/>";
-							metadataStr += "block_capacity = " + DiskSpaceUtil.formatSize(currDefaultBlockCapacity) + "<br/>";
 							// metadataStr += "name = " + currName + "<br/>";
 							// metadataStr += "host_url = " + currHostUrl + "<br/>";
 							// metadataStr += "context_root = " + currContextRoot + "<br/>";
 							metadataStr += "server_time = " + currServerTimeStr + "<br/>";
 
-							if (false && !metadataProperties.isEmpty()) {
+							Map<String, Object> metadataProperties = metadata.getProperties();
+							if (!metadataProperties.isEmpty()) {
 								for (Iterator<String> propItor = metadataProperties.keySet().iterator(); propItor.hasNext();) {
 									String propName = propItor.next();
-									Object propValue = serviceMetadata.getProperty(propName);
+									Object propValue = metadata.getProperty(propName);
 
 									if (propValue != null) {
 										if ("server_time".equals(propName)) {
 											propValue = DateUtil.toString(DateUtil.toDate(Long.valueOf(propValue.toString())), DateUtil.SIMPLE_DATE_FORMAT2);
-											
-										} else if ("block_capacity".equals(propName)) {
-											propValue = DiskSpaceUtil.formatSize(Long.valueOf(propValue.toString()));
 										}
-
 										propStr += propName + " = " + propValue + "<br/>";
 									}
 								}
 							}
 						}
+
+						String statusText = isOnline ? "Online" : "Offline";
+						String statusColor = isOnline ? "#2eb82e" : "#cccccc";
+						String enabledStr = enabled ? "true" : "false";
 						
-						String jvmName = null;
-						PlatformServiceMetadata platformMetadata = dfsIdToPlatformMetadata.get(dfsId);
-						if (platformMetadata != null) {
-							jvmName = platformMetadata.getJvmName();
-						}
-						if (jvmName == null) {
-							jvmName = "";
+						if (serviceUrl == null) {
+							serviceUrl = "";
 						}
 			%>
 			<tr>
+				<td class="td1">
+					<input type="checkbox" name="elementId" value="<%=elementId%>">
+				</td>
 				<td class="td1"><%=jvmName%></td>
-				<td class="td1"><%=dfsId%></td>
 				<td class="td1"><%=name%></td>
-				<td class="td1"><%=dfsServiceUrl%></td>
-				<td class="td1" width="100"><font color="<%=statusColor%>"><%=statusText%></font></td>
+				<td class="td1"><%=dfsId%></td>
+				<td class="td1"><%=enabledStr%></td>
+				<td class="td2"><%=serviceUrl%></td>
+				<td class="td1">
+					<font color="<%=statusColor%>"><%=statusText%></font>
+				</td>
 				<td class="td2"><%=metadataStr%></td>
 				<td class="td1">
-					<a class="action01" href="<%=contextRoot%>/admin/dfsvolumelist?dfsId=<%=dfsId%>">DFS Volumes</a>
+					<a class="action01" href="javascript:changeNode('<%=elementId%>', '<%=dfsId%>', '<%=name%>', <%=enabled%>)">Edit</a>
+					<a class="action01" href="<%=contextRoot%>/admin/dfsvolumelist?dfsId=<%=dfsId%>">Volumes</a>
 				</td>
 			</tr>
 			<%
 					}
 				}
 			%>
+			</form>
 		</table>
 	</div>
 	<br/>
+
+	<dialog id="newNodeDialog">
+	<div class="dialog_title_div01">Create Node</div>
+	<form id="new_form" method="post" action="<%=contextRoot + "/admin/dfsadd"%>">
+		<div class="dialog_main_div01">
+			<table class="dialog_table01">
+				<tr>
+					<td>Name:</td>
+					<td><input type="text" name="name"></td>
+				</tr>
+				<tr>
+					<td width="25%">DFS Id:</td>
+					<td width="75%"><input type="text" name="dfs_id" class="input01" size="35"></td>
+				</tr>
+				<tr>
+					<td>Enabled:</td>
+					<td>
+						<input name="enabled" type="radio" value="true" checked> <label>true</label> 
+						<input name="enabled" type="radio" value="false" > <label>false</label> 
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="dialog_button_div01">
+			<a id="okAddNode" class="button02">OK</a> 
+			<a id="cancelAddNode" class="button02b">Cancel</a>
+		</div>
+	</form>
+	</dialog>
+
+	<dialog id="changeNodeDialog">
+	<div class="dialog_title_div01">Change Node</div>
+	<form id="update_form" name="update_form_name" method="post" action="<%=contextRoot + "/admin/dfsupdate"%>">
+		<input type="hidden" id="node__elementId" name="elementId" >
+		<div class="dialog_main_div01">
+			<table class="dialog_table01">
+				<tr>
+					<td>Name:</td>
+					<td><input id="node__name" type="text" name="name"></td>
+				</tr>
+				<tr>
+					<td width="25%">DFS Id:</td>
+					<td width="75%"><input type="text" id="node__dfs_id" name="dfs_id" class="input01" size="35"></td>
+				</tr>
+				<tr>
+					<td>Enabled:</td>
+					<td>
+						<input name="enabled" type="radio" value="true"> <label>true</label> 
+						<input name="enabled" type="radio" value="false"> <label>false</label> 
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="dialog_button_div01">
+			<a id="okChangeNode" class="button02">OK</a> 
+			<a id="cancelChangeNode" class="button02b">Cancel</a>
+		</div>
+	</form>
+	</dialog>
+
+	<dialog id="deleteNodesDialog">
+	<form id="delete_form" method="post" action="<%=contextRoot + "/admin/dfsdelete"%>">
+		<div class="dialog_title_div01">Delete Nodes</div>
+		<div class="dialog_main_div01" id="deleteNodesDialogMessageDiv">Are you sure you want to delete selected nodes?</div>
+		<div class="dialog_button_div01">
+			<a id="okDeleteNodes" class="button02">OK</a>
+			<a id="cancelDeleteNodes" class="button02b">Cancel</a>
+		</div>
+	</form>
+	</dialog>
+
+	<dialog id="nodeActionDialog">
+		<div class="dialog_title_div01" id="nodeActionDialogTitleDiv" >{Action} Nodes</div>
+		<div class="dialog_main_div01" id="nodeActionDialogMessageDiv">Are you sure you want to {action} the nodes?</div>
+		<div class="dialog_button_div01">
+			<a id="okNodeAction" class="button02">OK</a> 
+			<a id="cancelNodeAction" class="button02b">Cancel</a>
+		</div>
+	</dialog>
+
 </body>
 </html>

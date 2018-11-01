@@ -10,13 +10,21 @@ import org.orbit.service.servlet.impl.ResourceMetadataImpl;
 import org.orbit.service.servlet.impl.ServletMetadataImpl;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.webconsole.WebConstants;
+import org.orbit.substance.webconsole.servlet.admin.dfs.DfsNodeActionServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfs.DfsNodeAddServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfs.DfsNodeDeleteServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfs.DfsNodeListServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfs.DfsNodeUpdateServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeActionServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeAddServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeDeleteServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeListServlet;
+import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeUpdateServlet;
 import org.orbit.substance.webconsole.servlet.dfs.CreateDirectoryServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileDeleteServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileDownloadServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileListServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileUploadServlet;
-import org.orbit.substance.webconsole.servlet.dfsadmin.DfsListServlet;
-import org.orbit.substance.webconsole.servlet.dfsadmin.DfsVolumeListServlet;
 import org.osgi.framework.BundleContext;
 
 public class WebApplication extends PlatformWebApplication {
@@ -73,11 +81,23 @@ public class WebApplication extends PlatformWebApplication {
 		addServlet(new ServletMetadataImpl("/filedelete", new FileDeleteServlet(), dicts));
 
 		// Admin
-		addServlet(new ServletMetadataImpl("/admin/dfslist", new DfsListServlet(), dicts));
-		addServlet(new ServletMetadataImpl("/admin/dfsvolumelist", new DfsVolumeListServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfslist", new DfsNodeListServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsadd", new DfsNodeAddServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsupdate", new DfsNodeUpdateServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsdelete", new DfsNodeDeleteServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsaction", new DfsNodeActionServlet(), dicts));
+
+		addServlet(new ServletMetadataImpl("/admin/dfsvolumelist", new DfsVolumeNodeListServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsvolumeadd", new DfsVolumeNodeAddServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsvolumeupdate", new DfsVolumeNodeUpdateServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsvolumedelete", new DfsVolumeNodeDeleteServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/admin/dfsvolumeaction", new DfsVolumeNodeActionServlet(), dicts));
 
 		// Add JSPs
 		addJSP(new JspMetadataImpl(bundleContext.getBundle(), "/views", "/WEB-INF", dicts));
 	}
 
 }
+
+// addServlet(new ServletMetadataImpl("/admin/dfslist", new DfsListServlet(), dicts));
+// addServlet(new ServletMetadataImpl("/admin/dfsvolumelist", new DfsVolumeListServlet(), dicts));

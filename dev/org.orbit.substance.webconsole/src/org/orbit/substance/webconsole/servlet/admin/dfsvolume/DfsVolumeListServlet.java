@@ -1,4 +1,4 @@
-package org.orbit.substance.webconsole.servlet.dfsadmin;
+package org.orbit.substance.webconsole.servlet.admin.dfsvolume;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -136,7 +136,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 		request.setAttribute("dfsVolumeIdToServiceMetadata", dfsVolumeIdToServiceMetadata);
 		request.setAttribute("dfsVolumeIdToPlatformMetadata", dfsVolumeIdToPlatformMetadata);
 
-		request.getRequestDispatcher(contextRoot + "/views/admin_dfs_volume_list.jsp").forward(request, response);
+		request.getRequestDispatcher(contextRoot + "/views/admin_dfs_volume_list_v0.jsp").forward(request, response);
 	}
 
 }

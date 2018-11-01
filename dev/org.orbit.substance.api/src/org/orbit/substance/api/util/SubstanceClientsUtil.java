@@ -19,6 +19,7 @@ import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
+import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.model.dfs.FileContentAccess;
 import org.orbit.substance.model.dfs.FilePart;
@@ -41,6 +42,23 @@ public class SubstanceClientsUtil {
 
 	public static class Dfs {
 		public FileMetadata[] EMPTY_FILES = new FileMetadata[0];
+
+		/**
+		 * 
+		 * @param clientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @return
+		 * @throws ClientException
+		 */
+		public DfsServiceMetadata getServiceMetadata(DfsClientResolver clientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
+			DfsServiceMetadata metadata = null;
+			DfsClient dfsClient = clientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsClient != null) {
+				metadata = dfsClient.getMetadata();
+			}
+			return metadata;
+		}
 
 		/**
 		 * 
@@ -431,6 +449,23 @@ public class SubstanceClientsUtil {
 	public static class DfsVolume {
 		public static final DataBlockMetadata[] EMPTY_DATA_BLOCKS = new DataBlockMetadata[0];
 		public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+
+		/**
+		 * 
+		 * @param clientResolver
+		 * @param dfsServiceUrl
+		 * @param accessToken
+		 * @return
+		 * @throws ClientException
+		 */
+		public DfsVolumeServiceMetadata getServiceMetadata(DfsVolumeClientResolver clientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
+			DfsVolumeServiceMetadata metadata = null;
+			DfsVolumeClient dfsVolumeClient = clientResolver.resolve(dfsServiceUrl, accessToken);
+			if (dfsVolumeClient != null) {
+				metadata = dfsVolumeClient.getMetadata();
+			}
+			return metadata;
+		}
 
 		/**
 		 * 

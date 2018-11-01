@@ -1,4 +1,4 @@
-package org.orbit.substance.webconsole.servlet.dfsadmin;
+package org.orbit.substance.webconsole.servlet.admin.dfs;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class DfsListServlet extends HttpServlet {
 		request.setAttribute("dfsIdToServiceMetadata", dfsIdToServiceMetadata);
 		request.setAttribute("dfsIdToPlatformMetadata", dfsIdToPlatformMetadata);
 
-		request.getRequestDispatcher(contextRoot + "/views/admin_dfs_list.jsp").forward(request, response);
+		request.getRequestDispatcher(contextRoot + "/views/admin_dfs_list_v0.jsp").forward(request, response);
 	}
 
 }
