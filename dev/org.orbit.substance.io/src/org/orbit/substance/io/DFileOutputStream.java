@@ -9,7 +9,7 @@ import java.io.PipedOutputStream;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.origin.common.io.IOUtil;
 
 /**
@@ -62,8 +62,8 @@ public class DFileOutputStream extends PipedOutputStream {
 					@Override
 					public void run() {
 						try {
-							FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, size);
-							SubstanceClientsUtil.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pipeInput);
+							FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, size);
+							SubstanceClientsHelper.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pipeInput);
 
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -86,10 +86,10 @@ public class DFileOutputStream extends PipedOutputStream {
 							byte[] bytes = byteOutput.toByteArray();
 
 							long length = bytes.length;
-							FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, length);
+							FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, length);
 
 							byteInput = new ByteArrayInputStream(bytes);
-							SubstanceClientsUtil.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, byteInput);
+							SubstanceClientsHelper.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, byteInput);
 
 						} catch (Exception e) {
 							e.printStackTrace();

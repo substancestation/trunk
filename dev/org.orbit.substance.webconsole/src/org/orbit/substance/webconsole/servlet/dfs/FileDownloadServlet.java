@@ -19,7 +19,7 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
@@ -62,7 +62,7 @@ public class FileDownloadServlet extends HttpServlet {
 			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
 			DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
 
-			FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
 			if (fileMetadata == null) {
 				message = MessageHelper.INSTANCE.add(message, "File is not found.");
 
@@ -98,7 +98,7 @@ public class FileDownloadServlet extends HttpServlet {
 
 			output = new FileOutputStream(localFile);
 
-			SubstanceClientsUtil.DfsVolume.download(dfsVolumeClientResolver, accessToken, fileMetadata, output);
+			SubstanceClientsHelper.DfsVolume.download(dfsVolumeClientResolver, accessToken, fileMetadata, output);
 
 			if (localFile.exists()) {
 				String fileType = MimeTypes.get().getByFileName(localFile.getName());

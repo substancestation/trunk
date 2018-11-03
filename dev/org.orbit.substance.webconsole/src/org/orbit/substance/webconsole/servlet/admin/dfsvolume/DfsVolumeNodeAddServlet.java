@@ -14,7 +14,7 @@ import org.orbit.infra.io.IConfigElement;
 import org.orbit.infra.io.IConfigRegistry;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
-import org.orbit.substance.io.util.DfsHelper;
+import org.orbit.substance.io.util.DfsNodeConfigHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
@@ -49,9 +49,9 @@ public class DfsVolumeNodeAddServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				IConfigRegistry cfgReg = DfsHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
+				IConfigRegistry cfgReg = DfsNodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
-					IConfigElement dfsConfigElement = DfsHelper.INSTANCE.getDfsConfigElement(cfgReg, dfsId);
+					IConfigElement dfsConfigElement = DfsNodeConfigHelper.INSTANCE.getDfsConfigElement(cfgReg, dfsId);
 					if (dfsConfigElement != null) {
 						Map<String, Object> attributes = new HashMap<String, Object>();
 						attributes.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID, dfsVolumeId);
@@ -62,7 +62,7 @@ public class DfsVolumeNodeAddServlet extends HttpServlet {
 						message = MessageHelper.INSTANCE.add(message, "Config element for DFS node (dfsId: '" + dfsId + "') cannot be found.");
 					}
 				} else {
-					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + DfsHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
+					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + DfsNodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
 				}
 
 			} catch (Exception e) {

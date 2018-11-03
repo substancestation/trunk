@@ -33,9 +33,9 @@ import org.origin.common.rest.model.ServiceMetadataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SubstanceClientsUtil {
+public class SubstanceClientsHelper {
 
-	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClientsUtil.class);
+	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClientsHelper.class);
 
 	public static Dfs Dfs = new Dfs();
 	public static DfsVolume DfsVolume = new DfsVolume();

@@ -13,7 +13,7 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
@@ -63,12 +63,12 @@ public class FileDeleteServlet extends HttpServlet {
 				// message = MessageHelper.INSTANCE.add(message, "File doesn't exist. fileId='" + fileId + "'.");
 				// continue;
 				// }
-				if (!SubstanceClientsUtil.Dfs.fileExists(dfsClientResolver, dfsServiceUrl, accessToken, fileId)) {
+				if (!SubstanceClientsHelper.Dfs.fileExists(dfsClientResolver, dfsServiceUrl, accessToken, fileId)) {
 					message = MessageHelper.INSTANCE.add(message, "File doesn't exist. fileId='" + fileId + "'.");
 					continue;
 				}
 
-				boolean isDeleted = SubstanceClientsUtil.Dfs.deleteFile(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileId);
+				boolean isDeleted = SubstanceClientsHelper.Dfs.deleteFile(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileId);
 				if (isDeleted) {
 					hasSucceed = true;
 				} else {

@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
-import org.orbit.infra.api.util.InfraClientsUtil;
+import org.orbit.infra.api.util.InfraClientsHelper;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.origin.common.service.WebServiceAwareHelper;
 
 public class DfsClientResolverImpl implements DfsClientResolver {
@@ -34,7 +34,7 @@ public class DfsClientResolverImpl implements DfsClientResolver {
 			throw new IllegalArgumentException("dfsServiceUrl is empty.");
 		}
 
-		DfsClient dfsClient = SubstanceClientsUtil.Dfs.getDfsClient(dfsServiceUrl, accessToken);
+		DfsClient dfsClient = SubstanceClientsHelper.Dfs.getDfsClient(dfsServiceUrl, accessToken);
 		return dfsClient;
 	}
 
@@ -45,7 +45,7 @@ public class DfsClientResolverImpl implements DfsClientResolver {
 		}
 
 		IndexItem dfsIndexItem = null;
-		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(this.indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(this.indexServiceUrl, accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);

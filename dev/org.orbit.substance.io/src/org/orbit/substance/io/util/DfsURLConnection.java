@@ -33,7 +33,7 @@ public class DfsURLConnection extends URLConnection {
 
 	@Override
 	public void connect() throws IOException {
-		this.file = DfsUtil.getFile(this.url);
+		this.file = DfsIndexItemHelper.getFile(this.url);
 		this.isConnected = (this.file != null) ? true : false;
 	}
 

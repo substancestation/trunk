@@ -13,7 +13,7 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
@@ -54,12 +54,12 @@ public class FileListServlet extends HttpServlet {
 			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
 
 			if (parentFileId == null || parentFileId.isEmpty() || "-1".equals(parentFileId)) {
-				files = SubstanceClientsUtil.Dfs.listRoots(dfsClientResolver, dfsServiceUrl, accessToken);
+				files = SubstanceClientsHelper.Dfs.listRoots(dfsClientResolver, dfsServiceUrl, accessToken);
 
 			} else {
-				files = SubstanceClientsUtil.Dfs.listFiles(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
+				files = SubstanceClientsHelper.Dfs.listFiles(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
 
-				FileMetadata parentFile = SubstanceClientsUtil.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
+				FileMetadata parentFile = SubstanceClientsHelper.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
 				if (parentFile != null) {
 					grandParentFileId = parentFile.getParentFileId();
 				}
@@ -70,7 +70,7 @@ public class FileListServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (files == null) {
-			files = SubstanceClientsUtil.Dfs.EMPTY_FILES;
+			files = SubstanceClientsHelper.Dfs.EMPTY_FILES;
 		}
 
 		// ---------------------------------------------------------------

@@ -13,7 +13,7 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.rest.client.ClientException;
@@ -51,7 +51,7 @@ public class CreateDirectoryServlet extends HttpServlet {
 
 				DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
 
-				FileMetadata fileMetadata = SubstanceClientsUtil.Dfs.createDirectory(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, fileName);
+				FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.createDirectory(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, fileName);
 				if (fileMetadata != null) {
 					succeed = true;
 				}

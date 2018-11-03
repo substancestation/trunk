@@ -18,10 +18,10 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
-import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
-import org.orbit.substance.io.util.DfsHelper;
-import org.orbit.substance.io.util.DfsUtil;
+import org.orbit.substance.io.util.DfsNodeConfigHelper;
+import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 
@@ -53,12 +53,12 @@ public class DfsNodeListServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			IConfigRegistry cfgReg = DfsHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
+			IConfigRegistry cfgReg = DfsNodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
 			if (cfgReg != null) {
 				configElements = cfgReg.listRootConfigElements();
 
 				if (configElements != null) {
-					Map<String, IndexItem> dfsIndexItemMap = DfsUtil.getDfsIndexItemsMap(indexServiceUrl, accessToken);
+					Map<String, IndexItem> dfsIndexItemMap = DfsIndexItemHelper.getDfsIndexItemsMap(indexServiceUrl, accessToken);
 
 					DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
 
@@ -73,7 +73,7 @@ public class DfsNodeListServlet extends HttpServlet {
 							if (isOnline) {
 								try {
 									String dfsServiceUrl = (String) dfsndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__BASE_URL);
-									DfsServiceMetadata metadata = SubstanceClientsUtil.Dfs.getServiceMetadata(dfsClientResolver, dfsServiceUrl, accessToken);
+									DfsServiceMetadata metadata = SubstanceClientsHelper.Dfs.getServiceMetadata(dfsClientResolver, dfsServiceUrl, accessToken);
 									if (metadata != null) {
 										configElement.adapt(DfsServiceMetadata.class, metadata);
 									}
@@ -87,7 +87,7 @@ public class DfsNodeListServlet extends HttpServlet {
 				}
 
 			} else {
-				message = MessageHelper.INSTANCE.add(message, "Config registry for '" + DfsHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
+				message = MessageHelper.INSTANCE.add(message, "Config registry for '" + DfsNodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
 			}
 
 		} catch (Exception e) {

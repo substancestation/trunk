@@ -24,7 +24,7 @@ import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
-import org.orbit.substance.io.util.DfsUtil;
+import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.io.util.OrbitClientHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.service.WebServiceAwareHelper;
@@ -61,7 +61,7 @@ public class DfsListServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			dfsIndexItems = DfsUtil.getDfsIndexItems(indexServiceUrl, accessToken);
+			dfsIndexItems = DfsIndexItemHelper.getDfsIndexItems(indexServiceUrl, accessToken);
 
 			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
 			for (IndexItem dfsIndexItem : dfsIndexItems) {
