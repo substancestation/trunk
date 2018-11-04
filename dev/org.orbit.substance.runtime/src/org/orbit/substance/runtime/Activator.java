@@ -1,5 +1,7 @@
 package org.orbit.substance.runtime;
 
+import org.orbit.substance.runtime.util.DfsConfigPropertiesHandler;
+import org.orbit.substance.runtime.util.DfsVolumeConfigPropertiesHandler;
 import org.origin.common.osgi.AbstractBundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -22,6 +24,10 @@ public class Activator extends AbstractBundleActivator {
 
 		Activator.instance = this;
 
+		// Load config properties
+		DfsConfigPropertiesHandler.getInstance().start(bundleContext);
+		DfsVolumeConfigPropertiesHandler.getInstance().start(bundleContext);
+
 		// Register extensions
 		Extensions.INSTANCE.start(bundleContext);
 
@@ -38,6 +44,10 @@ public class Activator extends AbstractBundleActivator {
 
 		// Unregister extensions
 		Extensions.INSTANCE.stop(bundleContext);
+
+		// Unload config properties
+		DfsConfigPropertiesHandler.getInstance().stop(bundleContext);
+		DfsVolumeConfigPropertiesHandler.getInstance().stop(bundleContext);
 
 		Activator.instance = null;
 		super.stop(bundleContext);

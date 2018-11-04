@@ -17,6 +17,9 @@ import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
+import org.orbit.substance.runtime.util.DfsVolumeConfigPropertiesHandler;
+import org.origin.common.event.PropertyChangeEvent;
+import org.origin.common.event.PropertyChangeListener;
 import org.origin.common.io.IOUtil;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
@@ -25,57 +28,65 @@ import org.origin.common.rest.model.StatusDTO;
 import org.origin.common.rest.server.ServerException;
 import org.origin.common.rest.util.LifecycleAware;
 import org.origin.common.util.DiskSpaceUnit;
-import org.origin.common.util.PropertyUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
+public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, PropertyChangeListener {
 
 	protected Map<Object, Object> initProperties;
-	protected Map<Object, Object> properties = new HashMap<Object, Object>();
 	protected Properties databaseProperties;
 	protected String database;
 	protected ServiceRegistration<?> serviceRegistry;
 	protected ServiceEditPolicies editPolicies;
+	// protected Map<Object, Object> properties = new HashMap<Object, Object>();
 
 	/**
 	 * 
 	 * @param initProperties
 	 */
 	public DfsVolumeServiceImpl(Map<Object, Object> initProperties) {
-		this.initProperties = initProperties;
+		this.initProperties = (initProperties != null) ? initProperties : new HashMap<Object, Object>();
 		this.editPolicies = new ServiceEditPoliciesImpl(DfsVolumeService.class, this);
 	}
 
 	@Override
+	public Map<Object, Object> getInitProperties() {
+		return this.initProperties;
+	}
+
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		Map<Object, Object> properties = new Hashtable<Object, Object>();
-		if (this.initProperties != null) {
-			properties.putAll(this.initProperties);
-		}
+		DfsVolumeConfigPropertiesHandler.getInstance().addPropertyChangeListener(this);
 
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_HOST_URL);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__DFS_ID);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__ID);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__NAME);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__HOST_URL);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_DRIVER);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_URL);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
-		PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
+		updateConnectionProperties();
 
-		updateProperties(properties);
-
-		String database = null;
-		try {
-			database = DatabaseUtil.getDatabase(this.databaseProperties);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		assert (database != null) : "database name cannot be retrieved.";
+		// Map<Object, Object> properties = new Hashtable<Object, Object>();
+		// if (this.initProperties != null) {
+		// properties.putAll(this.initProperties);
+		// }
+		//
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_HOST_URL);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__DFS_ID);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__ID);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__NAME);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__HOST_URL);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_DRIVER);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_URL);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
+		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
+		//
+		// updateProperties(properties);
+		//
+		// String database = null;
+		// try {
+		// database = DatabaseUtil.getDatabase(this.databaseProperties);
+		// } catch (SQLException e) {
+		// e.printStackTrace();
+		// }
+		// assert (database != null) : "database name cannot be retrieved.";
 
 		// this.categoryTableHandler = AppCategoryTableHandler.INSTANCE;
 		// this.appTableHandler = new AppMetadataTableHandler(database);
@@ -91,112 +102,143 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			this.serviceRegistry.unregister();
 			this.serviceRegistry = null;
 		}
+
+		DfsVolumeConfigPropertiesHandler.getInstance().removePropertyChangeListener(this);
 	}
 
+	/** PropertyChangeListener */
 	@Override
-	public Map<Object, Object> getProperties() {
-		return this.properties;
-	}
-
-	/**
-	 * 
-	 * @param configProps
-	 */
-	public synchronized void updateProperties(Map<Object, Object> configProps) {
-		if (configProps == null) {
-			configProps = new HashMap<Object, Object>();
-		}
-
-		String globalHostURL = (String) configProps.get(SubstanceConstants.ORBIT_HOST_URL);
-		String dfsId = (String) configProps.get(SubstanceConstants.DFS_VOLUME__DFS_ID);
-		String volumeId = (String) configProps.get(SubstanceConstants.DFS_VOLUME__ID);
-		String name = (String) configProps.get(SubstanceConstants.DFS_VOLUME__NAME);
-		String hostURL = (String) configProps.get(SubstanceConstants.DFS_VOLUME__HOST_URL);
-		String contextRoot = (String) configProps.get(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
-		String jdbcDriver = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER);
-		String jdbcURL = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_URL);
-		String jdbcUsername = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
-		String jdbcPassword = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
-		String volumeCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
-		String blockCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
-
-		boolean printProps = false;
-		if (printProps) {
-			System.out.println();
-			System.out.println("Config properties:");
-			System.out.println("-----------------------------------------------------");
-			System.out.println(SubstanceConstants.ORBIT_HOST_URL + " = " + globalHostURL);
-			System.out.println(SubstanceConstants.DFS_VOLUME__DFS_ID + " = " + dfsId);
-			System.out.println(SubstanceConstants.DFS_VOLUME__ID + " = " + volumeId);
-			System.out.println(SubstanceConstants.DFS_VOLUME__NAME + " = " + name);
-			System.out.println(SubstanceConstants.DFS_VOLUME__HOST_URL + " = " + hostURL);
-			System.out.println(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT + " = " + contextRoot);
-			System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER + " = " + jdbcDriver);
-			System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_URL + " = " + jdbcURL);
-			System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME + " = " + jdbcUsername);
-			System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD + " = " + jdbcPassword);
-			System.out.println(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB + " = " + volumeCapacity);
-			System.out.println(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB + " = " + blockCapacity);
-			System.out.println("-----------------------------------------------------");
-			System.out.println();
-		}
-
-		this.properties = configProps;
-		this.databaseProperties = getConnectionProperties(this.properties);
-		try {
-			this.database = DatabaseUtil.getDatabase(this.databaseProperties);
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public void notifyEvent(PropertyChangeEvent event) {
+		String eventName = event.getName();
+		if (SubstanceConstants.DFS_VOLUME__JDBC_DRIVER.equals(eventName) //
+				|| SubstanceConstants.DFS_VOLUME__JDBC_URL.equals(eventName) //
+				|| SubstanceConstants.DFS_VOLUME__JDBC_USERNAME.equals(eventName) //
+				|| SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD.equals(eventName)) {
+			updateConnectionProperties();
 		}
 	}
 
-	/**
-	 * 
-	 * @param props
-	 * @return
-	 */
-	protected synchronized Properties getConnectionProperties(Map<Object, Object> props) {
-		String driver = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER);
-		String url = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_URL);
-		String username = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
-		String password = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
-		return DatabaseUtil.getProperties(driver, url, username, password);
-	}
+	// @Override
+	// public Map<Object, Object> getProperties() {
+	// return this.properties;
+	// }
+	//
+	// /**
+	// *
+	// * @param configProps
+	// */
+	// public synchronized void updateProperties(Map<Object, Object> configProps) {
+	// if (configProps == null) {
+	// configProps = new HashMap<Object, Object>();
+	// }
+	//
+	// String globalHostURL = (String) configProps.get(SubstanceConstants.ORBIT_HOST_URL);
+	// String dfsId = (String) configProps.get(SubstanceConstants.DFS_VOLUME__DFS_ID);
+	// String volumeId = (String) configProps.get(SubstanceConstants.DFS_VOLUME__ID);
+	// String name = (String) configProps.get(SubstanceConstants.DFS_VOLUME__NAME);
+	// String hostURL = (String) configProps.get(SubstanceConstants.DFS_VOLUME__HOST_URL);
+	// String contextRoot = (String) configProps.get(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
+	// String jdbcDriver = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER);
+	// String jdbcURL = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_URL);
+	// String jdbcUsername = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
+	// String jdbcPassword = (String) configProps.get(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
+	// String volumeCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
+	// String blockCapacity = (String) configProps.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
+	//
+	// boolean printProps = false;
+	// if (printProps) {
+	// System.out.println();
+	// System.out.println("Config properties:");
+	// System.out.println("-----------------------------------------------------");
+	// System.out.println(SubstanceConstants.ORBIT_HOST_URL + " = " + globalHostURL);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__DFS_ID + " = " + dfsId);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__ID + " = " + volumeId);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__NAME + " = " + name);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__HOST_URL + " = " + hostURL);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT + " = " + contextRoot);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER + " = " + jdbcDriver);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_URL + " = " + jdbcURL);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME + " = " + jdbcUsername);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD + " = " + jdbcPassword);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB + " = " + volumeCapacity);
+	// System.out.println(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB + " = " + blockCapacity);
+	// System.out.println("-----------------------------------------------------");
+	// System.out.println();
+	// }
+	//
+	// this.properties = configProps;
+	// this.databaseProperties = getConnectionProperties(this.properties);
+	// try {
+	// this.database = DatabaseUtil.getDatabase(this.databaseProperties);
+	// } catch (SQLException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	//
+	// /**
+	// *
+	// * @param props
+	// * @return
+	// */
+	// protected synchronized Properties getConnectionProperties(Map<Object, Object> props) {
+	// String driver = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER);
+	// String url = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_URL);
+	// String username = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME);
+	// String password = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD);
+	// return DatabaseUtil.getProperties(driver, url, username, password);
+	// }
 
+	/** ConnectionAware */
 	@Override
 	public Connection getConnection() throws SQLException {
 		return DatabaseUtil.getConnection(this.databaseProperties);
+	}
+
+	protected synchronized void updateConnectionProperties() {
+		DfsVolumeConfigPropertiesHandler configPropertiesHandler = DfsVolumeConfigPropertiesHandler.getInstance();
+		String driver = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER, this.initProperties);
+		String url = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__JDBC_URL, this.initProperties);
+		String username = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME, this.initProperties);
+		String password = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__JDBC_PASSWORD, this.initProperties);
+
+		this.databaseProperties = DatabaseUtil.getProperties(driver, url, username, password);
+
+		String database = null;
+		try {
+			database = DatabaseUtil.getDatabase(this.databaseProperties);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		assert (database != null) : "database name cannot be retrieved.";
+		this.database = database;
 	}
 
 	protected String getDatabase() {
 		return this.database;
 	}
 
-	@Override
-	public String getDfsId() {
-		String dfsId = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__DFS_ID);
-		return dfsId;
-	}
-
-	@Override
-	public String getDfsVolumeId() {
-		String dfsVolumeId = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__ID);
-		return dfsVolumeId;
-	}
-
+	/** WebServiceAware */
 	@Override
 	public String getName() {
-		String name = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__NAME);
-		return name;
+		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__NAME);
+		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__NAME, this.initProperties);
 	}
 
 	@Override
 	public String getHostURL() {
-		String hostURL = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__HOST_URL);
+		// String hostURL = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__HOST_URL);
+		// if (hostURL != null) {
+		// return hostURL;
+		// }
+		// String globalHostURL = (String) this.properties.get(SubstanceConstants.ORBIT_HOST_URL);
+		// if (globalHostURL != null) {
+		// return globalHostURL;
+		// }
+		String hostURL = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__HOST_URL, this.initProperties);
 		if (hostURL != null) {
 			return hostURL;
 		}
-		String globalHostURL = (String) this.properties.get(SubstanceConstants.ORBIT_HOST_URL);
+		String globalHostURL = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.ORBIT_HOST_URL, this.initProperties);
 		if (globalHostURL != null) {
 			return globalHostURL;
 		}
@@ -205,31 +247,27 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 
 	@Override
 	public String getContextRoot() {
-		String contextRoot = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
-		return contextRoot;
+		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
+		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT, this.initProperties);
 	}
 
+	/** EditPoliciesAware */
 	@Override
 	public ServiceEditPolicies getEditPolicies() {
 		return this.editPolicies;
 	}
 
-	/**
-	 * 
-	 * @param e
-	 * @throws ServerException
-	 */
-	protected void handleSQLException(SQLException e) throws ServerException {
-		throw new ServerException(StatusDTO.RESP_500, e.getMessage(), e);
+	/** DfsVolumeService */
+	@Override
+	public String getDfsId() {
+		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__DFS_ID);
+		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__DFS_ID, this.initProperties);
 	}
 
-	/**
-	 * 
-	 * @param e
-	 * @throws ServerException
-	 */
-	protected void handleIOException(IOException e) throws ServerException {
-		throw new ServerException(StatusDTO.RESP_500, e.getMessage(), e);
+	@Override
+	public String getDfsVolumeId() {
+		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__ID);
+		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__ID, this.initProperties);
 	}
 
 	// ----------------------------------------------------------------------
@@ -239,7 +277,8 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	public long getVolumeCapacity() {
 		long volumeCapacityBytes = 0;
 		try {
-			String gbLiteral = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
+			// String gbLiteral = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
+			String gbLiteral = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB, this.initProperties);
 			if (gbLiteral != null && !gbLiteral.isEmpty()) {
 				int gbValue = Integer.parseInt(gbLiteral);
 				if (gbValue > 0) {
@@ -283,7 +322,8 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 	public long getDefaultBlockCapacity() {
 		long capacityBytes = -1;
 		try {
-			String capacityMBStr = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
+			// String capacityMBStr = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
+			String capacityMBStr = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB, this.initProperties);
 			if (capacityMBStr != null && !capacityMBStr.isEmpty()) {
 				int capacityMB = Integer.parseInt(capacityMBStr);
 				if (capacityMB > 0) {
@@ -906,6 +946,24 @@ public class DfsVolumeServiceImpl implements DfsVolumeService, LifecycleAware {
 			DatabaseUtil.closeQuietly(conn, true);
 		}
 		return isUpdated;
+	}
+
+	/**
+	 * 
+	 * @param e
+	 * @throws ServerException
+	 */
+	protected void handleSQLException(SQLException e) throws ServerException {
+		throw new ServerException(StatusDTO.RESP_500, e.getMessage(), e);
+	}
+
+	/**
+	 * 
+	 * @param e
+	 * @throws ServerException
+	 */
+	protected void handleIOException(IOException e) throws ServerException {
+		throw new ServerException(StatusDTO.RESP_500, e.getMessage(), e);
 	}
 
 }

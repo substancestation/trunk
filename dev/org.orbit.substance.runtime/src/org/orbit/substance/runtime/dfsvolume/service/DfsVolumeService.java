@@ -3,15 +3,17 @@ package org.orbit.substance.runtime.dfsvolume.service;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.origin.common.jdbc.ConnectionAware;
 import org.origin.common.rest.editpolicy.EditPoliciesAware;
 import org.origin.common.rest.server.ServerException;
-import org.origin.common.service.PropertiesAware;
 import org.origin.common.service.WebServiceAware;
 
-public interface DfsVolumeService extends WebServiceAware, PropertiesAware, ConnectionAware, EditPoliciesAware {
+public interface DfsVolumeService extends ConnectionAware, WebServiceAware, EditPoliciesAware {
+
+	Map<Object, Object> getInitProperties();
 
 	// ----------------------------------------------------------------------
 	// Methods about service

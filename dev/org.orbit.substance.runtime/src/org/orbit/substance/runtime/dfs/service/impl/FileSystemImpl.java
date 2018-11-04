@@ -25,9 +25,10 @@ import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.util.SubstanceComparators.DfsVolumeClientComparatorByFreeSpace;
+import org.orbit.substance.runtime.util.DfsConfigPropertiesHandler;
 import org.orbit.substance.runtime.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.SubstanceComparators.DfsVolumeClientComparatorByFreeSpace;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.annotation.Secured;
@@ -682,7 +683,8 @@ public class FileSystemImpl implements FileSystem {
 
 		String dfsId = getDfsId();
 		String accountId = fileMetadata.getAccountId();
-		String indexServiceUrl = (String) this.dfsService.getProperties().get(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		// String indexServiceUrl = (String) this.dfsService.getProperties().get(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		String indexServiceUrl = DfsConfigPropertiesHandler.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL, this.dfsService.getInitProperties());
 
 		// 1. Get a dfs volumes of the dfs.
 		// Note:
