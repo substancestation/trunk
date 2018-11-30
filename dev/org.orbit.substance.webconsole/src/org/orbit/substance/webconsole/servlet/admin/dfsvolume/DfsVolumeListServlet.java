@@ -23,9 +23,9 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
+import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.io.util.OrbitClientHelper;
-import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
@@ -89,7 +89,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 						}
 
 						try {
-							String platformId = (String) dfsVolumeIndexItem.getProperties().get(PlatformConstants.PLATFORM_ID);
+							String platformId = (String) dfsVolumeIndexItem.getProperties().get(PlatformConstants.IDX_PROP__PLATFORM_ID);
 							if (platformId != null) {
 								IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(indexServiceUrl, accessToken, platformId);
 								if (platformIndexItem != null) {

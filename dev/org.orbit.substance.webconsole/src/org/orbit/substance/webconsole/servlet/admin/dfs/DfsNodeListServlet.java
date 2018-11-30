@@ -20,8 +20,8 @@ import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsClientResolverImpl;
-import org.orbit.substance.io.util.DfsNodeConfigHelper;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
+import org.orbit.substance.io.util.DfsNodeConfigHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 
@@ -72,7 +72,7 @@ public class DfsNodeListServlet extends HttpServlet {
 							boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsndexItem);
 							if (isOnline) {
 								try {
-									String dfsServiceUrl = (String) dfsndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__BASE_URL);
+									String dfsServiceUrl = (String) dfsndexItem.getProperties().get(InfraConstants.SERVICE__BASE_URL);
 									DfsServiceMetadata metadata = SubstanceClientsHelper.Dfs.getServiceMetadata(dfsClientResolver, dfsServiceUrl, accessToken);
 									if (metadata != null) {
 										configElement.adapt(DfsServiceMetadata.class, metadata);

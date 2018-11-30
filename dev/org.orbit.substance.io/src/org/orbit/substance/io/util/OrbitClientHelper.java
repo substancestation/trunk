@@ -2,6 +2,7 @@ package org.orbit.substance.io.util;
 
 import java.io.IOException;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.util.InfraClientsHelper;
@@ -23,8 +24,8 @@ public class OrbitClientHelper {
 		PlatformClient platformClient = null;
 		if (indexItem != null) {
 			String platformUrl = null;
-			String platformHostUrl = (String) indexItem.getProperties().get(PlatformConstants.PLATFORM_HOST_URL);
-			String platformContextRoot = (String) indexItem.getProperties().get(PlatformConstants.PLATFORM_CONTEXT_ROOT);
+			String platformHostUrl = (String) indexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
+			String platformContextRoot = (String) indexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
 
 			if (platformHostUrl != null && platformContextRoot != null) {
 				platformUrl = platformHostUrl;

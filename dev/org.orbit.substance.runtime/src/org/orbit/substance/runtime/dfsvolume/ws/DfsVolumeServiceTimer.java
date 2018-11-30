@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
@@ -55,13 +56,13 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		Map<String, Object> props = new Hashtable<String, Object>();
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID, dfsId);
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID, dfsVolumeId);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__NAME, name);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL, hostURL);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT, contextRoot);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BASE_URL, url);
-		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
+		props.put(InfraConstants.SERVICE__NAME, name);
+		props.put(InfraConstants.SERVICE__HOST_URL, hostURL);
+		props.put(InfraConstants.SERVICE__CONTEXT_ROOT, contextRoot);
+		props.put(InfraConstants.SERVICE__BASE_URL, url);
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__VOLUME_CAPACITY, volumeCapacityBytes);
 		// props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY, blockCapacityBytes);
+		props.put(InfraConstants.SERVICE__LAST_HEARTBEAT_TIME, now);
 
 		return indexProvider.addIndexItem(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE, name, props);
 	}
@@ -83,13 +84,13 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		Map<String, Object> props = new Hashtable<String, Object>();
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID, dfsId);
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID, dfsVolumeId);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__NAME, name);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL, hostURL);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT, contextRoot);
-		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BASE_URL, url);
+		props.put(InfraConstants.SERVICE__NAME, name);
+		props.put(InfraConstants.SERVICE__HOST_URL, hostURL);
+		props.put(InfraConstants.SERVICE__CONTEXT_ROOT, contextRoot);
+		props.put(InfraConstants.SERVICE__BASE_URL, url);
 		props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__VOLUME_CAPACITY, volumeCapacityBytes);
 		// props.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__BLOCK_CAPACITY, blockCapacityBytes);
-		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
+		props.put(InfraConstants.SERVICE__LAST_HEARTBEAT_TIME, now);
 
 		indexProvider.setProperties(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, indexItemId, props);
 	}

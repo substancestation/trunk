@@ -3,6 +3,7 @@ package org.orbit.substance.io.util;
 import java.io.IOException;
 import java.util.List;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.util.InfraClientsHelper;
@@ -57,8 +58,8 @@ public class DfsClientResolverImpl implements DfsClientResolver {
 
 		String serviceURL = null;
 		if (dfsIndexItem != null) {
-			String hostURL = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__HOST_URL);
-			String contextRoot = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT);
+			String hostURL = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
+			String contextRoot = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
 			serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
 		}
 		return serviceURL;

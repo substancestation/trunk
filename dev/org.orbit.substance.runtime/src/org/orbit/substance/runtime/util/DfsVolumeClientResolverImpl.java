@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.util.InfraClientsHelper;
@@ -64,8 +65,8 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 
 		String serviceURL = null;
 		if (dfsVolumeIndexItem != null) {
-			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
-			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
+			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
+			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
 			serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
 		}
 		return serviceURL;
@@ -95,8 +96,8 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 
 		for (IndexItem dfsVolumeIndexItem : dfsVolumesIndexItems) {
 			// boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
-			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
-			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
+			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
+			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
 
 			String serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
 			if (serviceURL != null) {

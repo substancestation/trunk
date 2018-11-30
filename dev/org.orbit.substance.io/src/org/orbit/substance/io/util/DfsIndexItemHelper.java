@@ -156,8 +156,8 @@ public class DfsIndexItemHelper {
 	public static String getDfsServiceUrl(IndexItem dfsIndexItem) {
 		String dfsServiceUrl = null;
 		if (dfsIndexItem != null) {
-			String hostURL = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__HOST_URL);
-			String contextRoot = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT);
+			String hostURL = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
+			String contextRoot = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
 			if (hostURL != null && contextRoot != null) {
 				dfsServiceUrl = hostURL;
 				if (!hostURL.endsWith("/") && !contextRoot.startsWith("/")) {

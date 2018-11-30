@@ -19,8 +19,8 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.api.util.SubstanceClientsHelper;
-import org.orbit.substance.io.util.DfsNodeConfigHelper;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
+import org.orbit.substance.io.util.DfsNodeConfigHelper;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
@@ -88,7 +88,7 @@ public class DfsVolumeNodeListServlet extends HttpServlet {
 							boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
 							if (isOnline) {
 								try {
-									String dfsVolumeServiceUrl = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__BASE_URL);
+									String dfsVolumeServiceUrl = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__BASE_URL);
 									DfsVolumeServiceMetadata metadata = SubstanceClientsHelper.DfsVolume.getServiceMetadata(clientResolver, dfsVolumeServiceUrl, accessToken);
 									if (metadata != null) {
 										configElement.adapt(DfsVolumeServiceMetadata.class, metadata);

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
@@ -51,11 +52,11 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 
 		Map<String, Object> props = new Hashtable<String, Object>();
 		props.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
-		props.put(SubstanceConstants.IDX_PROP__DFS__NAME, name);
-		props.put(SubstanceConstants.IDX_PROP__DFS__HOST_URL, hostURL);
-		props.put(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT, contextRoot);
-		props.put(SubstanceConstants.IDX_PROP__DFS__BASE_URL, url);
-		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
+		props.put(InfraConstants.SERVICE__NAME, name);
+		props.put(InfraConstants.SERVICE__HOST_URL, hostURL);
+		props.put(InfraConstants.SERVICE__CONTEXT_ROOT, contextRoot);
+		props.put(InfraConstants.SERVICE__BASE_URL, url);
+		props.put(InfraConstants.SERVICE__LAST_HEARTBEAT_TIME, now);
 
 		return indexProvider.addIndexItem(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE, name, props);
 	}
@@ -73,11 +74,11 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		Integer indexItemId = indexItem.getIndexItemId();
 		Map<String, Object> props = new Hashtable<String, Object>();
 		props.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
-		props.put(SubstanceConstants.IDX_PROP__DFS__NAME, name);
-		props.put(SubstanceConstants.IDX_PROP__DFS__HOST_URL, hostURL);
-		props.put(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT, contextRoot);
-		props.put(SubstanceConstants.IDX_PROP__DFS__BASE_URL, url);
-		props.put(SubstanceConstants.IDX_PROP__LAST_HEARTBEAT_TIME, now);
+		props.put(InfraConstants.SERVICE__NAME, name);
+		props.put(InfraConstants.SERVICE__HOST_URL, hostURL);
+		props.put(InfraConstants.SERVICE__CONTEXT_ROOT, contextRoot);
+		props.put(InfraConstants.SERVICE__BASE_URL, url);
+		props.put(InfraConstants.SERVICE__LAST_HEARTBEAT_TIME, now);
 
 		indexProvider.setProperties(SubstanceConstants.IDX__DFS__INDEXER_ID, indexItemId, props);
 	}
