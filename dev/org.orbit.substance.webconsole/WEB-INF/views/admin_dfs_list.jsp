@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page import="java.io.*,java.util.*, javax.servlet.*"%>
 <%@ page import="org.origin.common.util.*"%>
+<%@ page import="org.orbit.infra.api.*"%>
 <%@ page import="org.orbit.infra.api.indexes.*"%>
 <%@ page import="org.orbit.infra.io.*"%>
 <%@ page import="org.orbit.substance.api.*"%>
@@ -77,8 +78,8 @@
 
 						IndexItem indexItem = configElement.getAdapter(IndexItem.class);
 						if (indexItem != null) {
-							name = (String) indexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__NAME);
-							serviceUrl = (String) indexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__BASE_URL);
+							name = (String) indexItem.getProperties().get(InfraConstants.SERVICE__NAME);
+							serviceUrl = (String) indexItem.getProperties().get(InfraConstants.SERVICE__BASE_URL);
 							isOnline = IndexItemHelper.INSTANCE.isOnline(indexItem);
 
 							// config name overrides index setting

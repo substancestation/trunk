@@ -129,22 +129,3 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 	}
 
 }
-
-// Map<String, Object> properties = new HashMap<String, Object>();
-// properties.put(WSClientConstants.REALM, null);
-// properties.put(WSClientConstants.ACCESS_TOKEN, accessToken);
-// properties.put(WSClientConstants.URL, dfsVolumeServiceUrl);
-// DfsVolumeClient dfsVolumeClient = SubstanceClients.getInstance().getDfsVolumeClient(properties);
-// dfsVolumeClients.add(dfsVolumeClient);
-
-// if (hostURL != null && contextRoot != null) {
-// dfsVolumeServiceUrl = hostURL;
-// if (!hostURL.endsWith("/") && !contextRoot.startsWith("/")) {
-// dfsVolumeServiceUrl += "/";
-// }
-// dfsVolumeServiceUrl += contextRoot;
-// }
-// boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
-// if (!isOnline) {
-// throw new IllegalStateException("DFS volume service '" + dfsVolumeServiceUrl + "' is not online.");
-// }
