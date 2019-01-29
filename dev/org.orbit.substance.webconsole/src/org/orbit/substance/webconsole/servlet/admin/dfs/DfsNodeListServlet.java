@@ -78,7 +78,7 @@ public class DfsNodeListServlet extends HttpServlet {
 										configElement.adapt(DfsServiceMetadata.class, metadata);
 									}
 								} catch (Exception e) {
-									message = MessageHelper.INSTANCE.add(message, e.getMessage() + " gaiaId: '" + dfsId + "'");
+									message = MessageHelper.INSTANCE.add(message, e.getMessage() + " DFS Id: '" + dfsId + "'");
 									e.printStackTrace();
 								}
 							}
