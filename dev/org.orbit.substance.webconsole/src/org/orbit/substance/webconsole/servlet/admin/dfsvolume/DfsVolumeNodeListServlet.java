@@ -20,7 +20,7 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
-import org.orbit.substance.io.util.DfsNodeConfigHelper;
+import org.orbit.substance.io.util.NodeConfigHelper;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
@@ -61,16 +61,16 @@ public class DfsVolumeNodeListServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				IConfigRegistry cfgReg = DfsNodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
+				IConfigRegistry cfgReg = NodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
-					dfsConfigElement = DfsNodeConfigHelper.INSTANCE.getDfsConfigElement(cfgReg, dfsId);
+					dfsConfigElement = NodeConfigHelper.INSTANCE.getDfsConfigElement(cfgReg, dfsId);
 					if (dfsConfigElement != null) {
 						configElements = dfsConfigElement.memberConfigElements();
 					} else {
 						message = MessageHelper.INSTANCE.add(message, "Config element for DFS node (dfsId: '" + dfsId + "') cannot be found.");
 					}
 				} else {
-					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + DfsNodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
+					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
 				}
 
 				if (configElements != null) {

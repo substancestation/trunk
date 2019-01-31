@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.orbit.infra.io.IConfigRegistry;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
-import org.orbit.substance.io.util.DfsNodeConfigHelper;
+import org.orbit.substance.io.util.NodeConfigHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
@@ -47,7 +47,7 @@ public class DfsNodeDeleteServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				IConfigRegistry cfgReg = DfsNodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
+				IConfigRegistry cfgReg = NodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
 					for (String elementId : elementIds) {
 						boolean currIsDeleted = cfgReg.deleteConfigElement(elementId);
@@ -59,7 +59,7 @@ public class DfsNodeDeleteServlet extends HttpServlet {
 					}
 
 				} else {
-					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + DfsNodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
+					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
 				}
 
 			} catch (Exception e) {
