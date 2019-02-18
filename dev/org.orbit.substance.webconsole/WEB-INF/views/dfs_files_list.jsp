@@ -54,16 +54,17 @@
 				<th class="th1" width="10">
 					<input type="checkbox" onClick="toggleSelection(this, 'fileId')" />
 				</th>
-				<th class="th1" width="500">Path</th>
+				<th class="th1" width="400">Path</th>
 				<th class="th1" width="60">Directory</th>
 				<th class="th1" width="60">Size</th>
 				<th class="th1" width="60">Date Modified</th>
+				<th class="th1" width="60">Actions</th>
 			</tr>
 			<%
 				if (files.length == 0) {
 			%>
 			<tr>
-				<td colspan="5">(n/a)</td>
+				<td colspan="6">(n/a)</td>
 			</tr>
 			<%
 				} else {
@@ -105,6 +106,9 @@
 					<% } %>
 				</td>
 				<td class="td1"><%=dateModifiedStr%></td>
+				<td class="td1">
+					<a class="action01" target="_blank" href="<%=contextRoot + "/filecontent?fileId=" + fileId%>">View text content</a>
+				</td>
 			</tr>
 			<%
 					}

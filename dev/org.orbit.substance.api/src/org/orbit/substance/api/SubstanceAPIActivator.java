@@ -6,13 +6,13 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Activator extends AbstractBundleActivator {
+public class SubstanceAPIActivator extends AbstractBundleActivator {
 
-	protected static Logger LOG = LoggerFactory.getLogger(Activator.class);
+	protected static Logger LOG = LoggerFactory.getLogger(SubstanceAPIActivator.class);
 
-	protected static Activator instance;
+	protected static SubstanceAPIActivator instance;
 
-	public static Activator getInstance() {
+	public static SubstanceAPIActivator getInstance() {
 		return instance;
 	}
 
@@ -21,7 +21,7 @@ public class Activator extends AbstractBundleActivator {
 		LOG.debug("start()");
 		super.start(bundleContext);
 
-		Activator.instance = this;
+		SubstanceAPIActivator.instance = this;
 
 		SubstanceClients.getInstance().start(bundleContext);
 	}
@@ -32,7 +32,7 @@ public class Activator extends AbstractBundleActivator {
 
 		SubstanceClients.getInstance().stop(bundleContext);
 
-		Activator.instance = null;
+		SubstanceAPIActivator.instance = null;
 		super.stop(bundleContext);
 	}
 

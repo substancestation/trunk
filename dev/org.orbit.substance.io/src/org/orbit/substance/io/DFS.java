@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.orbit.infra.api.InfraConstants;
-import org.orbit.substance.api.Activator;
+import org.orbit.substance.api.SubstanceAPIActivator;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
@@ -28,9 +28,9 @@ public abstract class DFS {
 	 * @return
 	 */
 	public synchronized static DFS getDefault(String accessToken) {
-		String dfsServiceUrl = Activator.getInstance().getProperty(SubstanceConstants.ORBIT_DFS_URL);
-		String indexServiceUrl = Activator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		DFS dfs = get(indexServiceUrl, dfsServiceUrl, accessToken);
+		String dfsServiceUrl = SubstanceAPIActivator.getInstance().getProperty(SubstanceConstants.ORBIT_DFS_URL);
+		String indexServiceUrl = SubstanceIOActivator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		DFS dfs = get(dfsServiceUrl, indexServiceUrl, accessToken);
 		return dfs;
 	}
 
@@ -88,7 +88,7 @@ public abstract class DFS {
 		return this.indexServiceUrl;
 	}
 
-	protected String getAccessToken() {
+	public String getAccessToken() {
 		return this.accessToken;
 	}
 

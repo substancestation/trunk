@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Orbit :: Substance :: Model
 Bundle-SymbolicName: org.orbit.substance.model;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.orbit.substance.model.Activator
+Bundle-Activator: org.orbit.substance.model.SubstanceModelActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.json;version="2015.11.23",
  org.osgi.framework;version="[1.3.0,2.0.0)",

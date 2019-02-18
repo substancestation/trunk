@@ -8,13 +8,13 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Activator extends AbstractBundleActivator {
+public class SubstanceIOActivator extends AbstractBundleActivator {
 
-	protected static Logger LOG = LoggerFactory.getLogger(Activator.class);
+	protected static Logger LOG = LoggerFactory.getLogger(SubstanceIOActivator.class);
 
-	protected static Activator instance;
+	protected static SubstanceIOActivator instance;
 
-	public static Activator getInstance() {
+	public static SubstanceIOActivator getInstance() {
 		return instance;
 	}
 
@@ -23,7 +23,7 @@ public class Activator extends AbstractBundleActivator {
 		LOG.debug("start()");
 		super.start(bundleContext);
 
-		Activator.instance = this;
+		SubstanceIOActivator.instance = this;
 
 		URIHandlerDFileImpl.INSTANCE.register();
 		DfsURLStreamHandlerFactory.INSTANCE.register(bundleContext);
@@ -36,7 +36,7 @@ public class Activator extends AbstractBundleActivator {
 		DfsURLStreamHandlerFactory.INSTANCE.unregister(bundleContext);
 		URIHandlerDFileImpl.INSTANCE.unregister();
 
-		Activator.instance = null;
+		SubstanceIOActivator.instance = null;
 		super.stop(bundleContext);
 	}
 

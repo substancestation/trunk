@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Orbit :: Substance :: Connector
 Bundle-SymbolicName: org.orbit.substance.connector;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.orbit.substance.connector.Activator
+Bundle-Activator: org.orbit.substance.connector.SubstanceConnectorActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.ws.rs.client;version="2.0.0",
  javax.ws.rs.core;version="[2.0.0,3.0.0)",

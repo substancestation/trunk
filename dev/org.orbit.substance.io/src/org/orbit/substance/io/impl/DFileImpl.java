@@ -65,6 +65,8 @@ public class DFileImpl implements DFile {
 	public URI toURI() throws IOException {
 		try {
 			String uriScheme = "dfs";
+
+			String accessToken = this.dfs.getAccessToken();
 			String uriHost = this.dfs.getServiceMetadata().getDfsId();
 			String uriPath = this.path.getPathString();
 			if (isDirectory()) {
@@ -77,7 +79,7 @@ public class DFileImpl implements DFile {
 			}
 			String uriFragment = null;
 
-			return new URI(uriScheme, uriHost, uriPath, uriFragment);
+			return new URI(uriScheme, accessToken, uriHost, -1, uriPath, null, uriFragment);
 
 		} catch (URISyntaxException x) {
 			throw new Error(x); // Can't happen

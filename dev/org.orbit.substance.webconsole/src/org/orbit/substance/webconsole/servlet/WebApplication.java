@@ -21,6 +21,7 @@ import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeDelet
 import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeListServlet;
 import org.orbit.substance.webconsole.servlet.admin.dfsvolume.DfsVolumeNodeUpdateServlet;
 import org.orbit.substance.webconsole.servlet.dfs.CreateDirectoryServlet;
+import org.orbit.substance.webconsole.servlet.dfs.FileContentServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileDeleteServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileDownloadServlet;
 import org.orbit.substance.webconsole.servlet.dfs.FileListServlet;
@@ -77,6 +78,7 @@ public class WebApplication extends PlatformWebApplication {
 		addServlet(new ServletMetadataImpl("/files", new FileListServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/mkdir", new CreateDirectoryServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/fileupload", new FileUploadServlet(), dicts));
+		addServlet(new ServletMetadataImpl("/filecontent", new FileContentServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/filedownload", new FileDownloadServlet(), dicts));
 		addServlet(new ServletMetadataImpl("/filedelete", new FileDeleteServlet(), dicts));
 

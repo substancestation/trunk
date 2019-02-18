@@ -13,7 +13,7 @@ import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.util.InfraClientsHelper;
 import org.orbit.substance.api.SubstanceConstants;
-import org.orbit.substance.io.Activator;
+import org.orbit.substance.io.SubstanceIOActivator;
 import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 
@@ -36,7 +36,7 @@ public class DfsIndexItemHelper {
 		String path = url.getPath();
 
 		String dfsServiceUrl = null;
-		String indexServiceUrl = Activator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		String indexServiceUrl = SubstanceIOActivator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		if (indexServiceUrl != null) {
 			IndexItem dfsIndexItem = DfsIndexItemHelper.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
 			if (dfsIndexItem != null) {
@@ -67,7 +67,7 @@ public class DfsIndexItemHelper {
 		String path = uri.getPath();
 
 		String dfsServiceUrl = null;
-		String indexServiceUrl = Activator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		String indexServiceUrl = SubstanceIOActivator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		if (indexServiceUrl != null) {
 			IndexItem dfsIndexItem = DfsIndexItemHelper.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
 			if (dfsIndexItem != null) {

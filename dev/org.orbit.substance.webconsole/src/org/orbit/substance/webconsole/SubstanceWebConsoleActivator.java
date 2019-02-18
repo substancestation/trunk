@@ -5,26 +5,26 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Activator implements BundleActivator {
+public class SubstanceWebConsoleActivator implements BundleActivator {
 
-	protected static Logger LOG = LoggerFactory.getLogger(Activator.class);
+	protected static Logger LOG = LoggerFactory.getLogger(SubstanceWebConsoleActivator.class);
 
 	protected static BundleContext bundleContext;
-	protected static Activator instance;
+	protected static SubstanceWebConsoleActivator instance;
 
 	static BundleContext getContext() {
 		return bundleContext;
 	}
 
-	public static Activator getInstance() {
+	public static SubstanceWebConsoleActivator getInstance() {
 		return instance;
 	}
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		LOG.info("start()");
-		Activator.bundleContext = bundleContext;
-		Activator.instance = this;
+		SubstanceWebConsoleActivator.bundleContext = bundleContext;
+		SubstanceWebConsoleActivator.instance = this;
 
 		// Register extensions
 		Extensions.INSTANCE.start(bundleContext);
@@ -37,8 +37,8 @@ public class Activator implements BundleActivator {
 		// Unregister extensions
 		Extensions.INSTANCE.stop(bundleContext);
 
-		Activator.instance = null;
-		Activator.bundleContext = null;
+		SubstanceWebConsoleActivator.instance = null;
+		SubstanceWebConsoleActivator.bundleContext = null;
 	}
 
 }

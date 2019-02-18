@@ -1,17 +1,17 @@
-package org.orbit.substance.connector;
+package org.orbit.substance.sdk;
 
 import org.origin.common.osgi.AbstractBundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Activator extends AbstractBundleActivator {
+public class SubstanceSDKActivator extends AbstractBundleActivator {
 
-	protected static Logger LOG = LoggerFactory.getLogger(Activator.class);
+	protected static Logger LOG = LoggerFactory.getLogger(SubstanceSDKActivator.class);
 
-	protected static Activator instance;
+	protected static SubstanceSDKActivator instance;
 
-	public static Activator getInstance() {
+	public static SubstanceSDKActivator getInstance() {
 		return instance;
 	}
 
@@ -20,20 +20,14 @@ public class Activator extends AbstractBundleActivator {
 		LOG.debug("start()");
 		super.start(bundleContext);
 
-		Activator.instance = this;
-
-		// Register extensions
-		Extensions.INSTANCE.start(bundleContext);
+		SubstanceSDKActivator.instance = this;
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		LOG.debug("stop()");
 
-		// Unregister extensions
-		Extensions.INSTANCE.stop(bundleContext);
-
-		Activator.instance = null;
+		SubstanceSDKActivator.instance = null;
 		super.stop(bundleContext);
 	}
 

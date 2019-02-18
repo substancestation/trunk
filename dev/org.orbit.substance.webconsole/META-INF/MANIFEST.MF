@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Orbit :: Substance :: Webconsole
 Bundle-SymbolicName: org.orbit.substance.webconsole;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.orbit.substance.webconsole.Activator
+Bundle-Activator: org.orbit.substance.webconsole.SubstanceWebConsoleActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.servlet;version="[3.1.0,4.0.0)",
  javax.servlet.http;version="[3.1.0,4.0.0)",

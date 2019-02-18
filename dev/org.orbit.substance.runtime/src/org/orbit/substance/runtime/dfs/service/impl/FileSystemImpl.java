@@ -656,8 +656,30 @@ public class FileSystemImpl implements FileSystem {
 			throw new IOException("File size is 0.");
 		}
 
-		long fileSize = size > 0 ? size : fileMetadata.getSize();
-		allocateVolumes(fileMetadata, fileSize);
+		allocateVolumes(fileMetadata, size);
+
+		// Update FileMetadata
+		long existingSize = fileMetadata.getSize();
+		if (size != existingSize) {
+			Connection conn = null;
+			try {
+				conn = getConnection();
+				FilesMetadataTableHandler tableHandler = getFilesMetadataTableHandler(conn);
+
+				// Update file parts
+				tableHandler.updateFileParts(conn, fileId, fileMetadata.getFileParts());
+
+				// Update file size
+				boolean isSizeUpdated = tableHandler.updateSize(conn, fileId, size);
+				if (isSizeUpdated) {
+					fileMetadata.setSize(size);
+				}
+			} catch (SQLException e) {
+				handleSQLException(e);
+			} finally {
+				DatabaseUtil.closeQuietly(conn, true);
+			}
+		}
 
 		return fileMetadata;
 	}

@@ -1132,7 +1132,8 @@ public class SubstanceClientsHelper {
 			String fileId = fileMetadata.getFileId();
 			List<FilePart> fileParts = fileMetadata.getFileParts();
 			if (fileParts.isEmpty()) {
-				throw new IllegalStateException("File parts is empty. fileId='" + fileId + "'");
+				// throw new IllegalStateException("File parts is empty. fileId='" + fileId + "'");
+				return true;
 			}
 
 			boolean hasPartDeleted = false;

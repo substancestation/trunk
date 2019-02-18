@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Orbit :: Substance :: Runtime
 Bundle-SymbolicName: org.orbit.substance.runtime;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.orbit.substance.runtime.Activator
+Bundle-Activator: org.orbit.substance.runtime.SubstanceRuntimeActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.inject;version="[1.0.0,2.0.0)",
  javax.servlet.http;version="[3.1.0,4.0.0)",

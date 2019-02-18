@@ -8,7 +8,7 @@ import java.net.URLConnection;
 
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
-import org.orbit.substance.io.Activator;
+import org.orbit.substance.io.SubstanceIOActivator;
 import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 
@@ -88,7 +88,7 @@ public class DfsURLConnection extends URLConnection {
 		connect();
 		if (this.isConnected) {
 			if (this.file.exists() && !this.file.isDirectory()) {
-				outputStream = file.getOutputStream();
+				outputStream = this.file.getOutputStream();
 			}
 		}
 
