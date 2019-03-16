@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.orbit.infra.api.InfraConstants;
 import org.orbit.substance.api.SubstanceAPIActivator;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
@@ -29,30 +28,46 @@ public abstract class DFS {
 	 */
 	public synchronized static DFS getDefault(String accessToken) {
 		String dfsServiceUrl = SubstanceAPIActivator.getInstance().getProperty(SubstanceConstants.ORBIT_DFS_URL);
-		String indexServiceUrl = SubstanceIOActivator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		DFS dfs = get(dfsServiceUrl, indexServiceUrl, accessToken);
+		// String indexServiceUrl = SubstanceIOActivator.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		DFS dfs = get(dfsServiceUrl, accessToken);
 		return dfs;
 	}
+
+	// /**
+	// *
+	// * @param dfsServiceUrl
+	// * @param indexServiceUrl
+	// * @param accessToken
+	// * @return
+	// */
+	// public synchronized static DFS get(String dfsServiceUrl, String indexServiceUrl, String accessToken) {
+	// String key = dfsServiceUrl + "|" + indexServiceUrl + "|" + accessToken;
+	// DFS dfs = dfsMap.get(key);
+	// if (dfs == null) {
+	// dfs = new DFSImpl(dfsServiceUrl, indexServiceUrl, accessToken);
+	// dfsMap.put(key, dfs);
+	// }
+	// return dfs;
+	// }
 
 	/**
 	 * 
 	 * @param dfsServiceUrl
-	 * @param indexServiceUrl
 	 * @param accessToken
 	 * @return
 	 */
-	public synchronized static DFS get(String dfsServiceUrl, String indexServiceUrl, String accessToken) {
-		String key = dfsServiceUrl + "|" + indexServiceUrl + "|" + accessToken;
+	public synchronized static DFS get(String dfsServiceUrl, String accessToken) {
+		String key = dfsServiceUrl + "|" + accessToken;
 		DFS dfs = dfsMap.get(key);
 		if (dfs == null) {
-			dfs = new DFSImpl(dfsServiceUrl, indexServiceUrl, accessToken);
+			dfs = new DFSImpl(dfsServiceUrl, accessToken);
 			dfsMap.put(key, dfs);
 		}
 		return dfs;
 	}
 
 	protected String dfsServiceUrl;
-	protected String indexServiceUrl;
+	// protected String indexServiceUrl;
 	protected String accessToken;
 
 	protected DfsClientResolver dfsClientResolver;
@@ -64,29 +79,28 @@ public abstract class DFS {
 	 * @param indexServiceUrl
 	 * @param accessToken
 	 */
-	public DFS(String dfsServiceUrl, String indexServiceUrl, String accessToken) {
+	public DFS(String dfsServiceUrl, String accessToken) {
 		if (dfsServiceUrl == null) {
 			throw new IllegalArgumentException("dfsServiceUrl is null.");
 		}
-		if (indexServiceUrl == null) {
-			throw new IllegalArgumentException("indexServiceUrl is null.");
-		}
+		// if (indexServiceUrl == null) {
+		// throw new IllegalArgumentException("indexServiceUrl is null.");
+		// }
 
 		this.dfsServiceUrl = dfsServiceUrl;
-		this.indexServiceUrl = indexServiceUrl;
 		this.accessToken = accessToken;
 
-		this.dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
-		this.dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
+		this.dfsClientResolver = new DfsClientResolverImpl();
+		this.dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 	}
 
 	protected String getDfsServiceUrl() {
 		return this.dfsServiceUrl;
 	}
 
-	protected String getIndexServiceUrl() {
-		return this.indexServiceUrl;
-	}
+	// protected String getIndexServiceUrl() {
+	// return this.indexServiceUrl;
+	// }
 
 	public String getAccessToken() {
 		return this.accessToken;

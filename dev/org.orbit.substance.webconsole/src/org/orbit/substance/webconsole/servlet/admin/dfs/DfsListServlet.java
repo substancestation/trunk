@@ -39,7 +39,7 @@ public class DfsListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Get parameters
 		// ---------------------------------------------------------------
-		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = null;
@@ -61,9 +61,9 @@ public class DfsListServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			dfsIndexItems = DfsIndexItemHelper.getDfsIndexItems(indexServiceUrl, accessToken);
+			dfsIndexItems = DfsIndexItemHelper.getDfsIndexItems(accessToken);
 
-			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
+			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
 			for (IndexItem dfsIndexItem : dfsIndexItems) {
 				String dfsId = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
 				String currHostUrl = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
@@ -87,7 +87,7 @@ public class DfsListServlet extends HttpServlet {
 					try {
 						String platformId = (String) dfsIndexItem.getProperties().get(PlatformConstants.IDX_PROP__PLATFORM_ID);
 						if (platformId != null) {
-							IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(indexServiceUrl, accessToken, platformId);
+							IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(accessToken, platformId);
 							if (platformIndexItem != null) {
 								PlatformClient dfsPlatformClient = OrbitClientHelper.INSTANCE.getPlatformClient(accessToken, platformIndexItem);
 								if (dfsPlatformClient != null) {

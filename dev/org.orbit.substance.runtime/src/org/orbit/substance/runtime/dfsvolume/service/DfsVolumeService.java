@@ -9,9 +9,10 @@ import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.origin.common.jdbc.ConnectionAware;
 import org.origin.common.rest.editpolicy.EditPoliciesAware;
 import org.origin.common.rest.server.ServerException;
+import org.origin.common.service.AccessTokenAware;
 import org.origin.common.service.WebServiceAware;
 
-public interface DfsVolumeService extends ConnectionAware, WebServiceAware, EditPoliciesAware {
+public interface DfsVolumeService extends ConnectionAware, WebServiceAware, EditPoliciesAware, AccessTokenAware {
 
 	Map<Object, Object> getInitProperties();
 

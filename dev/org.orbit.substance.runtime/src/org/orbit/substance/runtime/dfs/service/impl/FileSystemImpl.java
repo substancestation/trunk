@@ -6,14 +6,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orbit.infra.api.InfraConstants;
-import org.orbit.platform.sdk.http.JWTTokenHandler;
-import org.orbit.platform.sdk.http.OrbitRoles;
-import org.orbit.platform.sdk.util.ExtensionUtil;
 import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
@@ -21,17 +16,14 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.model.dfs.FileContentAccessImpl;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.model.dfs.FilePartImpl;
-import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.util.DfsConfigPropertiesHandler;
 import org.orbit.substance.runtime.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.runtime.util.ModelConverter;
 import org.orbit.substance.runtime.util.SubstanceComparators.DfsVolumeClientComparatorByFreeSpace;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.resource.Path;
-import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.server.ServerException;
 import org.origin.common.util.DiskSpaceUnit;
@@ -701,17 +693,18 @@ public class FileSystemImpl implements FileSystem {
 
 		// Note:
 		// - Access token for the dfs service to access the dfs volume service.
-		String dfsAccessToken = getDfsServiceToken();
+		String dfsAccessToken = this.dfsService.getAccessToken();
 
 		String dfsId = getDfsId();
 		String accountId = fileMetadata.getAccountId();
 		// String indexServiceUrl = (String) this.dfsService.getProperties().get(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		String indexServiceUrl = DfsConfigPropertiesHandler.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL, this.dfsService.getInitProperties());
+		// String indexServiceUrl = DfsConfigPropertiesHandler.getInstance().getProperty(InfraConstants.ORBIT_INDEX_SERVICE_URL,
+		// this.dfsService.getInitProperties());
 
 		// 1. Get a dfs volumes of the dfs.
 		// Note:
 		// - Dfs volumes are sorted by volume id (asc)
-		DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
+		DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
 		DfsVolumeClient[] dfsVolumeClients = ModelConverter.DfsVolume.getDfsVolumeClient(dfsVolumeClientResolver, dfsAccessToken, dfsId);
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
@@ -853,28 +846,6 @@ public class FileSystemImpl implements FileSystem {
 
 		fileMetadata.getFileParts().clear();
 		fileMetadata.getFileParts().addAll(fileParts);
-	}
-
-	protected String getDfsServiceToken() {
-		String tokenValue = null;
-		try {
-			JWTTokenHandler tokenHandler = ExtensionUtil.JWT.getTokenHandler(SubstanceConstants.TOKEN_PROVIDER__ORBIT);
-			if (tokenHandler != null) {
-				String roles = OrbitRoles.DFS_ADMIN;
-				int securityLevel = Secured.SecurityLevels.LEVEL_1;
-				String classificationLevels = Secured.ClassificationLevels.TOP_SECRET + "," + Secured.ClassificationLevels.SECRET + "," + Secured.ClassificationLevels.CONFIDENTIAL;
-
-				Map<String, String> payload = new LinkedHashMap<String, String>();
-				payload.put(JWTTokenHandler.PAYLOAD__ROLES, roles);
-				payload.put(JWTTokenHandler.PAYLOAD__SECURITY_LEVEL, String.valueOf(securityLevel));
-				payload.put(JWTTokenHandler.PAYLOAD__CLASSIFICATION_LEVELS, classificationLevels);
-
-				tokenValue = tokenHandler.createToken(payload);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return tokenValue;
 	}
 
 	@Override

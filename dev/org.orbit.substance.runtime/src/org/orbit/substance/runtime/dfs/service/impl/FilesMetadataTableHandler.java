@@ -113,6 +113,15 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @return
 	 */
 	public static String doGetTableName(String dfsId, String accountId) {
+		if (accountId.contains(".")) {
+			accountId = accountId.replaceAll("\\.", "_");
+		}
+		if (accountId.contains(".")) {
+			accountId = accountId.replaceAll("\\.", "_");
+		}
+		if (accountId.contains("-")) {
+			accountId = accountId.replaceAll("\\-", "_");
+		}
 		return dfsId + "_" + accountId;
 	}
 

@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.orbit.infra.api.InfraConstants;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
@@ -32,7 +31,7 @@ public class FileDeleteServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Get parameters
 		// ---------------------------------------------------------------
-		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
@@ -53,8 +52,8 @@ public class FileDeleteServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
-			DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
+			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
+			DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
 			for (int i = 0; i < fileIds.length; i++) {
 				String fileId = fileIds[i];

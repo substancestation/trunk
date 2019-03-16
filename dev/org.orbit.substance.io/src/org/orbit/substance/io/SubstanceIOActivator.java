@@ -1,6 +1,5 @@
 package org.orbit.substance.io;
 
-import org.orbit.infra.api.InfraConstants;
 import org.orbit.substance.io.util.DfsURLStreamHandlerFactory;
 import org.orbit.substance.io.util.URIHandlerDFileImpl;
 import org.origin.common.osgi.AbstractBundleActivator;
@@ -43,8 +42,8 @@ public class SubstanceIOActivator extends AbstractBundleActivator {
 	@Override
 	protected String[] getPropertyNames() {
 		String[] propNames = new String[] { //
-				InfraConstants.ORBIT_INDEX_SERVICE_URL, //
-				InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
+				// InfraConstants.ORBIT_INDEX_SERVICE_URL, //
+				// InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
 		};
 		return propNames;
 	}

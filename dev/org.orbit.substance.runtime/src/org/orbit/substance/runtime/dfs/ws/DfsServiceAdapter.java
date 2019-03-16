@@ -2,10 +2,8 @@ package org.orbit.substance.runtime.dfs.ws;
 
 import java.util.Map;
 
-import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.infra.api.indexes.ServiceIndexTimerFactory;
-import org.orbit.infra.api.util.InfraClients;
 import org.orbit.platform.sdk.PlatformSDKActivator;
 import org.orbit.platform.sdk.util.ExtensibleServiceEditPolicy;
 import org.orbit.substance.runtime.SubstanceConstants;
@@ -52,9 +50,9 @@ public class DfsServiceAdapter implements LifecycleAware {
 		this.properties = properties;
 	}
 
-	public IndexServiceClient getIndexProvider() {
-		return InfraClients.getInstance().getIndexService(this.properties, true);
-	}
+	// public IndexServiceClient getIndexProvider() {
+	// return InfraClients.getInstance().getIndexService(this.properties, true);
+	// }
 
 	public DfsService getService() {
 		return (this.serviceTracker != null) ? serviceTracker.getService() : null;
@@ -116,14 +114,13 @@ public class DfsServiceAdapter implements LifecycleAware {
 		this.webApp.start(bundleContext);
 
 		// Start indexing timer
-		IndexServiceClient indexProvider = getIndexProvider();
-
+		// IndexServiceClient indexProvider = getIndexProvider();
 		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS__INDEXER_ID);
 		if (extension != null) {
 			@SuppressWarnings("unchecked")
 			ServiceIndexTimerFactory<DfsService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);
 			if (indexTimerFactory != null) {
-				this.indexTimer = indexTimerFactory.create(indexProvider, service);
+				this.indexTimer = indexTimerFactory.create(service);
 				if (this.indexTimer != null) {
 					this.indexTimer.start();
 				}

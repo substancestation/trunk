@@ -3,7 +3,6 @@ package org.orbit.substance.webconsole.servlet;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.orbit.infra.api.InfraConstants;
 import org.orbit.platform.sdk.http.PlatformWebApplication;
 import org.orbit.service.servlet.impl.JspMetadataImpl;
 import org.orbit.service.servlet.impl.ResourceMetadataImpl;
@@ -41,8 +40,8 @@ public class WebApplication extends PlatformWebApplication {
 	@Override
 	protected String[] getPropertyNames() {
 		String[] propNames = new String[] { //
-				InfraConstants.ORBIT_INDEX_SERVICE_URL, //
-				InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
+				// InfraConstants.ORBIT_INDEX_SERVICE_URL, //
+				// InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
 				WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT, //
 				WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT, //
 				SubstanceConstants.ORBIT_DFS_URL, //

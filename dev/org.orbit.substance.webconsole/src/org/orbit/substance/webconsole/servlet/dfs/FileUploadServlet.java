@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.orbit.infra.api.InfraConstants;
 import org.orbit.platform.sdk.PlatformSDKActivator;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
@@ -55,7 +54,7 @@ public class FileUploadServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Get parameters
 		// ---------------------------------------------------------------
-		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
@@ -137,8 +136,8 @@ public class FileUploadServlet extends HttpServlet {
 				// 7. Create file metadata in dfs and upload file content to dfs volume.
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
-				DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
+				DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
+				DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
 				for (File localFile : localFiles) {
 					// (1) Create file metadata in DFS

@@ -7,6 +7,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
+import org.orbit.platform.sdk.http.AccessTokenSupport;
+import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
@@ -28,7 +30,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	protected ServiceRegistration<?> serviceRegistry;
 	protected ServiceEditPolicies wsEditPolicies;
 	protected Map<String, FileSystem> accountIdToFileSystemMap = new HashMap<String, FileSystem>();
-	// protected Map<Object, Object> properties = new HashMap<Object, Object>();
+	protected AccessTokenSupport accessTokenSupport;
 
 	/**
 	 * 
@@ -37,6 +39,14 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	public DfsServiceImpl(Map<Object, Object> initProperties) {
 		this.initProperties = (initProperties != null) ? initProperties : new HashMap<Object, Object>();
 		this.wsEditPolicies = new ServiceEditPoliciesImpl(DfsService.class, this);
+		this.accessTokenSupport = new AccessTokenSupport(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_ADMIN);
+	}
+
+	/** AccessTokenAware */
+	@Override
+	public String getAccessToken() {
+		String tokenValue = this.accessTokenSupport.getAccessToken();
+		return tokenValue;
 	}
 
 	@Override
@@ -49,27 +59,6 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 		DfsConfigPropertiesHandler.getInstance().addPropertyChangeListener(this);
 
 		updateConnectionProperties();
-
-		// Map<Object, Object> properties = new Hashtable<Object, Object>();
-		// if (this.initProperties != null) {
-		// properties.putAll(this.initProperties);
-		// }
-		//
-		// PropertyUtil.loadProperty(bundleContext, properties, InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_HOST_URL);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__ID);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__NAME);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__HOST_URL);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__CONTEXT_ROOT);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_DRIVER);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_URL);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_USERNAME);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_PASSWORD);
-		// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
-		//
-		// updateProperties(properties);
-		//
-		// initialize();
 
 		Hashtable<String, Object> props = new Hashtable<String, Object>();
 		this.serviceRegistry = bundleContext.registerService(DfsService.class, this, props);
@@ -99,69 +88,6 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 		}
 	}
 
-	// @Override
-	// public Map<Object, Object> getProperties() {
-	// return this.properties;
-	// }
-	//
-	// /**
-	// *
-	// * @param configProps
-	// */
-	// public synchronized void updateProperties(Map<Object, Object> configProps) {
-	// if (configProps == null) {
-	// configProps = new HashMap<Object, Object>();
-	// }
-	//
-	// String indexServiceUrl = (String) configProps.get(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-	// String globalHostURL = (String) configProps.get(SubstanceConstants.ORBIT_HOST_URL);
-	// String id = (String) configProps.get(SubstanceConstants.DFS__ID);
-	// String name = (String) configProps.get(SubstanceConstants.DFS__NAME);
-	// String hostURL = (String) configProps.get(SubstanceConstants.DFS__HOST_URL);
-	// String contextRoot = (String) configProps.get(SubstanceConstants.DFS__CONTEXT_ROOT);
-	// String jdbcDriver = (String) configProps.get(SubstanceConstants.DFS__JDBC_DRIVER);
-	// String jdbcURL = (String) configProps.get(SubstanceConstants.DFS__JDBC_URL);
-	// String jdbcUsername = (String) configProps.get(SubstanceConstants.DFS__JDBC_USERNAME);
-	// String jdbcPassword = (String) configProps.get(SubstanceConstants.DFS__JDBC_PASSWORD);
-	// String blockCapacityMB = (String) configProps.get(SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
-	//
-	// boolean printProps = false;
-	// if (printProps) {
-	// System.out.println();
-	// System.out.println("Config properties:");
-	// System.out.println("-----------------------------------------------------");
-	// System.out.println(InfraConstants.ORBIT_INDEX_SERVICE_URL + " = " + indexServiceUrl);
-	// System.out.println(SubstanceConstants.ORBIT_HOST_URL + " = " + globalHostURL);
-	// System.out.println(SubstanceConstants.DFS__ID + " = " + id);
-	// System.out.println(SubstanceConstants.DFS__NAME + " = " + name);
-	// System.out.println(SubstanceConstants.DFS__HOST_URL + " = " + hostURL);
-	// System.out.println(SubstanceConstants.DFS__CONTEXT_ROOT + " = " + contextRoot);
-	// System.out.println(SubstanceConstants.DFS__JDBC_DRIVER + " = " + jdbcDriver);
-	// System.out.println(SubstanceConstants.DFS__JDBC_URL + " = " + jdbcURL);
-	// System.out.println(SubstanceConstants.DFS__JDBC_USERNAME + " = " + jdbcUsername);
-	// System.out.println(SubstanceConstants.DFS__JDBC_PASSWORD + " = " + jdbcPassword);
-	// System.out.println(SubstanceConstants.DFS__BLOCK_CAPACITY_MB + " = " + blockCapacityMB);
-	// System.out.println("-----------------------------------------------------");
-	// System.out.println();
-	// }
-	//
-	// this.properties = configProps;
-	// this.databaseProperties = getConnectionProperties(this.properties);
-	// }
-	//
-	// /**
-	// *
-	// * @param props
-	// * @return
-	// */
-	// protected synchronized Properties getConnectionProperties(Map<Object, Object> props) {
-	// String driver = (String) this.properties.get(SubstanceConstants.DFS__JDBC_DRIVER);
-	// String url = (String) this.properties.get(SubstanceConstants.DFS__JDBC_URL);
-	// String username = (String) this.properties.get(SubstanceConstants.DFS__JDBC_USERNAME);
-	// String password = (String) this.properties.get(SubstanceConstants.DFS__JDBC_PASSWORD);
-	// return DatabaseUtil.getProperties(driver, url, username, password);
-	// }
-
 	/** ConnectionAware */
 	@Override
 	public Connection getConnection() throws SQLException {
@@ -177,35 +103,6 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 
 		this.databaseProperties = DatabaseUtil.getProperties(driver, url, username, password);
 	}
-
-	// /**
-	// * Initialize database tables.
-	// */
-	// public void initialize() {
-	// String database = null;
-	// try {
-	// database = DatabaseUtil.getDatabase(this.databaseProperties);
-	// } catch (SQLException e) {
-	// e.printStackTrace();
-	// }
-	// assert (database != null) : "database name cannot be retrieved.";
-	//
-	// Connection conn = null;
-	// try {
-	// conn = DatabaseUtil.getConnection(this.databaseProperties);
-	//
-	// // if (this.categoryTableHandler != null) {
-	// // DatabaseUtil.initialize(conn, this.categoryTableHandler);
-	// // }
-	// // if (this.appTableHandler != null) {
-	// // DatabaseUtil.initialize(conn, this.appTableHandler);
-	// // }
-	// } catch (SQLException e) {
-	// e.printStackTrace();
-	// } finally {
-	// DatabaseUtil.closeQuietly(conn, true);
-	// }
-	// }
 
 	/** WebServiceAware */
 	@Override
@@ -293,4 +190,119 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 // blockCapacityBytes = blockCapacityMB * 1024 * 1024;
 // if (blockCapacityBytes <= 0) {
 // blockCapacityBytes = 100 * 1024 * 1024; // 100MB
+// }
+
+// protected Map<Object, Object> properties = new HashMap<Object, Object>();
+
+// Map<Object, Object> properties = new Hashtable<Object, Object>();
+// if (this.initProperties != null) {
+// properties.putAll(this.initProperties);
+// }
+//
+// PropertyUtil.loadProperty(bundleContext, properties, InfraConstants.ORBIT_INDEX_SERVICE_URL);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.ORBIT_HOST_URL);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__ID);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__NAME);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__HOST_URL);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__CONTEXT_ROOT);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_DRIVER);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_URL);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_USERNAME);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__JDBC_PASSWORD);
+// PropertyUtil.loadProperty(bundleContext, properties, SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
+//
+// updateProperties(properties);
+//
+// initialize();
+
+// @Override
+// public Map<Object, Object> getProperties() {
+// return this.properties;
+// }
+
+// /**
+// * Initialize database tables.
+// */
+// public void initialize() {
+// String database = null;
+// try {
+// database = DatabaseUtil.getDatabase(this.databaseProperties);
+// } catch (SQLException e) {
+// e.printStackTrace();
+// }
+// assert (database != null) : "database name cannot be retrieved.";
+//
+// Connection conn = null;
+// try {
+// conn = DatabaseUtil.getConnection(this.databaseProperties);
+//
+// // if (this.categoryTableHandler != null) {
+// // DatabaseUtil.initialize(conn, this.categoryTableHandler);
+// // }
+// // if (this.appTableHandler != null) {
+// // DatabaseUtil.initialize(conn, this.appTableHandler);
+// // }
+// } catch (SQLException e) {
+// e.printStackTrace();
+// } finally {
+// DatabaseUtil.closeQuietly(conn, true);
+// }
+// }
+
+// /**
+// *
+// * @param configProps
+// */
+// public synchronized void updateProperties(Map<Object, Object> configProps) {
+// if (configProps == null) {
+// configProps = new HashMap<Object, Object>();
+// }
+//
+// String indexServiceUrl = (String) configProps.get(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+// String globalHostURL = (String) configProps.get(SubstanceConstants.ORBIT_HOST_URL);
+// String id = (String) configProps.get(SubstanceConstants.DFS__ID);
+// String name = (String) configProps.get(SubstanceConstants.DFS__NAME);
+// String hostURL = (String) configProps.get(SubstanceConstants.DFS__HOST_URL);
+// String contextRoot = (String) configProps.get(SubstanceConstants.DFS__CONTEXT_ROOT);
+// String jdbcDriver = (String) configProps.get(SubstanceConstants.DFS__JDBC_DRIVER);
+// String jdbcURL = (String) configProps.get(SubstanceConstants.DFS__JDBC_URL);
+// String jdbcUsername = (String) configProps.get(SubstanceConstants.DFS__JDBC_USERNAME);
+// String jdbcPassword = (String) configProps.get(SubstanceConstants.DFS__JDBC_PASSWORD);
+// String blockCapacityMB = (String) configProps.get(SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
+//
+// boolean printProps = false;
+// if (printProps) {
+// System.out.println();
+// System.out.println("Config properties:");
+// System.out.println("-----------------------------------------------------");
+// System.out.println(InfraConstants.ORBIT_INDEX_SERVICE_URL + " = " + indexServiceUrl);
+// System.out.println(SubstanceConstants.ORBIT_HOST_URL + " = " + globalHostURL);
+// System.out.println(SubstanceConstants.DFS__ID + " = " + id);
+// System.out.println(SubstanceConstants.DFS__NAME + " = " + name);
+// System.out.println(SubstanceConstants.DFS__HOST_URL + " = " + hostURL);
+// System.out.println(SubstanceConstants.DFS__CONTEXT_ROOT + " = " + contextRoot);
+// System.out.println(SubstanceConstants.DFS__JDBC_DRIVER + " = " + jdbcDriver);
+// System.out.println(SubstanceConstants.DFS__JDBC_URL + " = " + jdbcURL);
+// System.out.println(SubstanceConstants.DFS__JDBC_USERNAME + " = " + jdbcUsername);
+// System.out.println(SubstanceConstants.DFS__JDBC_PASSWORD + " = " + jdbcPassword);
+// System.out.println(SubstanceConstants.DFS__BLOCK_CAPACITY_MB + " = " + blockCapacityMB);
+// System.out.println("-----------------------------------------------------");
+// System.out.println();
+// }
+//
+// this.properties = configProps;
+// this.databaseProperties = getConnectionProperties(this.properties);
+// }
+//
+// /**
+// *
+// * @param props
+// * @return
+// */
+// protected synchronized Properties getConnectionProperties(Map<Object, Object> props) {
+// String driver = (String) this.properties.get(SubstanceConstants.DFS__JDBC_DRIVER);
+// String url = (String) this.properties.get(SubstanceConstants.DFS__JDBC_URL);
+// String username = (String) this.properties.get(SubstanceConstants.DFS__JDBC_USERNAME);
+// String password = (String) this.properties.get(SubstanceConstants.DFS__JDBC_PASSWORD);
+// return DatabaseUtil.getProperties(driver, url, username, password);
 // }

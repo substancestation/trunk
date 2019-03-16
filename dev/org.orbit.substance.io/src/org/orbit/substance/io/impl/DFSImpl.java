@@ -23,11 +23,10 @@ public class DFSImpl extends DFS {
 	/**
 	 * 
 	 * @param dfsServiceUrl
-	 * @param indexServiceUrl
 	 * @param accessToken
 	 */
-	public DFSImpl(String dfsServiceUrl, String indexServiceUrl, String accessToken) {
-		super(dfsServiceUrl, indexServiceUrl, accessToken);
+	public DFSImpl(String dfsServiceUrl, String accessToken) {
+		super(dfsServiceUrl, accessToken);
 	}
 
 	/**

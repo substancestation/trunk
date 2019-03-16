@@ -1,6 +1,5 @@
 package org.orbit.substance.runtime.util;
 
-import org.orbit.infra.api.InfraConstants;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.origin.common.model.AbstractConfigPropertiesHandler;
 
@@ -15,10 +14,9 @@ public class DfsConfigPropertiesHandler extends AbstractConfigPropertiesHandler 
 	@Override
 	public String[] getConfigPropertyNames() {
 		String[] propNames = new String[] { //
-				InfraConstants.ORBIT_INDEX_SERVICE_URL, //
-				InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
-				InfraConstants.ORBIT_CONFIG_REGISTRY_URL, //
-
+				// InfraConstants.ORBIT_INDEX_SERVICE_URL, //
+				// InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
+				// InfraConstants.ORBIT_CONFIG_REGISTRY_URL, //
 				SubstanceConstants.ORBIT_HOST_URL, //
 
 				SubstanceConstants.DFS__ID, //

@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexItemHelper;
 import org.orbit.platform.api.PlatformClient;
@@ -39,7 +38,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Get parameters
 		// ---------------------------------------------------------------
-		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = null;
@@ -65,11 +64,11 @@ public class DfsVolumeListServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				dfsIndexItem = DfsIndexItemHelper.getDfsIndexItem(indexServiceUrl, accessToken, dfsId);
+				dfsIndexItem = DfsIndexItemHelper.getDfsIndexItem(accessToken, dfsId);
 
-				dfsVolumeIndexItems = DfsIndexItemHelper.getDfsVolumeIndexItems(indexServiceUrl, accessToken, dfsId);
+				dfsVolumeIndexItems = DfsIndexItemHelper.getDfsVolumeIndexItems(accessToken, dfsId);
 
-				DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
+				DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
 				for (IndexItem dfsVolumeIndexItem : dfsVolumeIndexItems) {
 					String dfsVolumeId = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID);
@@ -91,7 +90,7 @@ public class DfsVolumeListServlet extends HttpServlet {
 						try {
 							String platformId = (String) dfsVolumeIndexItem.getProperties().get(PlatformConstants.IDX_PROP__PLATFORM_ID);
 							if (platformId != null) {
-								IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(indexServiceUrl, accessToken, platformId);
+								IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(accessToken, platformId);
 								if (platformIndexItem != null) {
 									PlatformClient dfsPlatformClient = OrbitClientHelper.INSTANCE.getPlatformClient(accessToken, platformIndexItem);
 									if (dfsPlatformClient != null) {

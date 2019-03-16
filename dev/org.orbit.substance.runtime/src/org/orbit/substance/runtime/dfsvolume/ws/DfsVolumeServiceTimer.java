@@ -19,29 +19,32 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 
 	/**
 	 * 
-	 * @param indexService
 	 * @param service
 	 */
-	public DfsVolumeServiceTimer(IndexServiceClient indexService, DfsVolumeService service) {
-		super(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, "Index Timer [" + service.getName() + "]", indexService, service);
+	public DfsVolumeServiceTimer(DfsVolumeService service) {
+		super(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, "Index Timer [" + service.getName() + "]", service);
 		setDebug(true);
 	}
 
 	@Override
-	public IndexItem getIndex(IndexServiceClient indexService, DfsVolumeService service) throws IOException {
-		String name = service.getName();
+	public IndexItem getIndex(IndexServiceClient indexService) throws IOException {
+		DfsVolumeService dfsVolume = getService();
+
+		String name = dfsVolume.getName();
 		return indexService.getIndexItem(getIndexProviderId(), SubstanceConstants.IDX__DFS_VOLUME__TYPE, name);
 	}
 
 	@Override
-	public IndexItem addIndex(IndexServiceClient indexService, DfsVolumeService service) throws IOException {
-		String dfsId = service.getDfsId();
-		String dfsVolumeId = service.getDfsVolumeId();
-		long volumeCapacityBytes = service.getVolumeCapacity();
-		String name = service.getName();
-		String hostURL = service.getHostURL();
-		String contextRoot = service.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(service);
+	public IndexItem addIndex(IndexServiceClient indexService) throws IOException {
+		DfsVolumeService dfsVolume = getService();
+
+		String dfsId = dfsVolume.getDfsId();
+		String dfsVolumeId = dfsVolume.getDfsVolumeId();
+		long volumeCapacityBytes = dfsVolume.getVolumeCapacity();
+		String name = dfsVolume.getName();
+		String hostURL = dfsVolume.getHostURL();
+		String contextRoot = dfsVolume.getContextRoot();
+		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfsVolume);
 		// long blockCapacityBytes = service.getDefaultBlockCapacity();
 
 		Date now = new Date();
@@ -61,14 +64,16 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	}
 
 	@Override
-	public void updateIndex(IndexServiceClient indexService, DfsVolumeService service, IndexItem indexItem) throws IOException {
-		String dfsId = service.getDfsId();
-		String dfsVolumeId = service.getDfsVolumeId();
-		long volumeCapacityBytes = service.getVolumeCapacity();
-		String name = service.getName();
-		String hostURL = service.getHostURL();
-		String contextRoot = service.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(service);
+	public void updateIndex(IndexServiceClient indexService, IndexItem indexItem) throws IOException {
+		DfsVolumeService dfsVolume = getService();
+
+		String dfsId = dfsVolume.getDfsId();
+		String dfsVolumeId = dfsVolume.getDfsVolumeId();
+		long volumeCapacityBytes = dfsVolume.getVolumeCapacity();
+		String name = dfsVolume.getName();
+		String hostURL = dfsVolume.getHostURL();
+		String contextRoot = dfsVolume.getContextRoot();
+		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfsVolume);
 
 		// long blockCapacityBytes = service.getDefaultBlockCapacity();
 
@@ -90,7 +95,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 	}
 
 	@Override
-	public void cleanupIndex(IndexServiceClient indexService, DfsVolumeService service, IndexItem indexItem) throws IOException {
+	public void cleanupIndex(IndexServiceClient indexService, IndexItem indexItem) throws IOException {
 		Integer indexItemId = indexItem.getIndexItemId();
 		Map<String, Object> props = indexItem.getProperties();
 		List<String> propertyNames = MapHelper.INSTANCE.getKeyList(props);

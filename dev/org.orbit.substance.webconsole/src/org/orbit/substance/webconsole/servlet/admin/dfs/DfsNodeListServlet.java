@@ -34,7 +34,7 @@ public class DfsNodeListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Get parameters
 		// ---------------------------------------------------------------
-		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = null;
@@ -58,9 +58,9 @@ public class DfsNodeListServlet extends HttpServlet {
 				configElements = cfgReg.listRootConfigElements();
 
 				if (configElements != null) {
-					Map<String, IndexItem> dfsIndexItemMap = DfsIndexItemHelper.getDfsIndexItemsMap(indexServiceUrl, accessToken);
+					Map<String, IndexItem> dfsIndexItemMap = DfsIndexItemHelper.getDfsIndexItemsMap(accessToken);
 
-					DfsClientResolver dfsClientResolver = new DfsClientResolverImpl(indexServiceUrl);
+					DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
 
 					for (IConfigElement configElement : configElements) {
 						String dfsId = configElement.getAttribute(SubstanceConstants.IDX_PROP__DFS__ID, String.class);

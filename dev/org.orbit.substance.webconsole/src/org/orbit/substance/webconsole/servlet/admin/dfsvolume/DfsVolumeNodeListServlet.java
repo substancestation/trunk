@@ -20,8 +20,8 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.api.util.SubstanceClientsHelper;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
-import org.orbit.substance.io.util.NodeConfigHelper;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
+import org.orbit.substance.io.util.NodeConfigHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
@@ -37,7 +37,7 @@ public class DfsVolumeNodeListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Get parameters
 		// ---------------------------------------------------------------
-		String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
+		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = null;
@@ -74,9 +74,9 @@ public class DfsVolumeNodeListServlet extends HttpServlet {
 				}
 
 				if (configElements != null) {
-					Map<String, IndexItem> dfsVolumeIndexItemMap = DfsIndexItemHelper.getDfsVolumeIndexItemsMap(indexServiceUrl, accessToken, dfsId);
+					Map<String, IndexItem> dfsVolumeIndexItemMap = DfsIndexItemHelper.getDfsVolumeIndexItemsMap(accessToken, dfsId);
 
-					DfsVolumeClientResolver clientResolver = new DfsVolumeClientResolverImpl(indexServiceUrl);
+					DfsVolumeClientResolver clientResolver = new DfsVolumeClientResolverImpl();
 
 					for (IConfigElement configElement : configElements) {
 						String dfsVolumeId = configElement.getAttribute(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID, String.class);

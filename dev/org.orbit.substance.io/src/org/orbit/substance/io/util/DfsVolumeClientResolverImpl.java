@@ -18,20 +18,6 @@ import org.origin.common.service.WebServiceAwareHelper;
 
 public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 
-	protected String indexServiceUrl;
-
-	/**
-	 * 
-	 * @param indexServiceUrl
-	 */
-	public DfsVolumeClientResolverImpl(String indexServiceUrl) {
-		if (indexServiceUrl == null || indexServiceUrl.isEmpty()) {
-			throw new IllegalArgumentException("indexServiceUrl is empty.");
-		}
-
-		this.indexServiceUrl = indexServiceUrl;
-	}
-
 	@Override
 	public DfsVolumeClient resolve(String dfsVolumeServiceUrl, String accessToken) {
 		if (dfsVolumeServiceUrl == null || dfsVolumeServiceUrl.isEmpty()) {
@@ -52,7 +38,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 		}
 
 		IndexItem dfsVolumeIndexItem = null;
-		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(this.indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID);
@@ -82,7 +68,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 		List<DfsVolumeClient> dfsVolumeClients = new ArrayList<DfsVolumeClient>();
 
 		List<IndexItem> dfsVolumesIndexItems = new ArrayList<IndexItem>();
-		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID);

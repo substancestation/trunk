@@ -19,27 +19,30 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 
 	/**
 	 * 
-	 * @param indexService
 	 * @param service
 	 */
-	public DfsServiceTimer(IndexServiceClient indexService, DfsService service) {
-		super(SubstanceConstants.IDX__DFS__INDEXER_ID, "Index Timer [" + service.getName() + "]", indexService, service);
+	public DfsServiceTimer(DfsService service) {
+		super(SubstanceConstants.IDX__DFS__INDEXER_ID, "Index Timer [" + service.getName() + "]", service);
 		setDebug(true);
 	}
 
 	@Override
-	public IndexItem getIndex(IndexServiceClient indexService, DfsService service) throws IOException {
-		String name = service.getName();
+	public IndexItem getIndex(IndexServiceClient indexService) throws IOException {
+		DfsService dfs = getService();
+
+		String name = dfs.getName();
 		return indexService.getIndexItem(getIndexProviderId(), SubstanceConstants.IDX__DFS__TYPE, name);
 	}
 
 	@Override
-	public IndexItem addIndex(IndexServiceClient indexService, DfsService service) throws IOException {
-		String dfsId = service.getDfsId();
-		String name = service.getName();
-		String hostURL = service.getHostURL();
-		String contextRoot = service.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(service);
+	public IndexItem addIndex(IndexServiceClient indexService) throws IOException {
+		DfsService dfs = getService();
+
+		String dfsId = dfs.getDfsId();
+		String name = dfs.getName();
+		String hostURL = dfs.getHostURL();
+		String contextRoot = dfs.getContextRoot();
+		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfs);
 
 		Date now = new Date();
 
@@ -55,12 +58,14 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 	}
 
 	@Override
-	public void updateIndex(IndexServiceClient indexService, DfsService service, IndexItem indexItem) throws IOException {
-		String dfsId = service.getDfsId();
-		String name = service.getName();
-		String hostURL = service.getHostURL();
-		String contextRoot = service.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(service);
+	public void updateIndex(IndexServiceClient indexService, IndexItem indexItem) throws IOException {
+		DfsService dfs = getService();
+
+		String dfsId = dfs.getDfsId();
+		String name = dfs.getName();
+		String hostURL = dfs.getHostURL();
+		String contextRoot = dfs.getContextRoot();
+		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfs);
 
 		Date now = new Date();
 
@@ -77,7 +82,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 	}
 
 	@Override
-	public void cleanupIndex(IndexServiceClient indexService, DfsService service, IndexItem indexItem) throws IOException {
+	public void cleanupIndex(IndexServiceClient indexService, IndexItem indexItem) throws IOException {
 		Integer indexItemId = indexItem.getIndexItemId();
 		Map<String, Object> props = indexItem.getProperties();
 		List<String> propertyNames = MapHelper.INSTANCE.getKeyList(props);

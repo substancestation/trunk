@@ -15,20 +15,6 @@ import org.origin.common.service.WebServiceAwareHelper;
 
 public class DfsClientResolverImpl implements DfsClientResolver {
 
-	protected String indexServiceUrl;
-
-	/**
-	 * 
-	 * @param indexServiceUrl
-	 */
-	public DfsClientResolverImpl(String indexServiceUrl) {
-		if (indexServiceUrl == null || indexServiceUrl.isEmpty()) {
-			throw new IllegalArgumentException("indexServiceUrl is empty.");
-		}
-
-		this.indexServiceUrl = indexServiceUrl;
-	}
-
 	@Override
 	public DfsClient resolve(String dfsServiceUrl, String accessToken) {
 		if (dfsServiceUrl == null || dfsServiceUrl.isEmpty()) {
@@ -46,7 +32,7 @@ public class DfsClientResolverImpl implements DfsClientResolver {
 		}
 
 		IndexItem dfsIndexItem = null;
-		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(this.indexServiceUrl, accessToken);
+		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
