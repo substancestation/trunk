@@ -11,14 +11,23 @@ public class DfsConfigPropertiesHandler extends AbstractConfigPropertiesHandler 
 		return INSTANCE;
 	}
 
+	// VM arguments example:
+	// -Dsubstance.dfs.autostart=true
+	// -Dsubstance.dfs.id=dfs1
+	// -Dsubstance.dfs.name=DFS1
+	// -Dsubstance.dfs.context_root=/orbit/v1/dfs
+	// -Dsubstance.dfs.block_capacity_mb=100
+	// -Dsubstance.dfs.jdbc.driver=org.postgresql.Driver
+	// -Dsubstance.dfs.jdbc.url=jdbc:postgresql://127.0.0.1:5432/dfs1
+	// -Dsubstance.dfs.jdbc.username=postgres
+	// -Dsubstance.dfs.jdbc.password=admin
+
 	@Override
 	public String[] getConfigPropertyNames() {
 		String[] propNames = new String[] { //
-				// InfraConstants.ORBIT_INDEX_SERVICE_URL, //
-				// InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
-				// InfraConstants.ORBIT_CONFIG_REGISTRY_URL, //
 				SubstanceConstants.ORBIT_HOST_URL, //
 
+				SubstanceConstants.DFS__AUTOSTART, //
 				SubstanceConstants.DFS__ID, //
 				SubstanceConstants.DFS__NAME, //
 				SubstanceConstants.DFS__HOST_URL, //
@@ -33,3 +42,7 @@ public class DfsConfigPropertiesHandler extends AbstractConfigPropertiesHandler 
 	}
 
 }
+
+// InfraConstants.ORBIT_INDEX_SERVICE_URL, //
+// InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
+// InfraConstants.ORBIT_CONFIG_REGISTRY_URL, //

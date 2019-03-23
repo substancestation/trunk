@@ -2,7 +2,7 @@ package org.orbit.substance.runtime.extension;
 
 import java.util.Map;
 
-import org.orbit.platform.sdk.IPlatformContext;
+import org.orbit.platform.sdk.IProcessContext;
 import org.orbit.platform.sdk.IProcess;
 import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
 import org.orbit.substance.runtime.dfs.service.DfsService;
@@ -15,7 +15,7 @@ public class DfsServiceActivator implements ServiceActivator {
 	public static final String ID = "org.orbit.substance.runtime.DfsServiceActivator";
 
 	@Override
-	public void start(IPlatformContext context, IProcess process) throws Exception {
+	public void start(IProcessContext context, IProcess process) throws Exception {
 		BundleContext bundleContext = context.getBundleContext();
 		Map<Object, Object> properties = context.getProperties();
 
@@ -27,7 +27,7 @@ public class DfsServiceActivator implements ServiceActivator {
 	}
 
 	@Override
-	public void stop(IPlatformContext context, IProcess process) throws Exception {
+	public void stop(IProcessContext context, IProcess process) throws Exception {
 		BundleContext bundleContext = context.getBundleContext();
 
 		// Stop service

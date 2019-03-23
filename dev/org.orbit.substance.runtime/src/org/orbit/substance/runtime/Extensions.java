@@ -45,8 +45,10 @@ import org.orbit.substance.runtime.extension.DfsVolumeServiceActivator;
 import org.orbit.substance.runtime.extension.DfsVolumeServicePropertyTester;
 import org.origin.common.extensions.Extension;
 import org.origin.common.extensions.InterfaceDescription;
+import org.origin.common.extensions.ParameterDefinition;
 import org.origin.common.extensions.ProgramExtensions;
 import org.origin.common.extensions.condition.ConditionFactory;
+import org.origin.common.extensions.condition.ICondition;
 import org.origin.common.extensions.condition.IPropertyTester;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.slf4j.Logger;
@@ -88,9 +90,57 @@ public class Extensions extends ProgramExtensions {
 		String extensionTypeId = ServiceActivator.EXTENSION_TYPE_ID;
 
 		Extension extension1 = new Extension(extensionTypeId, DfsServiceActivator.ID, "DFS Service Activator");
-		InterfaceDescription desc1 = new InterfaceDescription(ServiceActivator.class, DfsServiceActivator.class);
-		desc1.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(DfsServicePropertyTester.ID));
-		extension1.addInterface(desc1);
+		InterfaceDescription interfaceDesc1 = new InterfaceDescription(ServiceActivator.class, DfsServiceActivator.class);
+
+		// Conditions conditions = ConditionFactory.getInstance().newConditions(Conditions.OPERATOR.AND);
+		// ICondition propertyTester1 = ConditionFactory.getInstance().newPropertyTesterCondition(DfsServicePropertyTester.ID);
+		// ICondition propertyTester2 =
+		// ConditionFactory.getInstance().newPropertyTesterCondition(PlatformConstants.SERVICE_ACTIVATOR_PARAMETERS_PROPERTY_TESTER_ID);
+		// conditions.add(propertyTester1);
+		// conditions.add(propertyTester2);
+		// interfaceDesc1.setTriggerCondition(conditions);
+		ICondition propertyTester1 = ConditionFactory.getInstance().newPropertyTesterCondition(DfsServicePropertyTester.ID);
+		interfaceDesc1.setTriggerCondition(propertyTester1);
+
+		// VM arguments example:
+		// -Dsubstance.dfs.autostart=true
+		// -Dsubstance.dfs.id=dfs1
+		// -Dsubstance.dfs.name=DFS1
+		// -Dsubstance.dfs.context_root=/orbit/v1/dfs
+		// -Dsubstance.dfs.block_capacity_mb=100
+		// -Dsubstance.dfs.jdbc.driver=org.postgresql.Driver
+		// -Dsubstance.dfs.jdbc.url=jdbc:postgresql://127.0.0.1:5432/dfs1
+		// -Dsubstance.dfs.jdbc.username=postgres
+		// -Dsubstance.dfs.jdbc.password=admin
+
+		// Set parameter definitions:
+		// (1) The parameters values can to be retrieved from BundleContext. If not found, use the default value from the parameter definition.
+
+		// (2) If ConfigRegistry > platforms > platformId > services > serviceName (InterfaceDescription name) > paramName exists (not null), the value from
+		// ConfigRegistry overrides the parameter value.
+
+		// For starting of ServiceActivator:
+		// (1) ServiceActivatorHelper.isAutoStart(IPlatformContext, InterfaceDescription) returns a boolean value. If ConfigRegistry > platforms > platformId >
+		// services > serviceName (InterfaceDescription name) > autostart exists (not null), the value from ConfigRegistry overrides the boolean value. When the
+		// value is true, start the ServiceActivator.
+
+		// (2) When all NotEmpty parameters have values, the ServiceActivator will be started. If there are NotEmpty parameters without values, the
+		// ServiceActivator will not be started. An exception should be thrown.
+
+		interfaceDesc1.setParameterDefinitions( //
+				new ParameterDefinition("substance.dfs.autostart", "DFS auto start", false, "true"), //
+				new ParameterDefinition("substance.dfs.id", "DFS Id", true, null), //
+				new ParameterDefinition("substance.dfs.name", "DFS Name", true, null), //
+				new ParameterDefinition("substance.dfs.host.url", "DFS web service host URL", false, null), //
+				new ParameterDefinition("substance.dfs.context_root", "DFS web service context root", true, "/orbit/v1/dfs"), //
+				new ParameterDefinition("substance.dfs.block_capacity_mb", "DFS block capacity in MB", true, "100"), //
+				new ParameterDefinition("substance.dfs.jdbc.driver", "JDBC driver", true, null), //
+				new ParameterDefinition("substance.dfs.jdbc.url", "JDBC URL", true, null), //
+				new ParameterDefinition("substance.dfs.jdbc.username", "JDBC username", true, null), //
+				new ParameterDefinition("substance.dfs.jdbc.password", "JDBC password", true, null) //
+		);
+
+		extension1.addInterface(interfaceDesc1);
 		addExtension(extension1);
 
 		Extension extension2 = new Extension(extensionTypeId, DfsVolumeServiceActivator.ID, "DFS Volume Service Activator");

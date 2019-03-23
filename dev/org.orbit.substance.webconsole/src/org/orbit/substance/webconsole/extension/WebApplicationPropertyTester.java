@@ -3,7 +3,7 @@ package org.orbit.substance.webconsole.extension;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.orbit.platform.sdk.IPlatformContext;
+import org.orbit.platform.sdk.IProcessContext;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.extensions.condition.IPropertyTester;
 import org.origin.common.util.PropertyUtil;
@@ -18,8 +18,8 @@ public class WebApplicationPropertyTester implements IPropertyTester {
 	@Override
 	public boolean accept(Object context, Object source, Object target, Map<String, Object> args) {
 		BundleContext bundleContext = null;
-		if (context instanceof IPlatformContext) {
-			IPlatformContext platformContext = (IPlatformContext) context;
+		if (context instanceof IProcessContext) {
+			IProcessContext platformContext = (IProcessContext) context;
 			bundleContext = platformContext.getBundleContext();
 		}
 		if (bundleContext != null) {
