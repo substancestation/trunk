@@ -89,7 +89,7 @@ public class Extensions extends ProgramExtensions {
 	protected void createServiceActivatorExtensions() {
 		String extensionTypeId = ServiceActivator.EXTENSION_TYPE_ID;
 
-		Extension extension1 = new Extension(extensionTypeId, DfsServiceActivator.ID, "DFS Service Activator");
+		Extension extension1 = new Extension(extensionTypeId, DfsServiceActivator.ID, "DFS Service", "Distributed file system service.");
 		InterfaceDescription interfaceDesc1 = new InterfaceDescription(ServiceActivator.class, DfsServiceActivator.class);
 
 		// Conditions conditions = ConditionFactory.getInstance().newConditions(Conditions.OPERATOR.AND);
@@ -126,7 +126,6 @@ public class Extensions extends ProgramExtensions {
 
 		// (2) When all NotEmpty parameters have values, the ServiceActivator will be started. If there are NotEmpty parameters without values, the
 		// ServiceActivator will not be started. An exception should be thrown.
-
 		interfaceDesc1.setParameterDefinitions( //
 				new ParameterDefinition("substance.dfs.autostart", "DFS auto start", false, "true"), //
 				new ParameterDefinition("substance.dfs.id", "DFS Id", true, null), //
@@ -143,7 +142,7 @@ public class Extensions extends ProgramExtensions {
 		extension1.addInterface(interfaceDesc1);
 		addExtension(extension1);
 
-		Extension extension2 = new Extension(extensionTypeId, DfsVolumeServiceActivator.ID, "DFS Volume Service Activator");
+		Extension extension2 = new Extension(extensionTypeId, DfsVolumeServiceActivator.ID, "DFS Volume Service", "Distributed file system volume service.");
 		InterfaceDescription desc2 = new InterfaceDescription(ServiceActivator.class, DfsVolumeServiceActivator.class);
 		desc2.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(DfsVolumeServicePropertyTester.ID));
 		extension2.addInterface(desc2);
