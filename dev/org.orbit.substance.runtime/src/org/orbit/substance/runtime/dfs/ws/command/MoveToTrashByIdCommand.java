@@ -9,7 +9,7 @@ import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -54,7 +54,7 @@ public class MoveToTrashByIdCommand extends AbstractDfsCommand<DfsService> imple
 		}
 
 		FileMetadata fileMetadata = fileSystem.moveToTrash(file_id);
-		FileMetadataDTO fileMetadataDTO = ModelConverter.Dfs.toDTO(fileMetadata);
+		FileMetadataDTO fileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(fileMetadata);
 		return Response.ok().entity(fileMetadataDTO).build();
 	}
 

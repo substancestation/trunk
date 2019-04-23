@@ -44,6 +44,7 @@ public class WebApplication extends PlatformWebApplication {
 				// InfraConstants.ORBIT_EXTENSION_REGISTRY_URL, //
 				WebConstants.PLATFORM_WEB_CONSOLE_CONTEXT_ROOT, //
 				WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT, //
+				SubstanceConstants.ORBIT_DFS_ID, //
 				SubstanceConstants.ORBIT_DFS_URL, //
 		};
 		return propNames;

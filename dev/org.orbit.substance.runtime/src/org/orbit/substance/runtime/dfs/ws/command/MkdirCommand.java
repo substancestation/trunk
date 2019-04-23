@@ -9,7 +9,7 @@ import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
@@ -56,7 +56,7 @@ public class MkdirCommand extends AbstractDfsCommand<DfsService> implements WSCo
 			// file exists
 			if (existingFileMetadata.isDirectory()) {
 				// directory already exists
-				fileMetadataDTO = ModelConverter.Dfs.toDTO(existingFileMetadata);
+				fileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(existingFileMetadata);
 
 			} else {
 				ErrorDTO error = new ErrorDTO(String.valueOf(Status.BAD_REQUEST.getStatusCode()), String.format("Path '%s' already exists and is a file.", path_str));
@@ -67,7 +67,7 @@ public class MkdirCommand extends AbstractDfsCommand<DfsService> implements WSCo
 			// file doesn't exist
 			FileMetadata newFileMetadata = fileSystem.mkdirs(path);
 			if (newFileMetadata != null) {
-				fileMetadataDTO = ModelConverter.Dfs.toDTO(newFileMetadata);
+				fileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(newFileMetadata);
 			}
 		}
 

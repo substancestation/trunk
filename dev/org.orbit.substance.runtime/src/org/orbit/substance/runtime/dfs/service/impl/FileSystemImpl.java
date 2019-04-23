@@ -20,7 +20,7 @@ import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.util.DfsVolumeClientResolverImpl;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.orbit.substance.runtime.util.SubstanceComparators.DfsVolumeClientComparatorByFreeSpace;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.resource.Path;
@@ -706,7 +706,7 @@ public class FileSystemImpl implements FileSystem {
 		// - Dfs volumes are sorted by volume id (asc)
 		DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
-		DfsVolumeClient[] dfsVolumeClients = ModelConverter.DfsVolume.getDfsVolumeClient(dfsVolumeClientResolver, dfsAccessToken, dfsId);
+		DfsVolumeClient[] dfsVolumeClients = RuntimeModelConverter.DfsVolume.getDfsVolumeClient(dfsVolumeClientResolver, dfsAccessToken, dfsId);
 		for (DfsVolumeClient dfsVolumeClient : dfsVolumeClients) {
 			try {
 				// Find an existing datablock with enough space to hold the file content alone.

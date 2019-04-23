@@ -9,7 +9,7 @@ import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
@@ -57,7 +57,7 @@ public class PutBackFromTrashByPathCommand extends AbstractDfsCommand<DfsService
 		}
 
 		FileMetadata fileMetadata = fileSystem.putBackFromTrash(path);
-		FileMetadataDTO fileMetadataDTO = ModelConverter.Dfs.toDTO(fileMetadata);
+		FileMetadataDTO fileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(fileMetadata);
 		return Response.ok().entity(fileMetadataDTO).build();
 	}
 

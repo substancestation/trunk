@@ -29,7 +29,7 @@ import org.orbit.substance.model.dfsvolume.PendingFileImpl;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.model.ErrorDTO;
@@ -206,7 +206,7 @@ public class DfsVolumeFileContentWSResource extends AbstractWSApplicationResourc
 			return Response.status(Status.NOT_MODIFIED).entity(statusDTO).build();
 		}
 
-		FileContentMetadataDTO fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);
+		FileContentMetadataDTO fileContentDTO = RuntimeModelConverter.DfsVolume.toDTO(fileContent);
 		return Response.ok().entity(fileContentDTO).build();
 	}
 

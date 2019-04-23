@@ -9,7 +9,7 @@ import java.io.PipedOutputStream;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.origin.common.io.IOUtil;
 
 /**
@@ -49,7 +49,7 @@ public class DFileOutputStream extends PipedOutputStream {
 		try {
 			final DFS dfs = file.getDFS();
 			final String fileId = file.getFileId();
-			final String dfsServiceUrl = dfs.getDfsServiceUrl();
+			// final String dfsServiceUrl = dfs.getDfsServiceUrl();
 			final String accessToken = dfs.getAccessToken();
 			final DfsClientResolver dfsClientResolver = dfs.getDfsClientResolver();
 			final DfsVolumeClientResolver dfsVolumeClientResolver = dfs.getDfsVolumeClientResolver();
@@ -62,8 +62,8 @@ public class DFileOutputStream extends PipedOutputStream {
 					@Override
 					public void run() {
 						try {
-							FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, size);
-							SubstanceClientsHelper.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pipeInput);
+							FileMetadata fileMetadata = SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, size);
+							SubstanceClientsUtil.DFS_VOLUME.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pipeInput);
 
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -86,10 +86,10 @@ public class DFileOutputStream extends PipedOutputStream {
 							byte[] bytes = byteOutput.toByteArray();
 
 							long length = bytes.length;
-							FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.allocateVolumes(dfsClientResolver, dfsServiceUrl, accessToken, fileId, length);
+							FileMetadata fileMetadata = SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, length);
 
 							byteInput = new ByteArrayInputStream(bytes);
-							SubstanceClientsHelper.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, byteInput);
+							SubstanceClientsUtil.DFS_VOLUME.upload(dfsVolumeClientResolver, accessToken, fileMetadata, byteInput);
 
 						} catch (Exception e) {
 							e.printStackTrace();

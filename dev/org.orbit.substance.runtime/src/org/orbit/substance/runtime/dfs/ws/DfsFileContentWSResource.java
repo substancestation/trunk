@@ -25,7 +25,7 @@ import org.orbit.substance.model.dfs.FileMetadataDTO;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.io.IOUtil;
 import org.origin.common.rest.annotation.Secured;
 import org.origin.common.rest.model.ErrorDTO;
@@ -184,7 +184,7 @@ public class DfsFileContentWSResource extends AbstractWSApplicationResource {
 			IOUtil.closeQuietly(contentInputStream, true);
 		}
 
-		FileMetadataDTO newFileMetadataDTO = ModelConverter.Dfs.toDTO(newFile);
+		FileMetadataDTO newFileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(newFile);
 		return Response.ok().entity(newFileMetadataDTO).build();
 	}
 

@@ -16,8 +16,8 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
-import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.io.util.DfsClientResolverByDfsId;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.io.IOUtil;
@@ -38,7 +38,8 @@ public class FileContentServlet extends HttpServlet {
 		// Get parameters
 		// ---------------------------------------------------------------
 		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		// String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		String dfsId = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_ID);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = "";
@@ -58,10 +59,10 @@ public class FileContentServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
+			DfsClientResolver dfsClientResolver = new DfsClientResolverByDfsId(dfsId);
 			DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
-			FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(dfsClientResolver, accessToken, fileId);
 			if (fileMetadata == null) {
 				message = MessageHelper.INSTANCE.add(message, "File is not found.");
 
@@ -98,7 +99,7 @@ public class FileContentServlet extends HttpServlet {
 			// output = new FileOutputStream(localFile);
 			output = new ByteArrayOutputStream();
 
-			SubstanceClientsHelper.DfsVolume.download(dfsVolumeClientResolver, accessToken, fileMetadata, output);
+			SubstanceClientsUtil.DFS_VOLUME.download(dfsVolumeClientResolver, accessToken, fileMetadata, output);
 
 			fileContent = output.toString("UTF-8"); //$NON-NLS-1$
 

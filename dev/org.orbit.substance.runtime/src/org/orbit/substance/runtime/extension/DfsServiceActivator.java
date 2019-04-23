@@ -2,8 +2,8 @@ package org.orbit.substance.runtime.extension;
 
 import java.util.Map;
 
-import org.orbit.platform.sdk.IProcessContext;
 import org.orbit.platform.sdk.IProcess;
+import org.orbit.platform.sdk.IProcessContext;
 import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.impl.DfsServiceImpl;
@@ -19,7 +19,7 @@ public class DfsServiceActivator implements ServiceActivator {
 		BundleContext bundleContext = context.getBundleContext();
 		Map<Object, Object> properties = context.getProperties();
 
-		// Start service
+		// Start DFS service
 		DfsServiceImpl service = new DfsServiceImpl(properties);
 		service.start(bundleContext);
 
@@ -30,7 +30,7 @@ public class DfsServiceActivator implements ServiceActivator {
 	public void stop(IProcessContext context, IProcess process) throws Exception {
 		BundleContext bundleContext = context.getBundleContext();
 
-		// Stop service
+		// Stop DFS service
 		DfsService service = process.getAdapter(DfsService.class);
 		if (service instanceof LifecycleAware) {
 			((LifecycleAware) service).stop(bundleContext);

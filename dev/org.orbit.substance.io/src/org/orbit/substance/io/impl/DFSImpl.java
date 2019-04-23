@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
@@ -45,7 +45,7 @@ public class DFSImpl extends DFS {
 	public DfsServiceMetadata getServiceMetadata() throws IOException {
 		DfsServiceMetadata metadata = null;
 		try {
-			metadata = SubstanceClientsHelper.Dfs.getDfsMetadata(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken);
+			metadata = SubstanceClientsUtil.DFS.getDfsMetadata(this.dfsClientResolver, this.accessToken);
 		} catch (ClientException e) {
 			handle(e);
 		}
@@ -59,7 +59,7 @@ public class DFSImpl extends DFS {
 	public DFile[] listRoot() throws IOException {
 		List<DFile> files = new ArrayList<DFile>();
 		try {
-			FileMetadata[] fileMetadatas = SubstanceClientsHelper.Dfs.listRoots(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken);
+			FileMetadata[] fileMetadatas = SubstanceClientsUtil.DFS.listRoots(this.dfsClientResolver, this.accessToken);
 			if (fileMetadatas != null) {
 				for (FileMetadata fileMetadata : fileMetadatas) {
 					String fileId = fileMetadata.getFileId();
@@ -79,7 +79,7 @@ public class DFSImpl extends DFS {
 	public DFile[] listFiles(String parentFileId) throws IOException {
 		List<DFile> files = new ArrayList<DFile>();
 		try {
-			FileMetadata[] fileMetadatas = SubstanceClientsHelper.Dfs.listFiles(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, parentFileId);
+			FileMetadata[] fileMetadatas = SubstanceClientsUtil.DFS.listFiles(this.dfsClientResolver, this.accessToken, parentFileId);
 			if (fileMetadatas != null) {
 				for (FileMetadata fileMetadata : fileMetadatas) {
 					String fileId = fileMetadata.getFileId();
@@ -99,7 +99,7 @@ public class DFSImpl extends DFS {
 	public DFile[] listFiles(Path parentPath) throws IOException {
 		List<DFile> files = new ArrayList<DFile>();
 		try {
-			FileMetadata[] fileMetadatas = SubstanceClientsHelper.Dfs.listFiles(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, parentPath);
+			FileMetadata[] fileMetadatas = SubstanceClientsUtil.DFS.listFiles(this.dfsClientResolver, this.accessToken, parentPath);
 			if (fileMetadatas != null) {
 				for (FileMetadata fileMetadata : fileMetadatas) {
 					String fileId = fileMetadata.getFileId();
@@ -123,7 +123,7 @@ public class DFSImpl extends DFS {
 
 		DFile file = null;
 		try {
-			FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, fileId);
+			FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, fileId);
 			if (fileMetadata == null) {
 				throw new IOException("File doesn't exist. fileId='" + fileId + "'.");
 			}
@@ -155,7 +155,7 @@ public class DFSImpl extends DFS {
 
 		DFile file = null;
 		try {
-			FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, path);
+			FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, path);
 			if (fileMetadata != null) {
 				// file exists
 				String fileId = fileMetadata.getFileId();
@@ -178,7 +178,7 @@ public class DFSImpl extends DFS {
 
 		String fileId = null;
 		try {
-			FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, path);
+			FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, path);
 			if (fileMetadata != null) {
 				fileId = fileMetadata.getFileId();
 			}
@@ -193,7 +193,7 @@ public class DFSImpl extends DFS {
 		boolean exists = false;
 		try {
 			if (fileId != null) {
-				FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, fileId);
+				FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, fileId);
 				if (fileMetadata != null) {
 					exists = true;
 				}
@@ -209,7 +209,7 @@ public class DFSImpl extends DFS {
 		boolean exists = false;
 		try {
 			if (path != null) {
-				FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, path);
+				FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, path);
 				if (fileMetadata != null) {
 					exists = true;
 				}
@@ -225,7 +225,7 @@ public class DFSImpl extends DFS {
 		boolean isDirectory = false;
 		try {
 			if (fileId != null) {
-				FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, fileId);
+				FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, fileId);
 				if (fileMetadata != null) {
 					isDirectory = fileMetadata.isDirectory();
 				}
@@ -249,7 +249,7 @@ public class DFSImpl extends DFS {
 				throw new IOException("File already exists. Path is '" + path.getPathString() + "'.");
 			}
 
-			fileMetadata = SubstanceClientsHelper.Dfs.createDirectory(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, path);
+			fileMetadata = SubstanceClientsUtil.DFS.createDirectory(this.dfsClientResolver, this.accessToken, path);
 
 		} catch (ClientException e) {
 			handle(e);
@@ -265,7 +265,7 @@ public class DFSImpl extends DFS {
 
 		FileMetadata fileMetadata = null;
 		try {
-			fileMetadata = SubstanceClientsHelper.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, path, size);
+			fileMetadata = SubstanceClientsUtil.DFS.createNewFile(this.dfsClientResolver, this.accessToken, path, size);
 
 		} catch (ClientException e) {
 			handle(e);
@@ -325,7 +325,7 @@ public class DFSImpl extends DFS {
 
 		long length = 0;
 		try {
-			FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, fileId);
+			FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, fileId);
 			if (fileMetadata != null) {
 				length = fileMetadata.getSize();
 			}
@@ -427,7 +427,7 @@ public class DFSImpl extends DFS {
 
 		boolean succeed = false;
 		try {
-			succeed = SubstanceClientsHelper.Dfs.renameFile(this.dfsClientResolver, this.dfsServiceUrl, this.accessToken, fileId, newName);
+			succeed = SubstanceClientsUtil.DFS.renameFile(this.dfsClientResolver, this.accessToken, fileId, newName);
 
 		} catch (ClientException e) {
 			handle(e);
@@ -442,7 +442,7 @@ public class DFSImpl extends DFS {
 		}
 		boolean succeed = false;
 		try {
-			succeed = SubstanceClientsHelper.Dfs.deleteFile(this.dfsClientResolver, this.dfsVolumeClientResolver, this.dfsServiceUrl, this.accessToken, fileId);
+			succeed = SubstanceClientsUtil.DFS.deleteFile(this.dfsClientResolver, this.dfsVolumeClientResolver, this.accessToken, fileId);
 
 		} catch (ClientException e) {
 			handle(e);

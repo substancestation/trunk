@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.resource.Path;
 
 public class FileMetadataImpl implements FileMetadata {
@@ -284,8 +284,8 @@ public class FileMetadataImpl implements FileMetadata {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		String filePartsString = ModelConverter.Dfs.toFilePartsString(this.fileParts);
-		String propertiesString = ModelConverter.Dfs.toPropertiesString(this.properties);
+		String filePartsString = RuntimeModelConverter.Dfs.toFilePartsString(this.fileParts);
+		String propertiesString = RuntimeModelConverter.Dfs.toPropertiesString(this.properties);
 
 		sb.append("FileMetadataImpl (");
 		sb.append("dfsId='").append(this.dfsId).append("'");

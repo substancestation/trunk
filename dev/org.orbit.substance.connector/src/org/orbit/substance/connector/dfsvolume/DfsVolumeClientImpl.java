@@ -11,7 +11,7 @@ import org.orbit.substance.api.dfsvolume.DataBlockMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
-import org.orbit.substance.connector.util.ModelConverter;
+import org.orbit.substance.connector.util.ClientModelConverter;
 import org.orbit.substance.model.RequestConstants;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.ServiceClientImpl;
@@ -67,7 +67,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+				dataBlocks = ClientModelConverter.DfsVolume.getDataBlocks(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -89,7 +89,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+				dataBlocks = ClientModelConverter.DfsVolume.getDataBlocks(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -114,7 +114,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				dataBlocks = ModelConverter.DfsVolume.getDataBlocks(this, response);
+				dataBlocks = ClientModelConverter.DfsVolume.getDataBlocks(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -137,7 +137,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				succeed = ModelConverter.DfsVolume.exists(response);
+				succeed = ClientModelConverter.DfsVolume.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -157,7 +157,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
+				dataBlock = ClientModelConverter.DfsVolume.getDataBlock(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -177,7 +177,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				dataBlock = ModelConverter.DfsVolume.getDataBlock(this, response);
+				dataBlock = ClientModelConverter.DfsVolume.getDataBlock(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -198,7 +198,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				succeed = ModelConverter.DfsVolume.isUpdated(response);
+				succeed = ClientModelConverter.DfsVolume.isUpdated(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -218,7 +218,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				succeed = ModelConverter.DfsVolume.isDeleted(response);
+				succeed = ClientModelConverter.DfsVolume.isDeleted(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -241,7 +241,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				fileContents = ModelConverter.DfsVolume.getFileContents(this, response);
+				fileContents = ClientModelConverter.DfsVolume.getFileContents(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -266,7 +266,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				succeed = ModelConverter.DfsVolume.exists(response);
+				succeed = ClientModelConverter.DfsVolume.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -288,7 +288,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				fileContent = ModelConverter.DfsVolume.getFileContent(this, response);
+				fileContent = ClientModelConverter.DfsVolume.getFileContent(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -312,7 +312,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				succeed = ModelConverter.DfsVolume.isDeleted(response);
+				succeed = ClientModelConverter.DfsVolume.isDeleted(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -328,7 +328,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		FileContentMetadata fileContent = null;
 		Response response = getWSClient().upload(accountId, blockId, fileId, partId, file, checksum);
 		if (response != null) {
-			fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
+			fileContent = ClientModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 		}
 		return fileContent;
 	}
@@ -338,7 +338,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		FileContentMetadata fileContent = null;
 		Response response = getWSClient().upload(accountId, blockId, fileId, partId, inputStream, size, checksum);
 		if (response != null) {
-			fileContent = ModelConverter.DfsVolume.getUpdatedFileContent(this, response);
+			fileContent = ClientModelConverter.DfsVolume.getUpdatedFileContent(this, response);
 		}
 		return fileContent;
 	}

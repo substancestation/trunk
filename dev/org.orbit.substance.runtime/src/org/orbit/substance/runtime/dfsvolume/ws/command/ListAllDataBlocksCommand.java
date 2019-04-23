@@ -11,7 +11,7 @@ import org.orbit.substance.model.dfsvolume.DataBlockMetadataDTO;
 import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.Request;
 
@@ -39,7 +39,7 @@ public class ListAllDataBlocksCommand extends AbstractDfsVolumeWSCommand<DfsVolu
 		DataBlockMetadata[] dataBlocks = service.getDataBlocks();
 		if (dataBlocks != null) {
 			for (DataBlockMetadata dataBlock : dataBlocks) {
-				DataBlockMetadataDTO dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
+				DataBlockMetadataDTO dataBlockDTO = RuntimeModelConverter.DfsVolume.toDTO(dataBlock);
 				if (dataBlockDTO != null) {
 					dataBlockDTOs.add(dataBlockDTO);
 				}

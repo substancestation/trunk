@@ -6,19 +6,10 @@ public interface DfsClientResolver {
 
 	/**
 	 * 
-	 * @param dfsServiceUrl
-	 * @param accessToken
-	 * @return
-	 */
-	DfsClient resolve(String dfsServiceUrl, String accessToken);
-
-	/**
-	 * 
-	 * @param dfsId
 	 * @param accessToken
 	 * @return
 	 * @throws IOException
 	 */
-	String getURL(String dfsId, String accessToken) throws IOException;
+	DfsClient resolve(String accessToken) throws IOException;
 
 }

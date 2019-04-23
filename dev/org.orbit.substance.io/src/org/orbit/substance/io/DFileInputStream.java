@@ -7,7 +7,7 @@ import java.io.PipedOutputStream;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.origin.common.io.IOUtil;
 
 /**
@@ -34,12 +34,11 @@ public class DFileInputStream extends PipedInputStream {
 		try {
 			final DFS dfs = file.getDFS();
 			final String fileId = file.getFileId();
-			final String dfsServiceUrl = dfs.getDfsServiceUrl();
 			final String accessToken = dfs.getAccessToken();
 			final DfsClientResolver dfsClientResolver = dfs.getDfsClientResolver();
 			final DfsVolumeClientResolver dfsVolumeClientResolver = dfs.getDfsVolumeClientResolver();
 
-			final FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			final FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(dfsClientResolver, accessToken, fileId);
 			if (fileMetadata.isDirectory()) {
 				throw new IOException("File is directory.");
 			}
@@ -50,7 +49,7 @@ public class DFileInputStream extends PipedInputStream {
 				@Override
 				public void run() {
 					try {
-						SubstanceClientsHelper.DfsVolume.download(dfsVolumeClientResolver, accessToken, fileMetadata, pipeOutput);
+						SubstanceClientsUtil.DFS_VOLUME.download(dfsVolumeClientResolver, accessToken, fileMetadata, pipeOutput);
 
 					} catch (Exception e) {
 						e.printStackTrace();

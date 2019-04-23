@@ -48,6 +48,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 
 		Map<String, Object> props = new Hashtable<String, Object>();
 		props.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
+		props.put(InfraConstants.SERVICE__ID, dfsId);
 		props.put(InfraConstants.SERVICE__NAME, name);
 		props.put(InfraConstants.SERVICE__HOST_URL, hostURL);
 		props.put(InfraConstants.SERVICE__CONTEXT_ROOT, contextRoot);
@@ -72,6 +73,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		Integer indexItemId = indexItem.getIndexItemId();
 		Map<String, Object> props = new Hashtable<String, Object>();
 		props.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
+		props.put(InfraConstants.SERVICE__ID, dfsId);
 		props.put(InfraConstants.SERVICE__NAME, name);
 		props.put(InfraConstants.SERVICE__HOST_URL, hostURL);
 		props.put(InfraConstants.SERVICE__CONTEXT_ROOT, contextRoot);

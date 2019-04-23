@@ -12,8 +12,8 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
-import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.io.util.DfsClientResolverByDfsId;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
@@ -28,7 +28,8 @@ public class FileListServlet extends HttpServlet {
 		// Get parameters
 		// ---------------------------------------------------------------
 		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		// String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		String dfsId = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_ID);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = null;
@@ -50,15 +51,15 @@ public class FileListServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
+			DfsClientResolver dfsClientResolver = new DfsClientResolverByDfsId(dfsId);
 
 			if (parentFileId == null || parentFileId.isEmpty() || "-1".equals(parentFileId)) {
-				files = SubstanceClientsHelper.Dfs.listRoots(dfsClientResolver, dfsServiceUrl, accessToken);
+				files = SubstanceClientsUtil.DFS.listRoots(dfsClientResolver, accessToken);
 
 			} else {
-				files = SubstanceClientsHelper.Dfs.listFiles(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
+				files = SubstanceClientsUtil.DFS.listFiles(dfsClientResolver, accessToken, parentFileId);
 
-				FileMetadata parentFile = SubstanceClientsHelper.Dfs.getFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId);
+				FileMetadata parentFile = SubstanceClientsUtil.DFS.getFile(dfsClientResolver, accessToken, parentFileId);
 				if (parentFile != null) {
 					grandParentFileId = parentFile.getParentFileId();
 				}
@@ -69,7 +70,7 @@ public class FileListServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (files == null) {
-			files = SubstanceClientsHelper.Dfs.EMPTY_FILES;
+			files = SubstanceClientsUtil.DFS.EMPTY_FILES;
 		}
 
 		// ---------------------------------------------------------------

@@ -47,8 +47,6 @@ import org.origin.common.extensions.Extension;
 import org.origin.common.extensions.InterfaceDescription;
 import org.origin.common.extensions.ParameterDefinition;
 import org.origin.common.extensions.ProgramExtensions;
-import org.origin.common.extensions.condition.ConditionFactory;
-import org.origin.common.extensions.condition.ICondition;
 import org.origin.common.extensions.condition.IPropertyTester;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.slf4j.Logger;
@@ -90,7 +88,7 @@ public class Extensions extends ProgramExtensions {
 		String extensionTypeId = ServiceActivator.EXTENSION_TYPE_ID;
 
 		Extension extension1 = new Extension(extensionTypeId, DfsServiceActivator.ID, "DFS Service", "Distributed file system service.");
-		InterfaceDescription interfaceDesc1 = new InterfaceDescription(ServiceActivator.class, DfsServiceActivator.class);
+		InterfaceDescription desc1 = new InterfaceDescription(ServiceActivator.class, DfsServiceActivator.class);
 
 		// Conditions conditions = ConditionFactory.getInstance().newConditions(Conditions.OPERATOR.AND);
 		// ICondition propertyTester1 = ConditionFactory.getInstance().newPropertyTesterCondition(DfsServicePropertyTester.ID);
@@ -99,8 +97,8 @@ public class Extensions extends ProgramExtensions {
 		// conditions.add(propertyTester1);
 		// conditions.add(propertyTester2);
 		// interfaceDesc1.setTriggerCondition(conditions);
-		ICondition propertyTester1 = ConditionFactory.getInstance().newPropertyTesterCondition(DfsServicePropertyTester.ID);
-		interfaceDesc1.setTriggerCondition(propertyTester1);
+		// ICondition propertyTester1 = ConditionFactory.getInstance().newPropertyTesterCondition(DfsServicePropertyTester.ID);
+		// desc1.setTriggerCondition(propertyTester1);
 
 		// VM arguments example:
 		// -Dsubstance.dfs.autostart=true
@@ -126,8 +124,8 @@ public class Extensions extends ProgramExtensions {
 
 		// (2) When all NotEmpty parameters have values, the ServiceActivator will be started. If there are NotEmpty parameters without values, the
 		// ServiceActivator will not be started. An exception should be thrown.
-		interfaceDesc1.setParameterDefinitions( //
-				new ParameterDefinition("substance.dfs.autostart", "DFS auto start", false, "true"), //
+		desc1.setParameterDefinitions( //
+				new ParameterDefinition("autostart", "DFS service auto start", true, "true"), //
 				new ParameterDefinition("substance.dfs.id", "DFS Id", true, null), //
 				new ParameterDefinition("substance.dfs.name", "DFS Name", true, null), //
 				new ParameterDefinition("substance.dfs.host.url", "DFS web service host URL", false, null), //
@@ -136,15 +134,31 @@ public class Extensions extends ProgramExtensions {
 				new ParameterDefinition("substance.dfs.jdbc.driver", "JDBC driver", true, null), //
 				new ParameterDefinition("substance.dfs.jdbc.url", "JDBC URL", true, null), //
 				new ParameterDefinition("substance.dfs.jdbc.username", "JDBC username", true, null), //
-				new ParameterDefinition("substance.dfs.jdbc.password", "JDBC password", true, null) //
+				new ParameterDefinition("substance.dfs.jdbc.password", "JDBC password", true, null, true) //
 		);
 
-		extension1.addInterface(interfaceDesc1);
+		extension1.addInterface(desc1);
 		addExtension(extension1);
 
 		Extension extension2 = new Extension(extensionTypeId, DfsVolumeServiceActivator.ID, "DFS Volume Service", "Distributed file system volume service.");
 		InterfaceDescription desc2 = new InterfaceDescription(ServiceActivator.class, DfsVolumeServiceActivator.class);
-		desc2.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(DfsVolumeServicePropertyTester.ID));
+		// desc2.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(DfsVolumeServicePropertyTester.ID));
+
+		desc2.setParameterDefinitions( //
+				new ParameterDefinition("autostart", "DFS volume service auto start", false, "true"), //
+				new ParameterDefinition("substance.dfs_volume.dfs_id", "DFS Id", true, null), //
+				new ParameterDefinition("substance.dfs_volume.id", "DFS volume Id", true, null), //
+				new ParameterDefinition("substance.dfs_volume.name", "DFS volume name", true, null), //
+				new ParameterDefinition("substance.dfs_volume.host.url", "DFS volume web service host URL", false, null), //
+				new ParameterDefinition("substance.dfs_volume.context_root", "DFS volume web service context root", true, "/orbit/v1/dfs_volume"), //
+				new ParameterDefinition("substance.dfs_volume.volume_capacity_gb", "DFS volume volume capacity in GB", true, "10"), //
+				new ParameterDefinition("substance.dfs_volume.block_capacity_mb", "DFS volume block capacity in MB", true, "100"), //
+				new ParameterDefinition("substance.dfs_volume.jdbc.driver", "JDBC driver", true, null), //
+				new ParameterDefinition("substance.dfs_volume.jdbc.url", "JDBC URL", true, null), //
+				new ParameterDefinition("substance.dfs_volume.jdbc.username", "JDBC username", true, null), //
+				new ParameterDefinition("substance.dfs_volume.jdbc.password", "JDBC password", true, null, true) //
+		);
+
 		extension2.addInterface(desc2);
 		addExtension(extension2);
 	}

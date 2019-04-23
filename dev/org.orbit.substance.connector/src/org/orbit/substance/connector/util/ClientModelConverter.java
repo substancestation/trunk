@@ -29,7 +29,7 @@ import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.util.ResponseUtil;
 
-public class ModelConverter {
+public class ClientModelConverter {
 
 	public static Dfs Dfs = new Dfs();
 	public static DfsVolume DfsVolume = new DfsVolume();

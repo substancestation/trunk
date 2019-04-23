@@ -12,7 +12,7 @@ import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -79,7 +79,7 @@ public class ListDataBlocksCommand extends AbstractDfsVolumeWSCommand<DfsVolumeS
 				}
 
 				if (hasEnoughSpace) {
-					DataBlockMetadataDTO dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
+					DataBlockMetadataDTO dataBlockDTO = RuntimeModelConverter.DfsVolume.toDTO(dataBlock);
 					if (dataBlockDTO != null) {
 						dataBlockDTOs.add(dataBlockDTO);
 					}

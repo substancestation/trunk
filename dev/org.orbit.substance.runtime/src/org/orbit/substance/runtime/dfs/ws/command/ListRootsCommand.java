@@ -12,7 +12,7 @@ import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -48,7 +48,7 @@ public class ListRootsCommand extends AbstractDfsCommand<DfsService> implements 
 
 		List<FileMetadataDTO> fileMetadataDTOs = new ArrayList<FileMetadataDTO>();
 		for (FileMetadata rootFile : rootFiles) {
-			FileMetadataDTO fileMetadataDTO = ModelConverter.Dfs.toDTO(rootFile);
+			FileMetadataDTO fileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(rootFile);
 			if (fileMetadataDTO != null) {
 				fileMetadataDTOs.add(fileMetadataDTO);
 			}

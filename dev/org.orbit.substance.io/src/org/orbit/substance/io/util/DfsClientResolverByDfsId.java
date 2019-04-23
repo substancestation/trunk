@@ -6,33 +6,47 @@ import java.util.List;
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
-import org.orbit.infra.api.util.InfraClientsHelper;
+import org.orbit.infra.api.util.InfraClientsUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.origin.common.service.WebServiceAwareHelper;
 
-public class DfsClientResolverImpl implements DfsClientResolver {
+public class DfsClientResolverByDfsId implements DfsClientResolver {
 
-	@Override
-	public DfsClient resolve(String dfsServiceUrl, String accessToken) {
-		if (dfsServiceUrl == null || dfsServiceUrl.isEmpty()) {
-			throw new IllegalArgumentException("dfsServiceUrl is empty.");
+	protected String dfsId;
+
+	public DfsClientResolverByDfsId(String dfsId) {
+		this.dfsId = dfsId;
+
+		if (this.dfsId == null || this.dfsId.isEmpty()) {
+			throw new IllegalArgumentException("dfsId is null.");
 		}
+	}
 
-		DfsClient dfsClient = SubstanceClientsHelper.Dfs.getDfsClient(dfsServiceUrl, accessToken);
-		return dfsClient;
+	public String getDfsId() {
+		return this.dfsId;
 	}
 
 	@Override
-	public String getURL(String dfsId, String accessToken) throws IOException {
+	public DfsClient resolve(String accessToken) throws IOException {
+		String dfsServiceUrl = getURL(this.dfsId, accessToken);
+		if (dfsServiceUrl == null || dfsServiceUrl.isEmpty()) {
+			throw new IllegalArgumentException("dfsServiceUrl cannot be retrieved.");
+		}
+
+		DfsClient dfsClient = SubstanceClientsUtil.DFS.getDfsClient(dfsServiceUrl, accessToken);
+		return dfsClient;
+	}
+
+	protected String getURL(String dfsId, String accessToken) throws IOException {
 		if (dfsId == null || dfsId.isEmpty()) {
 			throw new IllegalArgumentException("dfsId is empty.");
 		}
 
 		IndexItem dfsIndexItem = null;
-		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
@@ -52,3 +66,13 @@ public class DfsClientResolverImpl implements DfsClientResolver {
 	}
 
 }
+
+// @Override
+// public DfsClient resolve(String dfsServiceUrl, String accessToken) {
+// if (dfsServiceUrl == null || dfsServiceUrl.isEmpty()) {
+// throw new IllegalArgumentException("dfsServiceUrl is empty.");
+// }
+//
+// DfsClient dfsClient = SubstanceClientsHelper.Dfs.getDfsClient(dfsServiceUrl, accessToken);
+// return dfsClient;
+// }

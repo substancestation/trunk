@@ -22,7 +22,7 @@ import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
 import org.origin.common.json.JSONUtil;
 import org.origin.common.resource.Path;
 
-public class ModelConverter {
+public class RuntimeModelConverter {
 
 	public static Dfs Dfs = new Dfs();
 	public static DfsVolume DfsVolume = new DfsVolume();

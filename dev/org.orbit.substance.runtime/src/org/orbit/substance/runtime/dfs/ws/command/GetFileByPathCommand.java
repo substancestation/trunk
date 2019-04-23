@@ -9,7 +9,7 @@ import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
@@ -52,7 +52,7 @@ public class GetFileByPathCommand extends AbstractDfsCommand<DfsService> impleme
 		Path path = new Path(path_str);
 		FileMetadata fileMetadata = fileSystem.getFile(path);
 		if (fileMetadata != null) {
-			fileMetadataDTO = ModelConverter.Dfs.toDTO(fileMetadata);
+			fileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(fileMetadata);
 		}
 		if (fileMetadataDTO != null) {
 			return Response.ok().entity(fileMetadataDTO).build();

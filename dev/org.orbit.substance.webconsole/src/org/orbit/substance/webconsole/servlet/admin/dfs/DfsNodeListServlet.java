@@ -18,8 +18,8 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
-import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.io.util.DfsClientResolverByDfsURL;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.io.util.NodeConfigHelper;
 import org.orbit.substance.webconsole.WebConstants;
@@ -60,8 +60,6 @@ public class DfsNodeListServlet extends HttpServlet {
 				if (configElements != null) {
 					Map<String, IndexItem> dfsIndexItemMap = DfsIndexItemHelper.getDfsIndexItemsMap(accessToken);
 
-					DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
-
 					for (IConfigElement configElement : configElements) {
 						String dfsId = configElement.getAttribute(SubstanceConstants.IDX_PROP__DFS__ID, String.class);
 
@@ -73,7 +71,9 @@ public class DfsNodeListServlet extends HttpServlet {
 							if (isOnline) {
 								try {
 									String dfsServiceUrl = (String) dfsndexItem.getProperties().get(InfraConstants.SERVICE__BASE_URL);
-									DfsServiceMetadata metadata = SubstanceClientsHelper.Dfs.getServiceMetadata(dfsClientResolver, dfsServiceUrl, accessToken);
+									DfsClientResolver dfsClientResolver = new DfsClientResolverByDfsURL(dfsServiceUrl);
+
+									DfsServiceMetadata metadata = SubstanceClientsUtil.DFS.getServiceMetadata(dfsClientResolver, accessToken);
 									if (metadata != null) {
 										configElement.adapt(DfsServiceMetadata.class, metadata);
 									}

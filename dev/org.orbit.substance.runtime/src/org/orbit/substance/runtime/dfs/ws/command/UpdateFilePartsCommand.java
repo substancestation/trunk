@@ -13,7 +13,7 @@ import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -63,7 +63,7 @@ public class UpdateFilePartsCommand extends AbstractDfsCommand<DfsService> imple
 			return Response.status(Status.BAD_REQUEST).entity(error).build();
 		}
 
-		List<FilePart> fileParts = ModelConverter.Dfs.toFileParts(file_parts_string);
+		List<FilePart> fileParts = RuntimeModelConverter.Dfs.toFileParts(file_parts_string);
 		boolean succeed = fileSystem.updateFileParts(file_id, fileParts);
 
 		Map<String, Boolean> result = new HashMap<String, Boolean>();

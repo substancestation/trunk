@@ -20,9 +20,9 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
-import org.orbit.substance.connector.util.ModelConverter;
-import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.connector.util.ClientModelConverter;
+import org.orbit.substance.io.util.DfsClientResolverByDfsId;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.webconsole.WebConstants;
@@ -55,7 +55,8 @@ public class FileUploadServlet extends HttpServlet {
 		// Get parameters
 		// ---------------------------------------------------------------
 		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		// String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		String dfsId = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_ID);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String message = "";
@@ -136,14 +137,14 @@ public class FileUploadServlet extends HttpServlet {
 				// 7. Create file metadata in dfs and upload file content to dfs volume.
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
+				DfsClientResolver dfsClientResolver = new DfsClientResolverByDfsId(dfsId);
 				DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
 				for (File localFile : localFiles) {
 					// (1) Create file metadata in DFS
 					String fileName = localFile.getName();
 					long fileSize = localFile.length();
-					FileMetadata fileMetadata = SubstanceClientsHelper.Dfs.createNewFile(dfsClientResolver, dfsServiceUrl, accessToken, parentFileId, fileName, fileSize);
+					FileMetadata fileMetadata = SubstanceClientsUtil.DFS.createNewFile(dfsClientResolver, accessToken, parentFileId, fileName, fileSize);
 					if (fileMetadata == null) {
 						message = MessageHelper.INSTANCE.add(message, "File metadata cannot be created in DFS.");
 						break;
@@ -152,16 +153,16 @@ public class FileUploadServlet extends HttpServlet {
 					}
 
 					// (2) Upload file to DFS volumes
-					boolean isUploaded = SubstanceClientsHelper.DfsVolume.upload(dfsVolumeClientResolver, accessToken, fileMetadata, localFile);
+					boolean isUploaded = SubstanceClientsUtil.DFS_VOLUME.upload(dfsVolumeClientResolver, accessToken, fileMetadata, localFile);
 					if (isUploaded) {
 						message = MessageHelper.INSTANCE.add(message, "File '" + localFile.getName() + "' is uploaded to DFS volume.");
 
 						// (3) Update file metadata's file parts checksum in DFS
 						String fileId = fileMetadata.getFileId();
 						List<FilePart> fileParts = fileMetadata.getFileParts();
-						String filePartsString = ModelConverter.Dfs.toFilePartsString(fileParts);
+						String filePartsString = ClientModelConverter.Dfs.toFilePartsString(fileParts);
 
-						boolean isFilePartsUpdated = SubstanceClientsHelper.Dfs.updateFileParts(dfsClientResolver, dfsServiceUrl, accessToken, fileId, filePartsString);
+						boolean isFilePartsUpdated = SubstanceClientsUtil.DFS.updateFileParts(dfsClientResolver, accessToken, fileId, filePartsString);
 						if (isFilePartsUpdated) {
 							message = MessageHelper.INSTANCE.add(message, "File parts are updated.");
 						} else {

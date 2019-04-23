@@ -9,11 +9,11 @@ import java.util.List;
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
-import org.orbit.infra.api.util.InfraClientsHelper;
+import org.orbit.infra.api.util.InfraClientsUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.origin.common.service.WebServiceAwareHelper;
 
 public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
@@ -24,7 +24,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 			throw new IllegalArgumentException("dfsVolumeServiceUrl is empty.");
 		}
 
-		DfsVolumeClient dfsVolumeClient = SubstanceClientsHelper.DfsVolume.getDfsVolumeClient(dfsVolumeServiceUrl, accessToken);
+		DfsVolumeClient dfsVolumeClient = SubstanceClientsUtil.DFS_VOLUME.getDfsVolumeClient(dfsVolumeServiceUrl, accessToken);
 		return dfsVolumeClient;
 	}
 
@@ -38,7 +38,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 		}
 
 		IndexItem dfsVolumeIndexItem = null;
-		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID);
@@ -67,7 +67,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 		List<DfsVolumeClient> dfsVolumeClients = new ArrayList<DfsVolumeClient>();
 
 		List<IndexItem> dfsVolumesIndexItems = new ArrayList<IndexItem>();
-		IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
 		List<IndexItem> indexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 		for (IndexItem currIndexItem : indexItems) {
 			String currDfsId = (String) currIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID);

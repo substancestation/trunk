@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
-import org.orbit.substance.connector.util.ModelConverter;
+import org.orbit.substance.connector.util.ClientModelConverter;
 import org.orbit.substance.model.RequestConstants;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
@@ -83,7 +83,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				files = ModelConverter.Dfs.getFiles(this, response);
+				files = ClientModelConverter.Dfs.getFiles(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -106,7 +106,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				files = ModelConverter.Dfs.getFiles(this, response);
+				files = ClientModelConverter.Dfs.getFiles(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -129,7 +129,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				files = ModelConverter.Dfs.getFiles(this, response);
+				files = ClientModelConverter.Dfs.getFiles(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -152,7 +152,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -172,7 +172,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -192,7 +192,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				exists = ModelConverter.Dfs.exists(response);
+				exists = ClientModelConverter.Dfs.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -212,7 +212,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				exists = ModelConverter.Dfs.exists(response);
+				exists = ClientModelConverter.Dfs.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -232,7 +232,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -253,7 +253,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -273,7 +273,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -297,7 +297,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		FileMetadata file = null;
 		Response response = sendRequest(request);
 		if (response != null) {
-			file = ModelConverter.Dfs.getFile(this, response);
+			file = ClientModelConverter.Dfs.getFile(this, response);
 		}
 		return file;
 	}
@@ -321,7 +321,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -351,7 +351,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -370,7 +370,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				isUpdated = ModelConverter.Dfs.isUpdated(response);
+				isUpdated = ClientModelConverter.Dfs.isUpdated(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -394,7 +394,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				isRenamed = ModelConverter.Dfs.isRenamed(response);
+				isRenamed = ClientModelConverter.Dfs.isRenamed(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -414,7 +414,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				isDeleted = ModelConverter.Dfs.isDeleted(response);
+				isDeleted = ClientModelConverter.Dfs.isDeleted(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -434,7 +434,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				isDeleted = ModelConverter.Dfs.isDeleted(response);
+				isDeleted = ClientModelConverter.Dfs.isDeleted(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -454,7 +454,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -474,7 +474,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -494,7 +494,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -514,7 +514,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				file = ModelConverter.Dfs.getFile(this, response);
+				file = ClientModelConverter.Dfs.getFile(this, response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -531,7 +531,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				isEmptied = ModelConverter.Dfs.isEmptied(response);
+				isEmptied = ClientModelConverter.Dfs.isEmptied(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);

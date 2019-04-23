@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.jdbc.DatabaseTableAware;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.jdbc.ResultSetListHandler;
@@ -165,8 +165,8 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 		long dateCreated = rs.getLong("dateCreated");
 		long dateModified = rs.getLong("dateModified");
 
-		List<PendingFile> pendingFiles = ModelConverter.DfsVolume.toPendingFiles(pendingFilesString);
-		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
+		List<PendingFile> pendingFiles = RuntimeModelConverter.DfsVolume.toPendingFiles(pendingFilesString);
+		Map<String, Object> properties = RuntimeModelConverter.Dfs.toProperties(propertiesString);
 
 		return new DataBlockMetadataImpl(this.dfsId, this.dfsVolumeId, id, blockId, accountId, capacity, size, pendingFiles, properties, dateCreated, dateModified);
 	}
@@ -280,7 +280,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public DataBlockMetadata insert(Connection conn, String blockId, String accountId, long capacity, long size, List<PendingFile> pendingFiles, long dateCreated, long dateModified) throws SQLException {
-		String pendingFilesString = ModelConverter.DfsVolume.toPendingFilesString(pendingFiles);
+		String pendingFilesString = RuntimeModelConverter.DfsVolume.toPendingFilesString(pendingFiles);
 
 		String insertSQL = "INSERT INTO " + getTableName() + " (blockId, accountId, capacity, size, pendingFiles, dateCreated, dateModified) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		boolean succeed = DatabaseUtil.update(conn, insertSQL, new Object[] { blockId, accountId, capacity, size, pendingFilesString, dateCreated, dateModified }, 1);
@@ -378,7 +378,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public boolean updatePendingFiles(Connection conn, int id, String blockId, String accountId, List<PendingFile> pendingFiles) throws SQLException {
-		String pendingFilesString = ModelConverter.DfsVolume.toPendingFilesString(pendingFiles);
+		String pendingFilesString = RuntimeModelConverter.DfsVolume.toPendingFilesString(pendingFiles);
 
 		if (id > 0) {
 			String updateSQL = "UPDATE " + getTableName() + " SET pendingFiles=?, dateModified=? WHERE id=?";
@@ -399,7 +399,7 @@ public class VolumeBlocksTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public boolean updateProperties(Connection conn, String fileId, Map<String, Object> properties) throws SQLException {
-		String propertiesString = ModelConverter.DfsVolume.toPropertiesString(properties);
+		String propertiesString = RuntimeModelConverter.DfsVolume.toPropertiesString(properties);
 
 		String updateSQL = "UPDATE " + getTableName() + " SET properties=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { propertiesString, getCurrentTime(), fileId }, 1);

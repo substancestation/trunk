@@ -12,8 +12,8 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
-import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
+import org.orbit.substance.io.util.DfsClientResolverByDfsId;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.rest.client.ClientException;
@@ -32,7 +32,8 @@ public class FileDeleteServlet extends HttpServlet {
 		// Get parameters
 		// ---------------------------------------------------------------
 		// String indexServiceUrl = getServletConfig().getInitParameter(InfraConstants.ORBIT_INDEX_SERVICE_URL);
-		String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		// String dfsServiceUrl = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_URL);
+		String dfsId = getServletConfig().getInitParameter(SubstanceConstants.ORBIT_DFS_ID);
 		String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 		String parentFileId = ServletUtil.getParameter(request, "parentFileId", "-1");
@@ -52,7 +53,7 @@ public class FileDeleteServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
+			DfsClientResolver dfsClientResolver = new DfsClientResolverByDfsId(dfsId);
 			DfsVolumeClientResolver dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 
 			for (int i = 0; i < fileIds.length; i++) {
@@ -62,12 +63,12 @@ public class FileDeleteServlet extends HttpServlet {
 				// message = MessageHelper.INSTANCE.add(message, "File doesn't exist. fileId='" + fileId + "'.");
 				// continue;
 				// }
-				if (!SubstanceClientsHelper.Dfs.fileExists(dfsClientResolver, dfsServiceUrl, accessToken, fileId)) {
+				if (!SubstanceClientsUtil.DFS.fileExists(dfsClientResolver, accessToken, fileId)) {
 					message = MessageHelper.INSTANCE.add(message, "File doesn't exist. fileId='" + fileId + "'.");
 					continue;
 				}
 
-				boolean isDeleted = SubstanceClientsHelper.Dfs.deleteFile(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileId);
+				boolean isDeleted = SubstanceClientsUtil.DFS.deleteFile(dfsClientResolver, dfsVolumeClientResolver, accessToken, fileId);
 				if (isDeleted) {
 					hasSucceed = true;
 				} else {

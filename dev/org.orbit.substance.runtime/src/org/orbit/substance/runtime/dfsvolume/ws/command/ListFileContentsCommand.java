@@ -13,7 +13,7 @@ import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -62,7 +62,7 @@ public class ListFileContentsCommand extends AbstractDfsVolumeWSCommand<DfsVolum
 				FileContentMetadata[] fileContents = service.getFileContents(accountId, blockId);
 				if (fileContents != null) {
 					for (FileContentMetadata fileContent : fileContents) {
-						FileContentMetadataDTO fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);
+						FileContentMetadataDTO fileContentDTO = RuntimeModelConverter.DfsVolume.toDTO(fileContent);
 						if (fileContentDTO != null) {
 							fileContentDTOs.add(fileContentDTO);
 						}

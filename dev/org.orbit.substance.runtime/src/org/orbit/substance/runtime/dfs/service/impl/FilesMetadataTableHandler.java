@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.jdbc.AbstractResultSetHandler;
 import org.origin.common.jdbc.DatabaseTableAware;
 import org.origin.common.jdbc.DatabaseUtil;
@@ -191,8 +191,8 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 			parentFileId = "-1";
 		}
 
-		List<FilePart> fileParts = ModelConverter.Dfs.toFileParts(filePartsString);
-		Map<String, Object> properties = ModelConverter.Dfs.toProperties(propertiesString);
+		List<FilePart> fileParts = RuntimeModelConverter.Dfs.toFileParts(filePartsString);
+		Map<String, Object> properties = RuntimeModelConverter.Dfs.toProperties(propertiesString);
 
 		return new FileMetadataImpl(this.dfsId, id, this.accountId, fileId, parentFileId, null, name, size, isDirectory, isHidden, inTrash, fileParts, properties, dateCreated, dateModified);
 	}
@@ -389,8 +389,8 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 			throw new IOException("File metadata with same name already exists.");
 		}
 
-		String filePartsString = ModelConverter.Dfs.toFilePartsString(fileParts);
-		String propertiesString = ModelConverter.Dfs.toPropertiesString(properties);
+		String filePartsString = RuntimeModelConverter.Dfs.toFilePartsString(fileParts);
+		String propertiesString = RuntimeModelConverter.Dfs.toPropertiesString(properties);
 
 		long dateCreated = getCurrentTime();
 		long dateModified = dateCreated;
@@ -490,7 +490,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public boolean updateFileParts(Connection conn, String fileId, List<FilePart> fileParts) throws SQLException {
-		String filePartsString = ModelConverter.Dfs.toFilePartsString(fileParts);
+		String filePartsString = RuntimeModelConverter.Dfs.toFilePartsString(fileParts);
 
 		String updateSQL = "UPDATE " + getTableName() + " SET fileParts=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { filePartsString, getCurrentTime(), fileId }, 1);
@@ -505,7 +505,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	 * @throws SQLException
 	 */
 	public boolean updateProperties(Connection conn, String fileId, Map<String, Object> properties) throws SQLException {
-		String propertiesString = ModelConverter.Dfs.toPropertiesString(properties);
+		String propertiesString = RuntimeModelConverter.Dfs.toPropertiesString(properties);
 
 		String updateSQL = "UPDATE " + getTableName() + " SET properties=?, dateModified=? WHERE fileId=?";
 		return DatabaseUtil.update(conn, updateSQL, new Object[] { propertiesString, getCurrentTime(), fileId }, 1);

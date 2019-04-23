@@ -23,7 +23,7 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
-import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.io.util.DfsClientResolverByDfsURL;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.io.util.OrbitClientHelper;
 import org.orbit.substance.webconsole.WebConstants;
@@ -63,7 +63,6 @@ public class DfsListServlet extends HttpServlet {
 
 			dfsIndexItems = DfsIndexItemHelper.getDfsIndexItems(accessToken);
 
-			DfsClientResolver dfsClientResolver = new DfsClientResolverImpl();
 			for (IndexItem dfsIndexItem : dfsIndexItems) {
 				String dfsId = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
 				String currHostUrl = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
@@ -76,7 +75,8 @@ public class DfsListServlet extends HttpServlet {
 				PlatformServiceMetadata platformMetadata = null;
 				if (isOnline) {
 					try {
-						DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+						DfsClientResolver dfsClientResolver = new DfsClientResolverByDfsURL(dfsServiceUrl);
+						DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 						if (dfsClient != null) {
 							dfsServiceMetadata = dfsClient.getMetadata();
 						}

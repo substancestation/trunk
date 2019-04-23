@@ -9,7 +9,7 @@ import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.common.ws.AbstractDfsCommand;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -50,7 +50,7 @@ public class GetFileByIdCommand extends AbstractDfsCommand<DfsService> implement
 		FileMetadataDTO fileMetadataDTO = null;
 		FileMetadata fileMetadata = fileSystem.getFile(file_id);
 		if (fileMetadata != null) {
-			fileMetadataDTO = ModelConverter.Dfs.toDTO(fileMetadata);
+			fileMetadataDTO = RuntimeModelConverter.Dfs.toDTO(fileMetadata);
 		}
 		if (fileMetadataDTO != null) {
 			return Response.ok().entity(fileMetadataDTO).build();

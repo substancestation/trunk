@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
-import org.orbit.infra.api.util.InfraClientsHelper;
+import org.orbit.infra.api.util.InfraClientsUtil;
 import org.orbit.platform.api.PlatformClient;
 import org.orbit.platform.api.PlatformConstants;
 import org.orbit.platform.api.util.PlatformClientsUtil;
@@ -52,7 +52,7 @@ public class OrbitClientHelper {
 	public IndexItem getPlatformIndexItem(String accessToken, String platformId) throws IOException {
 		IndexItem platformIndexItem = null;
 		if (platformId != null) {
-			IndexServiceClient indexService = InfraClientsHelper.INDEX_SERVICE.getIndexServiceClient(accessToken);
+			IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
 			if (indexService != null) {
 				platformIndexItem = indexService.getIndexItem(PlatformConstants.PLATFORM_INDEXER_ID, PlatformConstants.PLATFORM_INDEXER_TYPE, platformId);
 			}

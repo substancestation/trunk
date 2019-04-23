@@ -33,12 +33,12 @@ import org.origin.common.rest.model.ServiceMetadataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SubstanceClientsHelper {
+public class SubstanceClientsUtil {
 
-	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClientsHelper.class);
+	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClientsUtil.class);
 
-	public static Dfs Dfs = new Dfs();
-	public static DfsVolume DfsVolume = new DfsVolume();
+	public static Dfs DFS = new Dfs();
+	public static DfsVolume DFS_VOLUME = new DfsVolume();
 
 	public static class Dfs {
 		public FileMetadata[] EMPTY_FILES = new FileMetadata[0];
@@ -46,14 +46,14 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param clientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public DfsServiceMetadata getServiceMetadata(DfsClientResolver clientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
+		public DfsServiceMetadata getServiceMetadata(DfsClientResolver clientResolver, String accessToken) throws ClientException, IOException {
 			DfsServiceMetadata metadata = null;
-			DfsClient dfsClient = clientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = clientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				metadata = dfsClient.getMetadata();
 			}
@@ -81,14 +81,14 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public DfsServiceMetadata getDfsMetadata(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
+		public DfsServiceMetadata getDfsMetadata(DfsClientResolver dfsClientResolver, String accessToken) throws ClientException, IOException {
 			DfsServiceMetadata metadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				metadata = dfsClient.getMetadata();
 			}
@@ -98,14 +98,14 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata[] listRoots(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken) throws ClientException {
+		public FileMetadata[] listRoots(DfsClientResolver dfsClientResolver, String accessToken) throws ClientException, IOException {
 			FileMetadata[] rootFileMetadatas = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				rootFileMetadatas = dfsClient.listRoots();
 			}
@@ -118,15 +118,15 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param parentFileId
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata[] listFiles(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String parentFileId) throws ClientException {
+		public FileMetadata[] listFiles(DfsClientResolver dfsClientResolver, String accessToken, String parentFileId) throws ClientException, IOException {
 			FileMetadata[] memberFileMetadatas = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				memberFileMetadatas = dfsClient.listFiles(parentFileId);
 			}
@@ -139,15 +139,15 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param parentPath
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata[] listFiles(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path parentPath) throws ClientException {
+		public FileMetadata[] listFiles(DfsClientResolver dfsClientResolver, String accessToken, Path parentPath) throws ClientException, IOException {
 			FileMetadata[] memberFileMetadatas = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				memberFileMetadatas = dfsClient.listFiles(parentPath);
 			}
@@ -160,15 +160,15 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public boolean fileExists(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
+		public boolean fileExists(DfsClientResolver dfsClientResolver, String accessToken, String fileId) throws ClientException, IOException {
 			boolean exists = false;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				exists = dfsClient.exists(fileId);
 			}
@@ -178,15 +178,15 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param path
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public boolean fileExists(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+		public boolean fileExists(DfsClientResolver dfsClientResolver, String accessToken, Path path) throws ClientException, IOException {
 			boolean exists = false;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				exists = dfsClient.exists(path);
 			}
@@ -196,15 +196,15 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata getFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
+		public FileMetadata getFile(DfsClientResolver dfsClientResolver, String accessToken, String fileId) throws ClientException, IOException {
 			FileMetadata fileMetadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				fileMetadata = dfsClient.getFile(fileId);
 			}
@@ -214,15 +214,15 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param path
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata getFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+		public FileMetadata getFile(DfsClientResolver dfsClientResolver, String accessToken, Path path) throws ClientException, IOException {
 			FileMetadata fileMetadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				fileMetadata = dfsClient.getFile(path);
 			}
@@ -232,16 +232,16 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param parentFileId
 		 * @param fileName
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata createDirectory(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String parentFileId, String fileName) throws ClientException {
+		public FileMetadata createDirectory(DfsClientResolver dfsClientResolver, String accessToken, String parentFileId, String fileName) throws ClientException, IOException {
 			FileMetadata fileMetadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				fileMetadata = dfsClient.createDirectory(parentFileId, fileName);
 			}
@@ -251,15 +251,15 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param path
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata createDirectory(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path) throws ClientException {
+		public FileMetadata createDirectory(DfsClientResolver dfsClientResolver, String accessToken, Path path) throws ClientException, IOException {
 			FileMetadata fileMetadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				fileMetadata = dfsClient.createDirectory(path);
 			}
@@ -269,17 +269,17 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param parentFileId
 		 * @param fileName
 		 * @param size
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String parentFileId, String fileName, long size) throws ClientException {
+		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String accessToken, String parentFileId, String fileName, long size) throws ClientException, IOException {
 			FileMetadata fileMetadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				fileMetadata = dfsClient.createNewFile(parentFileId, fileName, size);
 			}
@@ -289,16 +289,16 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param path
 		 * @param size
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, Path path, long size) throws ClientException {
+		public FileMetadata createNewFile(DfsClientResolver dfsClientResolver, String accessToken, Path path, long size) throws ClientException, IOException {
 			FileMetadata fileMetadata = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				fileMetadata = dfsClient.createNewFile(path, size);
 			}
@@ -308,16 +308,16 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
 		 * @param size
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public FileMetadata allocateVolumes(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId, long size) throws ClientException {
+		public FileMetadata allocateVolumes(DfsClientResolver dfsClientResolver, String accessToken, String fileId, long size) throws ClientException, IOException {
 			FileMetadata file = null;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				file = dfsClient.allocateVolumes(fileId, size);
 			}
@@ -327,16 +327,16 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
 		 * @param filePartsString
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public boolean updateFileParts(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId, String filePartsString) throws ClientException {
+		public boolean updateFileParts(DfsClientResolver dfsClientResolver, String accessToken, String fileId, String filePartsString) throws ClientException, IOException {
 			boolean isUpdated = false;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null && filePartsString != null) {
 				isUpdated = dfsClient.updateFileParts(fileId, filePartsString);
 			}
@@ -346,7 +346,6 @@ public class SubstanceClientsHelper {
 		/**
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
 		 * @param newName
@@ -354,9 +353,9 @@ public class SubstanceClientsHelper {
 		 * @throws ClientException
 		 * @throws IOException
 		 */
-		public boolean renameFile(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId, String newName) throws ClientException, IOException {
+		public boolean renameFile(DfsClientResolver dfsClientResolver, String accessToken, String fileId, String newName) throws ClientException, IOException {
 			boolean succeed = false;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				succeed = dfsClient.rename(fileId, newName);
 			}
@@ -368,27 +367,25 @@ public class SubstanceClientsHelper {
 		 * 
 		 * @param dfsClientResolver
 		 * @param dfsVolumeClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
 		 * @return
 		 * @throws ClientException
 		 * @throws IOException
 		 */
-		public boolean deleteFile(DfsClientResolver dfsClientResolver, DfsVolumeClientResolver dfsVolumeClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException, IOException {
+		public boolean deleteFile(DfsClientResolver dfsClientResolver, DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, String fileId) throws ClientException, IOException {
 			List<FileMetadata> encounteredFiles = new ArrayList<FileMetadata>();
-			FileMetadata fileMetadata = getFile(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+			FileMetadata fileMetadata = getFile(dfsClientResolver, accessToken, fileId);
 			if (fileMetadata == null) {
 				return false;
 			}
-			return doDeleteFile(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, fileMetadata, encounteredFiles);
+			return doDeleteFile(dfsClientResolver, dfsVolumeClientResolver, accessToken, fileMetadata, encounteredFiles);
 		}
 
 		/**
 		 * 
 		 * @param dfsClientResolver
 		 * @param dfsVolumeClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileMetadata
 		 * @param encounteredFiles
@@ -396,7 +393,7 @@ public class SubstanceClientsHelper {
 		 * @throws ClientException
 		 * @throws IOException
 		 */
-		protected boolean doDeleteFile(DfsClientResolver dfsClientResolver, DfsVolumeClientResolver dfsVolumeClientResolver, String dfsServiceUrl, String accessToken, FileMetadata fileMetadata, List<FileMetadata> encounteredFiles) throws ClientException, IOException {
+		protected boolean doDeleteFile(DfsClientResolver dfsClientResolver, DfsVolumeClientResolver dfsVolumeClientResolver, String accessToken, FileMetadata fileMetadata, List<FileMetadata> encounteredFiles) throws ClientException, IOException {
 			if (fileMetadata == null) {
 				return false;
 			}
@@ -409,18 +406,18 @@ public class SubstanceClientsHelper {
 			String fileId = fileMetadata.getFileId();
 
 			if (fileMetadata.isDirectory()) {
-				FileMetadata[] memberFiles = listFiles(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+				FileMetadata[] memberFiles = listFiles(dfsClientResolver, accessToken, fileId);
 				for (FileMetadata memberFile : memberFiles) {
-					boolean currDeleted = doDeleteFile(dfsClientResolver, dfsVolumeClientResolver, dfsServiceUrl, accessToken, memberFile, encounteredFiles);
+					boolean currDeleted = doDeleteFile(dfsClientResolver, dfsVolumeClientResolver, accessToken, memberFile, encounteredFiles);
 					if (!currDeleted) {
 						return false;
 					}
 				}
-				isDeleted = deleteFileMetadata(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+				isDeleted = deleteFileMetadata(dfsClientResolver, accessToken, fileId);
 
 			} else {
-				DfsVolume.deleteFileContent(dfsVolumeClientResolver, accessToken, fileMetadata);
-				isDeleted = deleteFileMetadata(dfsClientResolver, dfsServiceUrl, accessToken, fileId);
+				DFS_VOLUME.deleteFileContent(dfsVolumeClientResolver, accessToken, fileMetadata);
+				isDeleted = deleteFileMetadata(dfsClientResolver, accessToken, fileId);
 			}
 
 			return isDeleted;
@@ -430,15 +427,15 @@ public class SubstanceClientsHelper {
 		 * Delete file metadata from DFS. Note that this method doesn't delete file content from DFS Volume.
 		 * 
 		 * @param dfsClientResolver
-		 * @param dfsServiceUrl
 		 * @param accessToken
 		 * @param fileId
 		 * @return
 		 * @throws ClientException
+		 * @throws IOException
 		 */
-		public boolean deleteFileMetadata(DfsClientResolver dfsClientResolver, String dfsServiceUrl, String accessToken, String fileId) throws ClientException {
+		public boolean deleteFileMetadata(DfsClientResolver dfsClientResolver, String accessToken, String fileId) throws ClientException, IOException {
 			boolean isDeleted = false;
-			DfsClient dfsClient = dfsClientResolver.resolve(dfsServiceUrl, accessToken);
+			DfsClient dfsClient = dfsClientResolver.resolve(accessToken);
 			if (dfsClient != null) {
 				isDeleted = dfsClient.delete(fileId);
 			}

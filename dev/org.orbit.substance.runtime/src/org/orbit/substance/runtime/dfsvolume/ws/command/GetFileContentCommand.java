@@ -10,7 +10,7 @@ import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -73,7 +73,7 @@ public class GetFileContentCommand extends AbstractDfsVolumeWSCommand<DfsVolumeS
 
 				FileContentMetadata fileContent = service.getFileContent(accountId, blockId, fileId, partId);
 				if (fileContent != null) {
-					fileContentDTO = ModelConverter.DfsVolume.toDTO(fileContent);
+					fileContentDTO = RuntimeModelConverter.DfsVolume.toDTO(fileContent);
 				}
 			}
 		}

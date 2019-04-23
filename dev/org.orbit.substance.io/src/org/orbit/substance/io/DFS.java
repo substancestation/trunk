@@ -13,7 +13,7 @@ import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.io.impl.DFSImpl;
-import org.orbit.substance.io.util.DfsClientResolverImpl;
+import org.orbit.substance.io.util.DfsClientResolverByDfsURL;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.origin.common.resource.Path;
 
@@ -66,7 +66,7 @@ public abstract class DFS {
 		return dfs;
 	}
 
-	protected String dfsServiceUrl;
+	// protected String dfsServiceUrl;
 	// protected String indexServiceUrl;
 	protected String accessToken;
 
@@ -76,7 +76,6 @@ public abstract class DFS {
 	/**
 	 * 
 	 * @param dfsServiceUrl
-	 * @param indexServiceUrl
 	 * @param accessToken
 	 */
 	public DFS(String dfsServiceUrl, String accessToken) {
@@ -87,16 +86,16 @@ public abstract class DFS {
 		// throw new IllegalArgumentException("indexServiceUrl is null.");
 		// }
 
-		this.dfsServiceUrl = dfsServiceUrl;
+		// this.dfsServiceUrl = dfsServiceUrl;
 		this.accessToken = accessToken;
 
-		this.dfsClientResolver = new DfsClientResolverImpl();
+		this.dfsClientResolver = new DfsClientResolverByDfsURL(dfsServiceUrl);
 		this.dfsVolumeClientResolver = new DfsVolumeClientResolverImpl();
 	}
 
-	protected String getDfsServiceUrl() {
-		return this.dfsServiceUrl;
-	}
+	// protected String getDfsServiceUrl() {
+	// return this.dfsServiceUrl;
+	// }
 
 	// protected String getIndexServiceUrl() {
 	// return this.indexServiceUrl;

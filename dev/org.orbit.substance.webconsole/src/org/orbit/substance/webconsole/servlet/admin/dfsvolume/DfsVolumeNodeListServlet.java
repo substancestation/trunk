@@ -18,7 +18,7 @@ import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
-import org.orbit.substance.api.util.SubstanceClientsHelper;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.io.util.NodeConfigHelper;
@@ -89,7 +89,7 @@ public class DfsVolumeNodeListServlet extends HttpServlet {
 							if (isOnline) {
 								try {
 									String dfsVolumeServiceUrl = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__BASE_URL);
-									DfsVolumeServiceMetadata metadata = SubstanceClientsHelper.DfsVolume.getServiceMetadata(clientResolver, dfsVolumeServiceUrl, accessToken);
+									DfsVolumeServiceMetadata metadata = SubstanceClientsUtil.DFS_VOLUME.getServiceMetadata(clientResolver, dfsVolumeServiceUrl, accessToken);
 									if (metadata != null) {
 										configElement.adapt(DfsVolumeServiceMetadata.class, metadata);
 									}

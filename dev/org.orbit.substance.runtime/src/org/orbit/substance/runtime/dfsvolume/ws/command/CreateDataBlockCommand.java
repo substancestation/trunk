@@ -14,7 +14,7 @@ import org.orbit.substance.runtime.Messages;
 import org.orbit.substance.runtime.common.ws.AbstractDfsVolumeWSCommand;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
-import org.orbit.substance.runtime.util.ModelConverter;
+import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
@@ -68,7 +68,7 @@ public class CreateDataBlockCommand extends AbstractDfsVolumeWSCommand<DfsVolume
 			String theAccountId = dataBlock.getAccountId();
 			if (accountId.equals(theAccountId)) {
 				accountAndBlockMatch = true;
-				dataBlockDTO = ModelConverter.DfsVolume.toDTO(dataBlock);
+				dataBlockDTO = RuntimeModelConverter.DfsVolume.toDTO(dataBlock);
 			}
 		}
 
