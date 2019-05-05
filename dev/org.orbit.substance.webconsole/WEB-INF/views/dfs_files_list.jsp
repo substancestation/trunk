@@ -107,7 +107,9 @@
 				</td>
 				<td class="td1"><%=dateModifiedStr%></td>
 				<td class="td1">
+					<% if (!isDirectory) { %>
 					<a class="action01" target="_blank" href="<%=contextRoot + "/filecontent?fileId=" + fileId%>">View text content</a>
+					<% } %>
 				</td>
 			</tr>
 			<%
