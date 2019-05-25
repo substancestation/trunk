@@ -22,7 +22,7 @@ public class SubstanceWebConsoleActivator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		LOG.info("start()");
+		LOG.debug("start()");
 		SubstanceWebConsoleActivator.bundleContext = bundleContext;
 		SubstanceWebConsoleActivator.instance = this;
 
@@ -32,7 +32,7 @@ public class SubstanceWebConsoleActivator implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		LOG.info("stop()");
+		LOG.debug("stop()");
 
 		// Unregister extensions
 		Extensions.INSTANCE.stop(bundleContext);
