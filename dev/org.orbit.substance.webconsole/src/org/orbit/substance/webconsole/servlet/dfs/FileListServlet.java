@@ -1,6 +1,8 @@
 package org.orbit.substance.webconsole.servlet.dfs;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -47,6 +49,7 @@ public class FileListServlet extends HttpServlet {
 		// ---------------------------------------------------------------
 		// Handle data
 		// ---------------------------------------------------------------
+		List<FileMetadata> parentFiles = new ArrayList<FileMetadata>();
 		FileMetadata[] files = null;
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
@@ -62,6 +65,15 @@ public class FileListServlet extends HttpServlet {
 				FileMetadata parentFile = SubstanceClientsUtil.DFS.getFile(dfsClientResolver, accessToken, parentFileId);
 				if (parentFile != null) {
 					grandParentFileId = parentFile.getParentFileId();
+				}
+				while (parentFile != null) {
+					parentFiles.add(0, parentFile);
+					
+					String _theParentFileId = parentFile.getParentFileId();
+					if (_theParentFileId == null || "-1".equals(_theParentFileId)) {
+						break;
+					}
+					parentFile = SubstanceClientsUtil.DFS.getFile(dfsClientResolver, accessToken, _theParentFileId);
 				}
 			}
 
@@ -80,6 +92,7 @@ public class FileListServlet extends HttpServlet {
 			request.setAttribute("message", message);
 		}
 		request.setAttribute("parentFileId", parentFileId);
+		request.setAttribute("parentFiles", parentFiles);
 		request.setAttribute("files", files);
 		if (grandParentFileId != null) {
 			request.setAttribute("grandParentFileId", grandParentFileId);

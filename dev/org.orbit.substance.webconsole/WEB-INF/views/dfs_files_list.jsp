@@ -10,11 +10,15 @@
 	String contextRoot = getServletConfig().getInitParameter(WebConstants.SUBSTANCE__WEB_CONSOLE_CONTEXT_ROOT);
 
 	String parentFileId = (String) request.getAttribute("parentFileId");
+	List<FileMetadata> parentFiles = (List<FileMetadata>) request.getAttribute("parentFiles");
 	FileMetadata[] files = (FileMetadata[]) request.getAttribute("files");
 	String grandParentFileId = (String) request.getAttribute("grandParentFileId");
 
 	if (parentFileId == null || parentFileId.isEmpty()) {
 		parentFileId = "-1";
+	}
+	if (parentFiles == null) {
+		parentFiles = new ArrayList<FileMetadata>();
 	}
 	if (files == null) {
 		files = new FileMetadata[0];
@@ -35,6 +39,19 @@
 <body>
 	<jsp:include page="<%=platformContextRoot + "/top_menu"%>" />
 	<jsp:include page="<%=platformContextRoot + "/top_message"%>" />
+
+	<div class="top_breadcrumbs_div01">
+		<a href="<%=contextRoot + "/files"%>">Files</a> / 
+		<%
+			for (FileMetadata currParentFile : parentFiles) {
+				String currParentFileId = currParentFile.getFileId();
+				String currParentFileName = currParentFile.getName();
+		%>
+			<a href="<%=contextRoot + "/files/configelements?parentFileId=" + currParentFileId%>"><%=currParentFileName%></a> /
+		<%
+			}
+		%>
+	</div>
 
 	<div class="main_div01">
 		<h2>Files</h2>

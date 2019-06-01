@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexItemHelper;
-import org.orbit.platform.api.PlatformClient;
 import org.orbit.platform.api.PlatformConstants;
 import org.orbit.platform.api.PlatformServiceMetadata;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
@@ -25,7 +24,6 @@ import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.io.util.DfsClientResolverByDfsURL;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
-import org.orbit.substance.io.util.OrbitClientHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.service.WebServiceAwareHelper;
 import org.origin.common.servlet.MessageHelper;
@@ -87,13 +85,13 @@ public class DfsListServlet extends HttpServlet {
 					try {
 						String platformId = (String) dfsIndexItem.getProperties().get(PlatformConstants.IDX_PROP__PLATFORM_ID);
 						if (platformId != null) {
-							IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(accessToken, platformId);
-							if (platformIndexItem != null) {
-								PlatformClient dfsPlatformClient = OrbitClientHelper.INSTANCE.getPlatformClient(accessToken, platformIndexItem);
-								if (dfsPlatformClient != null) {
-									platformMetadata = dfsPlatformClient.getMetadata();
-								}
-							}
+							// IndexItem platformIndexItem = OrbitClientHelper.INSTANCE.getPlatformIndexItem(accessToken, platformId);
+							// if (platformIndexItem != null) {
+							// PlatformClient dfsPlatformClient = OrbitClientHelper.INSTANCE.getPlatformClient(accessToken, platformIndexItem);
+							// if (dfsPlatformClient != null) {
+							// platformMetadata = dfsPlatformClient.getMetadata();
+							// }
+							// }
 						}
 					} catch (Exception e) {
 						// message = MessageHelper.INSTANCE.add(message, e.getMessage());

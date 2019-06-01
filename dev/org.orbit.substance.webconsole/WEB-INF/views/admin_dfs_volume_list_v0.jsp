@@ -18,7 +18,8 @@
 	String dfsName = null;
 	IndexItem dfsIndexItem = (IndexItem) request.getAttribute("dfsIndexItem");
 	if (dfsIndexItem != null) {
-		dfsName = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__NAME);
+		// dfsName = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__NAME);
+		dfsName = "(depreciated)";
 	}
 
 	List<IndexItem> dfsVolumeIndexItems = (List<IndexItem>) request.getAttribute("dfsVolumeIndexItems");
@@ -83,10 +84,12 @@
 					for (IndexItem dfsVolumeIndexItem : dfsVolumeIndexItems) {
 						String theDfsId = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__DFS_ID);
 						String dfsVolumeId = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID);
-						String name = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__NAME);
-						String hostUrl = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
-						String dfsVolumeContextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
-						String dfsVolumeServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(hostUrl, dfsVolumeContextRoot);
+						// String name = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__NAME);
+						// String hostUrl = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
+						// String dfsVolumeContextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
+						// String dfsVolumeServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(hostUrl, dfsVolumeContextRoot);
+						String name = "(depreciated)";
+						String dfsVolumeServiceUrl = "(depreciated)";
 
 						boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsVolumeIndexItem);
 						String statusText = isOnline ? "Online" : "Offline";

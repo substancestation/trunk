@@ -68,10 +68,12 @@
 				} else {
 					for (IndexItem dfsIndexItem : dfsIndexItems) {
 						String dfsId = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
-						String name = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__NAME);
-						String hostUrl = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__HOST_URL);
-						String dfsContextRoot = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT);
-						String dfsServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(hostUrl, dfsContextRoot);
+						// String name = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__NAME);
+						// String hostUrl = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__HOST_URL);
+						// String dfsContextRoot = (String)dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__CONTEXT_ROOT);
+						// String dfsServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(hostUrl, dfsContextRoot);
+						String name = "(depreciated)";
+						String dfsServiceUrl = "(depreciated)";
 
 						boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsIndexItem);
 						String statusText = isOnline ? "Online" : "Offline";
