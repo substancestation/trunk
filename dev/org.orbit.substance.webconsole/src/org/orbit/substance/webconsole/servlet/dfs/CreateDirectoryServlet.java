@@ -63,7 +63,7 @@ public class CreateDirectoryServlet extends HttpServlet {
 		}
 
 		if (succeed) {
-			message = MessageHelper.INSTANCE.add(message, "Directory is created successfully.");
+			message = MessageHelper.INSTANCE.add(message, "Directory is created.");
 		} else {
 			message = MessageHelper.INSTANCE.add(message, "Directory is not created.");
 		}

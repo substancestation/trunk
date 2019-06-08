@@ -85,7 +85,7 @@ public class FileDeleteServlet extends HttpServlet {
 		}
 
 		if (succeed) {
-			message = MessageHelper.INSTANCE.add(message, (fileIds.length > 1) ? "Files are deleted successfully." : "File is deleted successfully.");
+			message = MessageHelper.INSTANCE.add(message, (fileIds.length > 1) ? "Files are deleted." : "File is deleted.");
 		} else {
 			message = MessageHelper.INSTANCE.add(message, (fileIds.length > 1) ? "Files are not deleted." : "File is not deleted.");
 		}

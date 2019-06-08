@@ -71,7 +71,7 @@ public class DfsNodeDeleteServlet extends HttpServlet {
 		}
 
 		if (succeed) {
-			message = MessageHelper.INSTANCE.add(message, (elementIds.length > 1) ? "DFS nodes are deleted successfully." : "DFS node is deleted successfully.");
+			message = MessageHelper.INSTANCE.add(message, (elementIds.length > 1) ? "DFS nodes are deleted." : "DFS node is deleted.");
 		} else {
 			message = MessageHelper.INSTANCE.add(message, (elementIds.length > 1) ? "DFS nodes are not deleted." : "DFS node is not deleted.");
 		}

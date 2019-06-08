@@ -72,7 +72,7 @@ public class DfsVolumeNodeDeleteServlet extends HttpServlet {
 		}
 
 		if (succeed) {
-			message = MessageHelper.INSTANCE.add(message, (elementIds.length > 1) ? "DFS volume nodes are deleted successfully." : "DFS volume node is deleted successfully.");
+			message = MessageHelper.INSTANCE.add(message, (elementIds.length > 1) ? "DFS volume nodes are deleted." : "DFS volume node is deleted.");
 		} else {
 			message = MessageHelper.INSTANCE.add(message, (elementIds.length > 1) ? "DFS volume nodes are not deleted." : "DFS volume node is not deleted.");
 		}
