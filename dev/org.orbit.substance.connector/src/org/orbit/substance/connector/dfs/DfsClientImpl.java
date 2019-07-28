@@ -192,7 +192,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				exists = ClientModelConverter.Dfs.exists(response);
+				exists = ResponseUtil.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -212,7 +212,7 @@ public class DfsClientImpl extends ServiceClientImpl<DfsClient, DfsWSClient> imp
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				exists = ClientModelConverter.Dfs.exists(response);
+				exists = ResponseUtil.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);

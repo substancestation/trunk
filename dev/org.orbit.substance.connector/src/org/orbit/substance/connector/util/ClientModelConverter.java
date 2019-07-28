@@ -153,26 +153,6 @@ public class ClientModelConverter {
 		 * @return
 		 * @throws ClientException
 		 */
-		public boolean exists(Response response) throws ClientException {
-			if (!ResponseUtil.isSuccessful(response)) {
-				throw new ClientException(response);
-			}
-			boolean exists = false;
-			try {
-				exists = ResponseUtil.getSimpleValue(response, "exists", Boolean.class);
-
-			} catch (Exception e) {
-				throw new ClientException(500, e.getMessage(), e);
-			}
-			return exists;
-		}
-
-		/**
-		 * 
-		 * @param response
-		 * @return
-		 * @throws ClientException
-		 */
 		public boolean isDirectory(Response response) throws ClientException {
 			if (!ResponseUtil.isSuccessful(response)) {
 				throw new ClientException(response);
@@ -194,7 +174,7 @@ public class ClientModelConverter {
 		 * @throws ClientException
 		 */
 		public boolean isUpdated(Response response) throws ClientException {
-			return isSucceed(response);
+			return ResponseUtil.isSucceed(response);
 		}
 
 		/**
@@ -204,7 +184,7 @@ public class ClientModelConverter {
 		 * @throws ClientException
 		 */
 		public boolean isRenamed(Response response) throws ClientException {
-			return isSucceed(response);
+			return ResponseUtil.isSucceed(response);
 		}
 
 		/**
@@ -214,7 +194,7 @@ public class ClientModelConverter {
 		 * @throws ClientException
 		 */
 		public boolean isDeleted(Response response) throws ClientException {
-			return isSucceed(response);
+			return ResponseUtil.isSucceed(response);
 		}
 
 		/**
@@ -224,27 +204,7 @@ public class ClientModelConverter {
 		 * @throws ClientException
 		 */
 		public boolean isEmptied(Response response) throws ClientException {
-			return isSucceed(response);
-		}
-
-		/**
-		 * 
-		 * @param response
-		 * @return
-		 * @throws ClientException
-		 */
-		public boolean isSucceed(Response response) throws ClientException {
-			if (!ResponseUtil.isSuccessful(response)) {
-				throw new ClientException(response);
-			}
-			boolean succeed = false;
-			try {
-				succeed = ResponseUtil.getSimpleValue(response, "succeed", Boolean.class);
-
-			} catch (Exception e) {
-				throw new ClientException(500, e.getMessage(), e);
-			}
-			return succeed;
+			return ResponseUtil.isSucceed(response);
 		}
 
 		/**
@@ -422,28 +382,8 @@ public class ClientModelConverter {
 		 * @return
 		 * @throws ClientException
 		 */
-		public boolean exists(Response response) throws ClientException {
-			if (!ResponseUtil.isSuccessful(response)) {
-				throw new ClientException(response);
-			}
-			boolean exists = false;
-			try {
-				exists = ResponseUtil.getSimpleValue(response, "exists", Boolean.class);
-
-			} catch (Exception e) {
-				throw new ClientException(500, e.getMessage(), e);
-			}
-			return exists;
-		}
-
-		/**
-		 * 
-		 * @param response
-		 * @return
-		 * @throws ClientException
-		 */
 		public boolean isUpdated(Response response) throws ClientException {
-			return isSucceed(response);
+			return ResponseUtil.isSucceed(response);
 		}
 
 		/**
@@ -453,7 +393,7 @@ public class ClientModelConverter {
 		 * @throws ClientException
 		 */
 		public boolean isDeleted(Response response) throws ClientException {
-			return isSucceed(response);
+			return ResponseUtil.isSucceed(response);
 		}
 
 		/**
@@ -463,7 +403,7 @@ public class ClientModelConverter {
 		 * @throws ClientException
 		 */
 		public boolean isUploaded(Response response) throws ClientException {
-			return isSucceed(response);
+			return ResponseUtil.isSucceed(response);
 		}
 
 		/**
@@ -483,26 +423,6 @@ public class ClientModelConverter {
 				fileContent = toFileContent(dfsVolumeClient, fileContentDTO);
 			}
 			return fileContent;
-		}
-
-		/**
-		 * 
-		 * @param response
-		 * @return
-		 * @throws ClientException
-		 */
-		public boolean isSucceed(Response response) throws ClientException {
-			if (!ResponseUtil.isSuccessful(response)) {
-				throw new ClientException(response);
-			}
-			boolean succeed = false;
-			try {
-				succeed = ResponseUtil.getSimpleValue(response, "succeed", Boolean.class);
-
-			} catch (Exception e) {
-				throw new ClientException(500, e.getMessage(), e);
-			}
-			return succeed;
 		}
 
 		/**

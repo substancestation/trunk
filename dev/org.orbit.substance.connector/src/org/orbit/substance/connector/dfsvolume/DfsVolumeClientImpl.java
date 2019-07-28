@@ -137,7 +137,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				succeed = ClientModelConverter.DfsVolume.exists(response);
+				succeed = ResponseUtil.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
@@ -266,7 +266,7 @@ public class DfsVolumeClientImpl extends ServiceClientImpl<DfsVolumeClient, DfsV
 		try {
 			response = sendRequest(request);
 			if (response != null) {
-				succeed = ClientModelConverter.DfsVolume.exists(response);
+				succeed = ResponseUtil.exists(response);
 			}
 		} finally {
 			ResponseUtil.closeQuietly(response, true);
