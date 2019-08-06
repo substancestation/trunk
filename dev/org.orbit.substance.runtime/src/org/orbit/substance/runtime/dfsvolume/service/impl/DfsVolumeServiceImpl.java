@@ -16,6 +16,7 @@ import org.orbit.platform.sdk.http.AccessTokenSupport;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.SubstanceConstants;
+import org.orbit.substance.runtime.SubstanceRuntimeActivator;
 import org.orbit.substance.runtime.dfsvolume.service.DataBlockMetadata;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
@@ -67,7 +68,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		DfsVolumeConfigPropertiesHandler.getInstance().addPropertyChangeListener(this);
+		SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler().addPropertyChangeListener(this);
 
 		updateConnectionProperties();
 
@@ -114,7 +115,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 			this.serviceRegistry = null;
 		}
 
-		DfsVolumeConfigPropertiesHandler.getInstance().removePropertyChangeListener(this);
+		SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler().removePropertyChangeListener(this);
 	}
 
 	/** PropertyChangeListener */
@@ -206,7 +207,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	}
 
 	protected synchronized void updateConnectionProperties() {
-		DfsVolumeConfigPropertiesHandler configPropertiesHandler = DfsVolumeConfigPropertiesHandler.getInstance();
+		DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
 		String driver = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__JDBC_DRIVER, this.initProperties);
 		String url = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__JDBC_URL, this.initProperties);
 		String username = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__JDBC_USERNAME, this.initProperties);
@@ -232,7 +233,8 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	@Override
 	public String getName() {
 		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__NAME);
-		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__NAME, this.initProperties);
+		DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
+		return configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__NAME, this.initProperties);
 	}
 
 	@Override
@@ -245,11 +247,12 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 		// if (globalHostURL != null) {
 		// return globalHostURL;
 		// }
-		String hostURL = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__HOST_URL, this.initProperties);
+		DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
+		String hostURL = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__HOST_URL, this.initProperties);
 		if (hostURL != null) {
 			return hostURL;
 		}
-		String globalHostURL = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.ORBIT_HOST_URL, this.initProperties);
+		String globalHostURL = configPropertiesHandler.getProperty(SubstanceConstants.ORBIT_HOST_URL, this.initProperties);
 		if (globalHostURL != null) {
 			return globalHostURL;
 		}
@@ -259,7 +262,8 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	@Override
 	public String getContextRoot() {
 		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT);
-		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT, this.initProperties);
+		DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
+		return configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT, this.initProperties);
 	}
 
 	/** EditPoliciesAware */
@@ -272,13 +276,15 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	@Override
 	public String getDfsId() {
 		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__DFS_ID);
-		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__DFS_ID, this.initProperties);
+		DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
+		return configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__DFS_ID, this.initProperties);
 	}
 
 	@Override
 	public String getDfsVolumeId() {
 		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__ID);
-		return DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__ID, this.initProperties);
+		DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
+		return configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__ID, this.initProperties);
 	}
 
 	// ----------------------------------------------------------------------
@@ -289,7 +295,8 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 		long volumeCapacityBytes = 0;
 		try {
 			// String gbLiteral = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB);
-			String gbLiteral = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB, this.initProperties);
+			DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
+			String gbLiteral = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__VOLUME_CAPACITY_GB, this.initProperties);
 			if (gbLiteral != null && !gbLiteral.isEmpty()) {
 				int gbValue = Integer.parseInt(gbLiteral);
 				if (gbValue > 0) {
@@ -334,7 +341,8 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 		long capacityBytes = -1;
 		try {
 			// String capacityMBStr = (String) this.properties.get(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB);
-			String capacityMBStr = DfsVolumeConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB, this.initProperties);
+			DfsVolumeConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler();
+			String capacityMBStr = configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__BLOCK_CAPACITY_MB, this.initProperties);
 			if (capacityMBStr != null && !capacityMBStr.isEmpty()) {
 				int capacityMB = Integer.parseInt(capacityMBStr);
 				if (capacityMB > 0) {

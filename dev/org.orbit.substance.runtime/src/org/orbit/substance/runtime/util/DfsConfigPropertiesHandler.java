@@ -5,12 +5,6 @@ import org.origin.common.model.AbstractConfigPropertiesHandler;
 
 public class DfsConfigPropertiesHandler extends AbstractConfigPropertiesHandler {
 
-	protected static DfsConfigPropertiesHandler INSTANCE = new DfsConfigPropertiesHandler();
-
-	public static DfsConfigPropertiesHandler getInstance() {
-		return INSTANCE;
-	}
-
 	// VM arguments example:
 	// -Dsubstance.dfs.autostart=true
 	// -Dsubstance.dfs.id=dfs1
@@ -21,7 +15,6 @@ public class DfsConfigPropertiesHandler extends AbstractConfigPropertiesHandler 
 	// -Dsubstance.dfs.jdbc.url=jdbc:postgresql://127.0.0.1:5432/dfs1
 	// -Dsubstance.dfs.jdbc.username=postgres
 	// -Dsubstance.dfs.jdbc.password=admin
-
 	@Override
 	public String[] getConfigPropertyNames() {
 		String[] propNames = new String[] { //

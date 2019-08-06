@@ -11,28 +11,38 @@ public class SubstanceRuntimeActivator extends AbstractBundleActivator {
 
 	protected static Logger LOG = LoggerFactory.getLogger(SubstanceRuntimeActivator.class);
 
-	protected static SubstanceRuntimeActivator instance;
+	protected static SubstanceRuntimeActivator activator;
 
 	public static SubstanceRuntimeActivator getInstance() {
-		return instance;
+		return activator;
 	}
+
+	protected DfsConfigPropertiesHandler dfsConfigPropertiesHandler;
+	protected DfsVolumeConfigPropertiesHandler dfsVolumeConfigPropertiesHandler;
+	protected Extensions extensions;
+	protected SubstanceServices services;
 
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		LOG.debug("start()");
 		super.start(bundleContext);
 
-		SubstanceRuntimeActivator.instance = this;
+		activator = this;
 
 		// Load config properties
-		DfsConfigPropertiesHandler.getInstance().start(bundleContext);
-		DfsVolumeConfigPropertiesHandler.getInstance().start(bundleContext);
+		this.dfsConfigPropertiesHandler = new DfsConfigPropertiesHandler();
+		this.dfsConfigPropertiesHandler.start(bundleContext);
+
+		this.dfsVolumeConfigPropertiesHandler = new DfsVolumeConfigPropertiesHandler();
+		this.dfsVolumeConfigPropertiesHandler.start(bundleContext);
 
 		// Register extensions
-		Extensions.INSTANCE.start(bundleContext);
+		this.extensions = new Extensions();
+		this.extensions.start(bundleContext);
 
 		// Start service adapters
-		SubstanceServices.getInstance().start(bundleContext);
+		this.services = new SubstanceServices();
+		this.services.start(bundleContext);
 	}
 
 	@Override
@@ -40,17 +50,46 @@ public class SubstanceRuntimeActivator extends AbstractBundleActivator {
 		LOG.debug("stop()");
 
 		// Stop service adapters
-		SubstanceServices.getInstance().stop(bundleContext);
+		if (this.services != null) {
+			this.services.stop(bundleContext);
+			this.services = null;
+		}
 
 		// Unregister extensions
-		Extensions.INSTANCE.stop(bundleContext);
+		if (this.extensions != null) {
+			this.extensions.stop(bundleContext);
+			this.extensions = null;
+		}
 
 		// Unload config properties
-		DfsConfigPropertiesHandler.getInstance().stop(bundleContext);
-		DfsVolumeConfigPropertiesHandler.getInstance().stop(bundleContext);
+		if (this.dfsConfigPropertiesHandler != null) {
+			this.dfsConfigPropertiesHandler.stop(bundleContext);
+			this.dfsConfigPropertiesHandler = null;
+		}
+		if (this.dfsVolumeConfigPropertiesHandler != null) {
+			this.dfsVolumeConfigPropertiesHandler.stop(bundleContext);
+			this.dfsVolumeConfigPropertiesHandler = null;
+		}
 
-		SubstanceRuntimeActivator.instance = null;
+		activator = null;
+
 		super.stop(bundleContext);
+	}
+
+	public DfsConfigPropertiesHandler getDfsConfigPropertiesHandler() {
+		return this.dfsConfigPropertiesHandler;
+	}
+
+	public DfsVolumeConfigPropertiesHandler getDfsVolumeConfigPropertiesHandler() {
+		return this.dfsVolumeConfigPropertiesHandler;
+	}
+
+	public Extensions getExtensions() {
+		return this.extensions;
+	}
+
+	public SubstanceServices getServices() {
+		return this.services;
 	}
 
 }

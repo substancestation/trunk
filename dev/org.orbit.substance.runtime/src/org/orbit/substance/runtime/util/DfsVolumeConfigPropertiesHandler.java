@@ -5,12 +5,6 @@ import org.origin.common.model.AbstractConfigPropertiesHandler;
 
 public class DfsVolumeConfigPropertiesHandler extends AbstractConfigPropertiesHandler {
 
-	protected static DfsVolumeConfigPropertiesHandler INSTANCE = new DfsVolumeConfigPropertiesHandler();
-
-	public static DfsVolumeConfigPropertiesHandler getInstance() {
-		return INSTANCE;
-	}
-
 	@Override
 	public String[] getConfigPropertyNames() {
 		String[] propNames = new String[] { //

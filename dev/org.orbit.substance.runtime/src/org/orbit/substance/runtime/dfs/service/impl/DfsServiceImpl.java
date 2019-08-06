@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.orbit.platform.sdk.http.AccessTokenSupport;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.runtime.SubstanceConstants;
+import org.orbit.substance.runtime.SubstanceRuntimeActivator;
 import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.orbit.substance.runtime.dfs.service.FileSystem;
 import org.orbit.substance.runtime.util.DfsConfigPropertiesHandler;
@@ -56,7 +57,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
-		DfsConfigPropertiesHandler.getInstance().addPropertyChangeListener(this);
+		SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler().addPropertyChangeListener(this);
 
 		updateConnectionProperties();
 
@@ -73,7 +74,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 
 		this.accountIdToFileSystemMap.clear();
 
-		DfsConfigPropertiesHandler.getInstance().removePropertyChangeListener(this);
+		SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler().removePropertyChangeListener(this);
 	}
 
 	/** PropertyChangeListener */
@@ -95,7 +96,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	}
 
 	protected synchronized void updateConnectionProperties() {
-		DfsConfigPropertiesHandler configPropertiesHandler = DfsConfigPropertiesHandler.getInstance();
+		DfsConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler();
 		String driver = configPropertiesHandler.getProperty(SubstanceConstants.DFS__JDBC_DRIVER, this.initProperties);
 		String url = configPropertiesHandler.getProperty(SubstanceConstants.DFS__JDBC_URL, this.initProperties);
 		String username = configPropertiesHandler.getProperty(SubstanceConstants.DFS__JDBC_USERNAME, this.initProperties);
@@ -108,11 +109,13 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	@Override
 	public String getName() {
 		// return (String) this.properties.get(SubstanceConstants.DFS__NAME);
-		return DfsConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS__NAME, this.initProperties);
+		DfsConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler();
+		return configPropertiesHandler.getProperty(SubstanceConstants.DFS__NAME, this.initProperties);
 	}
 
 	@Override
 	public String getHostURL() {
+		DfsConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler();
 		// String hostURL = (String) this.properties.get(SubstanceConstants.DFS__HOST_URL);
 		// if (hostURL != null) {
 		// return hostURL;
@@ -121,11 +124,11 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 		// if (globalHostURL != null) {
 		// return globalHostURL;
 		// }
-		String hostURL = DfsConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS__HOST_URL, this.initProperties);
+		String hostURL = configPropertiesHandler.getProperty(SubstanceConstants.DFS__HOST_URL, this.initProperties);
 		if (hostURL != null) {
 			return hostURL;
 		}
-		String globalHostURL = DfsConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.ORBIT_HOST_URL, this.initProperties);
+		String globalHostURL = configPropertiesHandler.getProperty(SubstanceConstants.ORBIT_HOST_URL, this.initProperties);
 		if (globalHostURL != null) {
 			return globalHostURL;
 		}
@@ -134,8 +137,9 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 
 	@Override
 	public String getContextRoot() {
+		DfsConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler();
 		// return (String) this.properties.get(SubstanceConstants.DFS__CONTEXT_ROOT);
-		return DfsConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS__CONTEXT_ROOT, this.initProperties);
+		return configPropertiesHandler.getProperty(SubstanceConstants.DFS__CONTEXT_ROOT, this.initProperties);
 	}
 
 	/** EditPoliciesAware */
@@ -147,16 +151,18 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	/** DfsService */
 	@Override
 	public String getDfsId() {
+		DfsConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler();
 		// return (String) this.properties.get(SubstanceConstants.DFS__ID);
-		return DfsConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS__ID, this.initProperties);
+		return configPropertiesHandler.getProperty(SubstanceConstants.DFS__ID, this.initProperties);
 	}
 
 	@Override
 	public long getDefaultBlockCapacity() {
+		DfsConfigPropertiesHandler configPropertiesHandler = SubstanceRuntimeActivator.getInstance().getDfsConfigPropertiesHandler();
 		long blockCapacityBytes = -1;
 		try {
 			// String blockCapacityMBStr = (String) this.properties.get(SubstanceConstants.DFS__BLOCK_CAPACITY_MB);
-			String blockCapacityMBStr = DfsConfigPropertiesHandler.getInstance().getProperty(SubstanceConstants.DFS__BLOCK_CAPACITY_MB, this.initProperties);
+			String blockCapacityMBStr = configPropertiesHandler.getProperty(SubstanceConstants.DFS__BLOCK_CAPACITY_MB, this.initProperties);
 			if (blockCapacityMBStr != null && !blockCapacityMBStr.isEmpty()) {
 				int blockCapacityMB = Integer.parseInt(blockCapacityMBStr);
 				if (blockCapacityMB > 0) {

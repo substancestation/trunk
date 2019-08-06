@@ -18,12 +18,6 @@ public class SubstanceServices {
 
 	protected static Logger LOG = LoggerFactory.getLogger(SubstanceServices.class);
 
-	private static SubstanceServices INSTANCE = new SubstanceServices();
-
-	public static SubstanceServices getInstance() {
-		return INSTANCE;
-	}
-
 	protected Map<Object, Object> properties;
 	protected ServiceConnectorAdapter<IndexProviderClient> indexProviderConnector;
 

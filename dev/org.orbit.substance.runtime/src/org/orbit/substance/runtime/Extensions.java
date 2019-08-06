@@ -56,8 +56,6 @@ public class Extensions extends ProgramExtensions {
 
 	protected static Logger LOG = LoggerFactory.getLogger(Extensions.class);
 
-	public static Extensions INSTANCE = new Extensions();
-
 	public Extensions() {
 		setBundleId("org.orbit.substance.runtime");
 	}
@@ -125,7 +123,7 @@ public class Extensions extends ProgramExtensions {
 		// (2) When all NotEmpty parameters have values, the ServiceActivator will be started. If there are NotEmpty parameters without values, the
 		// ServiceActivator will not be started. An exception should be thrown.
 		desc1.setParameterDefinitions( //
-				new ParameterDefinition("autostart", "DFS service auto start", true, "true"), //
+				// new ParameterDefinition("autostart", "DFS service auto start", false, "false"), //
 				new ParameterDefinition("substance.dfs.id", "DFS Id", true, null), //
 				new ParameterDefinition("substance.dfs.name", "DFS Name", true, null), //
 				new ParameterDefinition("substance.dfs.host.url", "DFS web service host URL", false, null), //
@@ -145,7 +143,7 @@ public class Extensions extends ProgramExtensions {
 		// desc2.setTriggerCondition(ConditionFactory.getInstance().newPropertyTesterCondition(DfsVolumeServicePropertyTester.ID));
 
 		desc2.setParameterDefinitions( //
-				new ParameterDefinition("autostart", "DFS volume service auto start", false, "true"), //
+				// new ParameterDefinition("autostart", "DFS volume service auto start", false, "false"), //
 				new ParameterDefinition("substance.dfs_volume.dfs_id", "DFS Id", true, null), //
 				new ParameterDefinition("substance.dfs_volume.id", "DFS volume Id", true, null), //
 				new ParameterDefinition("substance.dfs_volume.name", "DFS volume name", true, null), //
