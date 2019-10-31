@@ -11,7 +11,7 @@ import java.util.Map;
 import org.orbit.infra.api.InfraConstants;
 import org.orbit.infra.api.indexes.IndexItem;
 import org.orbit.infra.api.indexes.IndexServiceClient;
-import org.orbit.infra.api.util.InfraClientsUtil;
+import org.orbit.infra.api.util.IndexServiceUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
@@ -89,7 +89,7 @@ public class DfsIndexItemHelper {
 	 */
 	public static List<IndexItem> getDfsIndexItems(String accessToken) throws IOException {
 		List<IndexItem> dfsIndexItems = null;
-		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = IndexServiceUtil.getClient(accessToken);
 		if (indexService != null) {
 			dfsIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 		}
@@ -107,7 +107,7 @@ public class DfsIndexItemHelper {
 	 */
 	public static Map<String, IndexItem> getDfsIndexItemsMap(String accessToken) throws IOException {
 		Map<String, IndexItem> dfsIndexItemMap = new HashMap<String, IndexItem>();
-		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = IndexServiceUtil.getClient(accessToken);
 		if (indexService != null) {
 			List<IndexItem> gaiaIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 			if (gaiaIndexItems != null) {
@@ -128,7 +128,7 @@ public class DfsIndexItemHelper {
 	 */
 	public static IndexItem getDfsIndexItem(String accessToken, String dfsId) throws IOException {
 		IndexItem dfsIndexItem = null;
-		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = IndexServiceUtil.getClient(accessToken);
 		if (indexService != null) {
 			List<IndexItem> dfsIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS__INDEXER_ID, SubstanceConstants.IDX__DFS__TYPE);
 			if (dfsIndexItems != null) {
@@ -175,7 +175,7 @@ public class DfsIndexItemHelper {
 	 */
 	public static List<IndexItem> getDfsVolumeIndexItems(String accessToken, String dfsId) throws IOException {
 		List<IndexItem> dfsVolumeIndexItems = new ArrayList<IndexItem>();
-		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = IndexServiceUtil.getClient(accessToken);
 		if (indexService != null) {
 			List<IndexItem> allDfsVolumeIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 
@@ -199,7 +199,7 @@ public class DfsIndexItemHelper {
 	 */
 	public static Map<String, IndexItem> getDfsVolumeIndexItemsMap(String accessToken, String dfsId) throws IOException {
 		Map<String, IndexItem> dfsVolumeIndexItemMap = new HashMap<String, IndexItem>();
-		IndexServiceClient indexService = InfraClientsUtil.INDEX_SERVICE.getIndexServiceClient(accessToken);
+		IndexServiceClient indexService = IndexServiceUtil.getClient(accessToken);
 		if (dfsId != null && indexService != null) {
 			List<IndexItem> allDfsVolumeIndexItems = indexService.getIndexItems(SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID, SubstanceConstants.IDX__DFS_VOLUME__TYPE);
 

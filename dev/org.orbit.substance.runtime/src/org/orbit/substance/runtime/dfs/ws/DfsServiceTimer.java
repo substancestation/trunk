@@ -94,7 +94,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 	@Override
 	public void removeIndex(IndexServiceClient indexService, IndexItem indexItem) throws IOException {
 		Integer indexItemId = indexItem.getIndexItemId();
-		indexService.deleteIndexItem(getIndexProviderId(), indexItemId);
+		indexService.removeIndexItem(getIndexProviderId(), indexItemId);
 	}
 
 }
