@@ -49,4 +49,6 @@ public interface DFile {
 
 	boolean delete() throws IOException;
 
+	DFile[] listFiles() throws IOException;
+
 }

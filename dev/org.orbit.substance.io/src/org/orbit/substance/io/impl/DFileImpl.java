@@ -334,6 +334,11 @@ public class DFileImpl implements DFile {
 		return succeed;
 	}
 
+	@Override
+	public DFile[] listFiles() throws IOException {
+		return this.dfs.listFiles(this.fileId);
+	}
+
 	public static void main(String[] args) {
 		try {
 			URI uri1 = new URI("dfs", "dfs1", "/path/to/file1.txt", null);
@@ -350,4 +355,5 @@ public class DFileImpl implements DFile {
 			e.printStackTrace();
 		}
 	}
+
 }
