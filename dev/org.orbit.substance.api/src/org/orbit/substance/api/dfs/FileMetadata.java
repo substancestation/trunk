@@ -20,6 +20,8 @@ public interface FileMetadata {
 
 	Path getPath();
 
+	void setPath(Path path);
+
 	String getName();
 
 	boolean isDirectory();

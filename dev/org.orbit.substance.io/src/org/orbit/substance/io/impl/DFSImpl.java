@@ -18,6 +18,11 @@ import org.origin.common.io.IOUtil;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ *
+ */
 public class DFSImpl extends DFS {
 
 	/**
@@ -62,10 +67,9 @@ public class DFSImpl extends DFS {
 			FileMetadata[] fileMetadatas = SubstanceClientsUtil.DFS.listRoots(this.dfsClientResolver, this.accessToken);
 			if (fileMetadatas != null) {
 				for (FileMetadata fileMetadata : fileMetadatas) {
-					String fileId = fileMetadata.getFileId();
-					Path path = fileMetadata.getPath();
-
-					DFile file = new DFileImpl(this, fileId, path);
+					// String fileId = fileMetadata.getFileId();
+					// Path path = fileMetadata.getPath();
+					DFile file = new DFileImpl(this, fileMetadata);
 					files.add(file);
 				}
 			}
@@ -82,10 +86,9 @@ public class DFSImpl extends DFS {
 			FileMetadata[] fileMetadatas = SubstanceClientsUtil.DFS.listFiles(this.dfsClientResolver, this.accessToken, parentFileId);
 			if (fileMetadatas != null) {
 				for (FileMetadata fileMetadata : fileMetadatas) {
-					String fileId = fileMetadata.getFileId();
-					Path path = fileMetadata.getPath();
-
-					DFile file = new DFileImpl(this, fileId, path);
+					// String fileId = fileMetadata.getFileId();
+					// Path path = fileMetadata.getPath();
+					DFile file = new DFileImpl(this, fileMetadata);
 					files.add(file);
 				}
 			}
@@ -102,10 +105,9 @@ public class DFSImpl extends DFS {
 			FileMetadata[] fileMetadatas = SubstanceClientsUtil.DFS.listFiles(this.dfsClientResolver, this.accessToken, parentPath);
 			if (fileMetadatas != null) {
 				for (FileMetadata fileMetadata : fileMetadatas) {
-					String fileId = fileMetadata.getFileId();
-					Path path = fileMetadata.getPath();
-
-					DFile file = new DFileImpl(this, fileId, path);
+					// String fileId = fileMetadata.getFileId();
+					// Path path = fileMetadata.getPath();
+					DFile file = new DFileImpl(this, fileMetadata);
 					files.add(file);
 				}
 			}
@@ -113,6 +115,25 @@ public class DFSImpl extends DFS {
 			handle(e);
 		}
 		return files.toArray(new DFile[files.size()]);
+	}
+
+	@Override
+	public FileMetadata getFileMetadata(String pathString) throws IOException {
+		if (pathString == null) {
+			throw new IllegalArgumentException("pathString is null.");
+		}
+		return getFileMetadata(new Path(pathString));
+	}
+
+	@Override
+	public FileMetadata getFileMetadata(Path path) throws IOException {
+		FileMetadata fileMetadata = null;
+		try {
+			fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, path);
+		} catch (ClientException e) {
+			handle(e);
+		}
+		return fileMetadata;
 	}
 
 	@Override
@@ -129,8 +150,8 @@ public class DFSImpl extends DFS {
 			}
 
 			fileId = fileMetadata.getFileId();
-			Path path = fileMetadata.getPath();
-			file = new DFileImpl(this, fileId, path);
+			// Path path = fileMetadata.getPath();
+			file = new DFileImpl(this, fileMetadata);
 
 		} catch (ClientException e) {
 			handle(e);
@@ -143,8 +164,7 @@ public class DFSImpl extends DFS {
 		if (pathString == null) {
 			throw new IllegalArgumentException("pathString is null.");
 		}
-		Path path = new Path(pathString);
-		return getFile(path);
+		return getFile(new Path(pathString));
 	}
 
 	@Override
@@ -158,8 +178,8 @@ public class DFSImpl extends DFS {
 			FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, path);
 			if (fileMetadata != null) {
 				// file exists
-				String fileId = fileMetadata.getFileId();
-				file = new DFileImpl(this, fileId, path);
+				// String fileId = fileMetadata.getFileId();
+				file = new DFileImpl(this, fileMetadata);
 			} else {
 				// file doesn't exists
 				file = new DFileImpl(this, path);
@@ -168,40 +188,6 @@ public class DFSImpl extends DFS {
 			handle(e);
 		}
 		return file;
-	}
-
-	@Override
-	public String getFileId(Path path) throws IOException {
-		if (path == null) {
-			throw new IllegalArgumentException("path is null.");
-		}
-
-		String fileId = null;
-		try {
-			FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, path);
-			if (fileMetadata != null) {
-				fileId = fileMetadata.getFileId();
-			}
-		} catch (ClientException e) {
-			handle(e);
-		}
-		return fileId;
-	}
-
-	@Override
-	public boolean exists(String fileId) throws IOException {
-		boolean exists = false;
-		try {
-			if (fileId != null) {
-				FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, fileId);
-				if (fileMetadata != null) {
-					exists = true;
-				}
-			}
-		} catch (ClientException e) {
-			handle(e);
-		}
-		return exists;
 	}
 
 	@Override
@@ -314,7 +300,7 @@ public class DFSImpl extends DFS {
 	}
 
 	@Override
-	public long getLength(String fileId) throws IOException {
+	public long getSize(String fileId) throws IOException {
 		if (fileId == null) {
 			throw new IllegalArgumentException("fileId is null.");
 		}
@@ -544,4 +530,40 @@ public class DFSImpl extends DFS {
 // handle(e);
 // }
 // return fileMetadata;
+// }
+
+// public abstract boolean exists(String fileId) throws IOException;
+// @Override
+// public boolean exists(String fileId) throws IOException {
+// boolean exists = false;
+// try {
+// if (fileId != null) {
+// FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, fileId);
+// if (fileMetadata != null) {
+// exists = true;
+// }
+// }
+// } catch (ClientException e) {
+// handle(e);
+// }
+// return exists;
+// }
+
+// public abstract String getFileId(Path path) throws IOException;
+// @Override
+// public String getFileId(Path path) throws IOException {
+// if (path == null) {
+// throw new IllegalArgumentException("path is null.");
+// }
+//
+// String fileId = null;
+// try {
+// FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(this.dfsClientResolver, this.accessToken, path);
+// if (fileMetadata != null) {
+// fileId = fileMetadata.getFileId();
+// }
+// } catch (ClientException e) {
+// handle(e);
+// }
+// return fileId;
 // }

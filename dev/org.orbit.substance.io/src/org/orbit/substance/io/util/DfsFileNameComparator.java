@@ -1,5 +1,6 @@
 package org.orbit.substance.io.util;
 
+import java.io.IOException;
 import java.util.Comparator;
 
 import org.orbit.substance.io.DFile;
@@ -21,8 +22,19 @@ public class DfsFileNameComparator implements Comparator<DFile> {
 
 	@Override
 	public int compare(DFile f1, DFile f2) {
-		String name1 = f1.getName();
-		String name2 = f2.getName();
+		String name1 = "";
+		String name2 = "";
+		try {
+			name1 = f1.getName();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			name2 = f2.getName();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		if (this.ASC) {
 			return name1.compareTo(name2);
 		} else {

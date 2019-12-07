@@ -17,6 +17,11 @@ import org.orbit.substance.io.util.DfsClientResolverByDfsURL;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.origin.common.resource.Path;
 
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ *
+ */
 public abstract class DFS {
 
 	protected static Map<String, DFS> dfsMap = new HashMap<String, DFS>();
@@ -32,23 +37,6 @@ public abstract class DFS {
 		DFS dfs = get(dfsServiceUrl, accessToken);
 		return dfs;
 	}
-
-	// /**
-	// *
-	// * @param dfsServiceUrl
-	// * @param indexServiceUrl
-	// * @param accessToken
-	// * @return
-	// */
-	// public synchronized static DFS get(String dfsServiceUrl, String indexServiceUrl, String accessToken) {
-	// String key = dfsServiceUrl + "|" + indexServiceUrl + "|" + accessToken;
-	// DFS dfs = dfsMap.get(key);
-	// if (dfs == null) {
-	// dfs = new DFSImpl(dfsServiceUrl, indexServiceUrl, accessToken);
-	// dfsMap.put(key, dfs);
-	// }
-	// return dfs;
-	// }
 
 	/**
 	 * 
@@ -121,15 +109,15 @@ public abstract class DFS {
 
 	public abstract DFile[] listFiles(Path parentPath) throws IOException;
 
+	public abstract FileMetadata getFileMetadata(String pathString) throws IOException;
+
+	public abstract FileMetadata getFileMetadata(Path path) throws IOException;
+
 	public abstract DFile getFileById(String fileId) throws IOException;
 
 	public abstract DFile getFile(String pathString) throws IOException;
 
 	public abstract DFile getFile(Path path) throws IOException;
-
-	public abstract String getFileId(Path path) throws IOException;
-
-	public abstract boolean exists(String fileId) throws IOException;
 
 	public abstract boolean exists(Path path) throws IOException;
 
@@ -143,7 +131,7 @@ public abstract class DFS {
 
 	public abstract FileMetadata create(Path path, byte[] bytes) throws IOException;
 
-	public abstract long getLength(String fileId) throws IOException;
+	public abstract long getSize(String fileId) throws IOException;
 
 	public abstract InputStream getInputStream(String fileId) throws IOException;
 
@@ -162,3 +150,19 @@ public abstract class DFS {
 }
 
 // public abstract String getDfsId() throws IOException;
+// /**
+// *
+// * @param dfsServiceUrl
+// * @param indexServiceUrl
+// * @param accessToken
+// * @return
+// */
+// public synchronized static DFS get(String dfsServiceUrl, String indexServiceUrl, String accessToken) {
+// String key = dfsServiceUrl + "|" + indexServiceUrl + "|" + accessToken;
+// DFS dfs = dfsMap.get(key);
+// if (dfs == null) {
+// dfs = new DFSImpl(dfsServiceUrl, indexServiceUrl, accessToken);
+// dfsMap.put(key, dfs);
+// }
+// return dfs;
+// }

@@ -17,7 +17,7 @@ import org.origin.common.resource.Path;
 public class DFileImpl implements DFile {
 
 	protected DFS dfs;
-	protected String fileId;
+	protected FileMetadata metadata;
 	protected Path path;
 
 	/**
@@ -27,9 +27,6 @@ public class DFileImpl implements DFile {
 	 * @throws IOException
 	 */
 	public DFileImpl(DFS dfs, Path path) throws IOException {
-		if (path == null) {
-			throw new IOException("path is null.");
-		}
 		this.dfs = dfs;
 		this.path = path;
 	}
@@ -37,17 +34,26 @@ public class DFileImpl implements DFile {
 	/**
 	 * 
 	 * @param dfs
-	 * @param fileId
-	 * @param path
+	 * @param fileMetadata
 	 * @throws IOException
 	 */
-	public DFileImpl(DFS dfs, String fileId, Path path) throws IOException {
-		if (path == null) {
-			throw new IOException("path is null.");
-		}
+	public DFileImpl(DFS dfs, FileMetadata fileMetadata) throws IOException {
 		this.dfs = dfs;
-		this.fileId = fileId;
-		this.path = path;
+		this.metadata = fileMetadata;
+		this.path = fileMetadata.getPath();
+	}
+
+	@Override
+	public void resolveMetadata(boolean reset) throws IOException {
+		if (reset) {
+			this.metadata = null;
+		}
+		if (this.metadata == null && this.path != null) {
+			this.metadata = this.dfs.getFileMetadata(this.path);
+			if (this.metadata != null) {
+				this.path = this.metadata.getPath();
+			}
+		}
 	}
 
 	/*
@@ -86,20 +92,34 @@ public class DFileImpl implements DFile {
 		}
 	}
 
+	/**
+	 * 
+	 * @param path
+	 * @param isDirectory
+	 * @return
+	 */
 	protected static String slashify(String path, boolean isDirectory) {
 		String p = path;
-		if (File.separatorChar != '/')
+		if (File.separatorChar != '/') {
 			p = p.replace(File.separatorChar, '/');
-		if (!p.startsWith("/"))
+		}
+		if (!p.startsWith("/")) {
 			p = "/" + p;
-		if (!p.endsWith("/") && isDirectory)
+		}
+		if (!p.endsWith("/") && isDirectory) {
 			p = p + "/";
+		}
 		return p;
 	}
 
 	@Override
 	public DFS getDFS() {
 		return this.dfs;
+	}
+
+	@Override
+	public Path getPath() {
+		return this.path;
 	}
 
 	@Override
@@ -112,63 +132,56 @@ public class DFileImpl implements DFile {
 	}
 
 	@Override
-	public String getFileId() {
-		return this.fileId;
+	public String getFileId() throws IOException {
+		resolveMetadata(false);
+
+		if (this.metadata != null) {
+			return this.metadata.getFileId();
+		}
+		return null;
 	}
 
 	@Override
-	public Path getPath() {
-		return this.path;
-	}
+	public String getName() throws IOException {
+		// resolveMetadata(false);
 
-	@Override
-	public String getName() {
 		return this.path.getLastSegment();
 	}
 
 	@Override
 	public synchronized boolean exists() throws IOException {
-		boolean exists = false;
-		if (this.fileId != null) {
-			exists = this.dfs.exists(this.fileId);
+		resolveMetadata(false);
+		if (this.metadata != null) {
+			return true;
 		}
-		return exists;
+		return false;
 	}
 
 	@Override
 	public boolean isDirectory() throws IOException {
-		boolean isDirectory = false;
-		if (this.fileId != null) {
-			isDirectory = this.dfs.isDirectory(this.fileId);
+		resolveMetadata(false);
+
+		if (this.metadata != null) {
+			return this.metadata.isDirectory();
 		}
-		return isDirectory;
+		return false;
 	}
 
 	@Override
 	public synchronized boolean mkdir() throws IOException {
+		resolveMetadata(false);
 		if (exists()) {
 			return false;
 		}
 
-		String newFileId = null;
-		FileMetadata fileMetadata = this.dfs.mkdir(this.path);
-		if (fileMetadata != null) {
-			newFileId = fileMetadata.getFileId();
-			if (!fileMetadata.isDirectory()) {
+		this.metadata = this.dfs.mkdir(this.path);
+		if (this.metadata != null) {
+			if (!metadata.isDirectory()) {
 				throw new IOException("New file is not a directory.");
 			}
+			return true;
 		}
-
-		boolean exists = false;
-		if (newFileId != null) {
-			exists = this.dfs.exists(newFileId);
-		}
-		if (!exists) {
-			throw new IOException("New directory is not created.");
-		}
-
-		this.fileId = newFileId;
-		return true;
+		return false;
 	}
 
 	@Override
@@ -177,25 +190,15 @@ public class DFileImpl implements DFile {
 			throw new IOException("File already exists.");
 		}
 
-		String newFileId = null;
-		FileMetadata fileMetadata = this.dfs.createNewFile(this.path, 0);
-		if (fileMetadata != null) {
-			newFileId = fileMetadata.getFileId();
-			if (fileMetadata.isDirectory()) {
+		this.metadata = this.dfs.createNewFile(this.path, 0);
+		if (this.metadata != null) {
+			if (this.metadata.isDirectory()) {
 				throw new IOException("New file is a directory.");
 			}
+			return true;
 		}
 
-		boolean exists = false;
-		if (newFileId != null) {
-			exists = this.dfs.exists(newFileId);
-		}
-		if (!exists) {
-			throw new IOException("New file is not created.");
-		}
-
-		this.fileId = newFileId;
-		return true;
+		return false;
 	}
 
 	@Override
@@ -204,25 +207,14 @@ public class DFileImpl implements DFile {
 			throw new IOException("File already exists.");
 		}
 
-		String newFileId = null;
-		FileMetadata fileMetadata = this.dfs.create(this.path, inputStream);
-		if (fileMetadata != null) {
-			newFileId = fileMetadata.getFileId();
-			if (fileMetadata.isDirectory()) {
+		this.metadata = this.dfs.create(this.path, inputStream);
+		if (metadata != null) {
+			if (this.metadata.isDirectory()) {
 				throw new IOException("New file is a directory.");
 			}
+			return true;
 		}
-
-		boolean exists = false;
-		if (newFileId != null) {
-			exists = this.dfs.exists(newFileId);
-		}
-		if (!exists) {
-			throw new IOException("New file is not created.");
-		}
-
-		this.fileId = newFileId;
-		return true;
+		return false;
 	}
 
 	@Override
@@ -231,33 +223,22 @@ public class DFileImpl implements DFile {
 			throw new IOException("File already exists.");
 		}
 
-		String newFileId = null;
-		FileMetadata fileMetadata = this.dfs.create(this.path, bytes);
-		if (fileMetadata != null) {
-			newFileId = fileMetadata.getFileId();
-			if (fileMetadata.isDirectory()) {
+		this.metadata = this.dfs.create(this.path, bytes);
+		if (this.metadata != null) {
+			if (this.metadata.isDirectory()) {
 				throw new IOException("New file is a directory.");
 			}
+			return true;
 		}
-
-		boolean exists = false;
-		if (newFileId != null) {
-			exists = this.dfs.exists(newFileId);
-		}
-		if (!exists) {
-			throw new IOException("New file is not created.");
-		}
-
-		this.fileId = newFileId;
-		return true;
+		return false;
 	}
 
 	@Override
-	public synchronized long getLength() throws IOException {
+	public synchronized long getSize() throws IOException {
 		if (!exists()) {
 			throw new IOException("File doesn't exists.");
 		}
-		return this.dfs.getLength(this.fileId);
+		return this.metadata.getSize();
 	}
 
 	@Override
@@ -298,7 +279,7 @@ public class DFileImpl implements DFile {
 		if (!exists()) {
 			throw new IOException("File doesn't exists.");
 		}
-		this.dfs.setContents(this.fileId, inputStream);
+		this.dfs.setContents(this.metadata.getFileId(), inputStream);
 	}
 
 	@Override
@@ -306,7 +287,7 @@ public class DFileImpl implements DFile {
 		if (!exists()) {
 			throw new IOException("File doesn't exists.");
 		}
-		this.dfs.setContents(this.fileId, bytes);
+		this.dfs.setContents(this.metadata.getFileId(), bytes);
 	}
 
 	@Override
@@ -314,10 +295,12 @@ public class DFileImpl implements DFile {
 		if (!exists()) {
 			throw new IOException("File doesn't exists.");
 		}
-		boolean succeed = this.dfs.rename(this.fileId, newName);
+
+		boolean succeed = this.dfs.rename(this.metadata.getFileId(), newName);
 		if (succeed) {
 			Path parentPath = this.path.getParent();
 			this.path = new Path(parentPath, newName);
+			this.metadata.setPath(this.path);
 		}
 		return succeed;
 	}
@@ -327,33 +310,58 @@ public class DFileImpl implements DFile {
 		if (exists()) {
 			return false;
 		}
-		boolean succeed = this.dfs.delete(this.fileId);
-		if (succeed) {
-			this.fileId = null;
-		}
+		boolean succeed = this.dfs.delete(this.metadata.getFileId());
 		return succeed;
 	}
 
 	@Override
 	public DFile[] listFiles() throws IOException {
-		return this.dfs.listFiles(this.fileId);
+		resolveMetadata(false);
+
+		DFile[] memberFiles = null;
+		if (this.metadata != null) {
+			memberFiles = this.dfs.listFiles(this.metadata.getFileId());
+		}
+		if (memberFiles == null) {
+			memberFiles = new DFile[0];
+		}
+		return memberFiles;
 	}
 
-	public static void main(String[] args) {
-		try {
-			URI uri1 = new URI("dfs", "dfs1", "/path/to/file1.txt", null);
-			URI uri2 = new URI("dfs", "dfs1", "/path/to/file3.txt", null);
-			URI uri3 = new URI("dfs", "dfs1", "/path/to/dir/", null);
-			URI uri4 = new URI("dfs", "dfs1", "/path/to/dir", null);
+	@Override
+	public long getDateCreated() throws IOException {
+		resolveMetadata(false);
 
-			System.out.println(uri1);
-			System.out.println(uri2);
-			System.out.println(uri3);
-			System.out.println(uri4);
-
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
+		if (this.metadata != null) {
+			return this.metadata.getDateCreated();
 		}
+		return 0;
+	}
+
+	@Override
+	public long getDateModified() throws IOException {
+		resolveMetadata(false);
+
+		if (this.metadata != null) {
+			return this.metadata.getDateModified();
+		}
+		return 0;
 	}
 
 }
+
+// public static void main(String[] args) {
+// try {
+// URI uri1 = new URI("dfs", "dfs1", "/path/to/file1.txt", null);
+// URI uri2 = new URI("dfs", "dfs1", "/path/to/file3.txt", null);
+// URI uri3 = new URI("dfs", "dfs1", "/path/to/dir/", null);
+// URI uri4 = new URI("dfs", "dfs1", "/path/to/dir", null);
+// System.out.println(uri1);
+// System.out.println(uri2);
+// System.out.println(uri3);
+// System.out.println(uri4);
+//
+// } catch (URISyntaxException e) {
+// e.printStackTrace();
+// }
+// }

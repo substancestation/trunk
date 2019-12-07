@@ -28,6 +28,8 @@ public class DfsFileComparator implements Comparator<Object> {
 
 			String type1 = "";
 			String type2 = "";
+			String name1 = "";
+			String name2 = "";
 			try {
 				type1 = f1.isDirectory() ? "d" : "f";
 			} catch (IOException e) {
@@ -38,9 +40,16 @@ public class DfsFileComparator implements Comparator<Object> {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			String name1 = f1.getName();
-			String name2 = f2.getName();
+			try {
+				name1 = f1.getName();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				name2 = f2.getName();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 			if (type1.compareTo(type2) == 0) {
 				if (this.ASC) {

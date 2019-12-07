@@ -43,7 +43,7 @@ public class DfsURLConnection extends URLConnection {
 		try {
 			connect();
 			if (this.isConnected) {
-				length = (int) this.file.getLength();
+				length = (int) this.file.getSize();
 			}
 		} catch (IOException ex) {
 			// means 'unknown length'
@@ -58,7 +58,7 @@ public class DfsURLConnection extends URLConnection {
 		try {
 			connect();
 			if (this.isConnected) {
-				length = this.file.getLength();
+				length = this.file.getSize();
 			}
 		} catch (IOException ex) {
 			// means 'unknown length'

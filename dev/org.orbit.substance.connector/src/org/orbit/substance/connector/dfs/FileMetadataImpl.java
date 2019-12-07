@@ -196,10 +196,10 @@ public class FileMetadataImpl implements FileMetadata {
 			return;
 		}
 
+		// this.name = sourceFile.getName();
 		this.fileId = sourceFile.getFileId();
 		this.parentFileId = sourceFile.getParentFileId();
 		this.path = sourceFile.getPath();
-		// this.name = sourceFile.getName();
 		this.size = sourceFile.getSize();
 		this.isDirectory = sourceFile.isDirectory();
 		this.isHidden = sourceFile.isHidden();

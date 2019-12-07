@@ -9,17 +9,19 @@ import org.origin.common.resource.Path;
 
 public interface DFile {
 
+	void resolveMetadata(boolean reset) throws IOException;
+
 	URI toURI() throws IOException;
 
 	DFS getDFS();
 
-	DFile getParent() throws IOException;
-
-	String getFileId();
-
 	Path getPath();
 
-	String getName();
+	DFile getParent() throws IOException;
+
+	String getFileId() throws IOException;
+
+	String getName() throws IOException;
 
 	boolean exists() throws IOException;
 
@@ -33,7 +35,7 @@ public interface DFile {
 
 	boolean create(byte[] bytes) throws IOException;
 
-	long getLength() throws IOException;
+	long getSize() throws IOException;
 
 	InputStream getInputStream() throws IOException;
 
@@ -50,5 +52,9 @@ public interface DFile {
 	boolean delete() throws IOException;
 
 	DFile[] listFiles() throws IOException;
+
+	long getDateCreated() throws IOException;
+
+	long getDateModified() throws IOException;
 
 }
