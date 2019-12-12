@@ -12,6 +12,7 @@ import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
 import org.orbit.substance.io.DFileOutputStream;
+import org.origin.common.adapter.AdaptorSupport;
 import org.origin.common.resource.Path;
 
 public class DFileImpl implements DFile {
@@ -19,6 +20,7 @@ public class DFileImpl implements DFile {
 	protected DFS dfs;
 	protected FileMetadata metadata;
 	protected Path path;
+	protected AdaptorSupport adaptorSupport = new AdaptorSupport();
 
 	/**
 	 * 
@@ -346,6 +348,34 @@ public class DFileImpl implements DFile {
 			return this.metadata.getDateModified();
 		}
 		return 0;
+	}
+
+	@Override
+	public <T> void adapt(Class<T> clazz, T object) {
+		this.adaptorSupport.adapt(clazz, object);
+	}
+
+	@Override
+	public <T> void adapt(Class<T>[] classes, T object) {
+		this.adaptorSupport.adapt(classes, object);
+	}
+
+	/** implement IAdaptable */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		T t = this.adaptorSupport.getAdapter(adapter);
+		if (t == null) {
+			if (Path.class.equals(adapter)) {
+				t = (T) this.path;
+			}
+		}
+		return t;
+	}
+
+	@Override
+	public String toString() {
+		return "DFileImpl [metadata=" + this.metadata + ", path=" + this.path + "]";
 	}
 
 }

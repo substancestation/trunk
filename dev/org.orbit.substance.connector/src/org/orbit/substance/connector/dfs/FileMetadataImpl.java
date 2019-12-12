@@ -217,6 +217,11 @@ public class FileMetadataImpl implements FileMetadata {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "FileMetadataImpl [dfsId=" + this.dfsId + ", fileId=" + this.fileId + ", parentFileId=" + this.parentFileId + ", path=" + this.path + ", size=" + this.size + ", isDirectory=" + this.isDirectory + ", isHidden=" + this.isHidden + ", inTrash=" + this.inTrash + ", dateCreated=" + this.dateCreated + ", dateModified=" + this.dateModified + "]";
+	}
+
 }
 
 // protected String name;

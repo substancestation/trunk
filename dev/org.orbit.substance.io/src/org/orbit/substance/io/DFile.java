@@ -5,9 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+import org.origin.common.adapter.IAdaptable;
 import org.origin.common.resource.Path;
 
-public interface DFile {
+public interface DFile extends IAdaptable {
 
 	void resolveMetadata(boolean reset) throws IOException;
 
