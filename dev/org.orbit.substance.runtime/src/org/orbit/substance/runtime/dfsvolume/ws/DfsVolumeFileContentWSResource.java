@@ -50,6 +50,7 @@ import org.origin.common.util.DiskSpaceUnit;
  * URL (GET):    {scheme}://{host}:{port}/{contextRoot}/file/content
  * 
  * @see AppStoreWSAppResource
+ * @see CubeWSResource
  */
 @Secured(roles = { OrbitRoles.SYSTEM_COMPONENT, OrbitRoles.USER })
 @javax.ws.rs.Path("/file")
