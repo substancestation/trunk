@@ -28,7 +28,7 @@ public interface DFile extends IAdaptable {
 
 	boolean isDirectory() throws IOException;
 
-	boolean mkdir() throws IOException;
+	boolean mkdir(boolean createUniqueFolderIfExist) throws IOException;
 
 	boolean createNewFile() throws IOException;
 

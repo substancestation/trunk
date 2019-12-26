@@ -170,13 +170,13 @@ public class DFileImpl implements DFile {
 	}
 
 	@Override
-	public synchronized boolean mkdir() throws IOException {
+	public synchronized boolean mkdir(boolean createUniqueFolderIfExist) throws IOException {
 		resolveMetadata(false);
 		if (exists()) {
 			return false;
 		}
 
-		this.metadata = this.dfs.mkdir(this.path);
+		this.metadata = this.dfs.mkdir(this.path, createUniqueFolderIfExist);
 		if (this.metadata != null) {
 			if (!metadata.isDirectory()) {
 				throw new IOException("New file is not a directory.");
@@ -192,7 +192,7 @@ public class DFileImpl implements DFile {
 			throw new IOException("File already exists.");
 		}
 
-		this.metadata = this.dfs.createNewFile(this.path, 0);
+		this.metadata = this.dfs.createNewFile(this.path, 0, true);
 		if (this.metadata != null) {
 			if (this.metadata.isDirectory()) {
 				throw new IOException("New file is a directory.");

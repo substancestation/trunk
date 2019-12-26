@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.orbit.substance.api.SubstanceAPIActivator;
@@ -123,9 +124,9 @@ public abstract class DFS {
 
 	public abstract boolean isDirectory(String fileId) throws IOException;
 
-	public abstract FileMetadata mkdir(Path path) throws IOException;
+	public abstract FileMetadata mkdir(Path path, boolean createUniqueFolderIfExist) throws IOException;
 
-	public abstract FileMetadata createNewFile(Path path, long size) throws IOException;
+	public abstract FileMetadata createNewFile(Path path, long size, boolean notifyEvent) throws IOException;
 
 	public abstract FileMetadata create(Path path, InputStream inputStream) throws IOException;
 
@@ -146,6 +147,12 @@ public abstract class DFS {
 	public abstract boolean rename(String fileId, String newName) throws IOException;
 
 	public abstract boolean delete(String fileId) throws IOException;
+
+	public abstract void addFileListener(DFileListener listener);
+
+	public abstract void removeFileListener(DFileListener listener);
+
+	public abstract List<DFileListener> getFileListeners();
 
 }
 

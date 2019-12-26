@@ -13,7 +13,9 @@ import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
+import org.orbit.substance.io.DFileListener;
 import org.orbit.substance.io.DFileOutputStream;
+import org.orbit.substance.io.DfsEvent;
 import org.origin.common.io.IOUtil;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
@@ -100,6 +102,12 @@ public class DFSImpl extends DFS {
 
 	@Override
 	public DFile[] listFiles(Path parentPath) throws IOException {
+		if (parentPath == null || parentPath.getPathString() == null) {
+			throw new IllegalArgumentException("path is null.");
+		}
+		if (parentPath.isRoot()) {
+			return listRoot();
+		}
 		List<DFile> files = new ArrayList<DFile>();
 		try {
 			FileMetadata[] fileMetadatas = SubstanceClientsUtil.DFS.listFiles(this.dfsClientResolver, this.accessToken, parentPath);
@@ -223,19 +231,56 @@ public class DFSImpl extends DFS {
 	}
 
 	@Override
-	public FileMetadata mkdir(Path path) throws IOException {
-		if (path == null) {
+	public FileMetadata mkdir(Path path, boolean createUniqueFolderIfExist) throws IOException {
+		if (path == null || path.getPathString() == null) {
 			throw new IllegalArgumentException("path is null.");
+		}
+		if (path.isRoot()) {
+			throw new IllegalArgumentException("Cannot create root path.");
 		}
 
 		FileMetadata fileMetadata = null;
 		try {
-			if (exists(path)) {
-				// File already exists.
-				throw new IOException("File already exists. Path is '" + path.getPathString() + "'.");
+			// if (exists(path)) {
+			// File already exists.
+			// throw new IOException("File already exists. Path is '" + path.getPathString() + "'.");
+			// }
+			String lastSegment = path.getLastSegment();
+			Path parentPath = path.getParent();
+
+			DFile[] files = listFiles(parentPath);
+			if (files != null) {
+				int number = 1;
+				boolean madeUnique = false;
+				String baseLastSegment = lastSegment;
+				for (DFile currFile : files) {
+					if (lastSegment.equals(currFile.getName())) {
+						if (!createUniqueFolderIfExist) {
+							throw new IOException("File already exists.");
+						} else {
+							lastSegment = baseLastSegment + " " + number++;
+							madeUnique = true;
+						}
+					}
+				}
+				if (madeUnique) {
+					path = new Path(parentPath, lastSegment);
+				}
 			}
 
 			fileMetadata = SubstanceClientsUtil.DFS.createDirectory(this.dfsClientResolver, this.accessToken, path);
+
+			// Send notification
+			if (fileMetadata != null) {
+				Object source = getFile(path.getParent());
+				if (path.getParent() == null || path.getParent().isRoot()) {
+					source = this;
+				} else {
+					source = getFile(path.getParent());
+				}
+				DFile file = new DFileImpl(this, fileMetadata);
+				notifyFileEvent(this, DfsEvent.CREATE, source, null, file);
+			}
 
 		} catch (ClientException e) {
 			handle(e);
@@ -244,14 +289,29 @@ public class DFSImpl extends DFS {
 	}
 
 	@Override
-	public FileMetadata createNewFile(Path path, long size) throws IOException {
-		if (path == null) {
+	public FileMetadata createNewFile(Path path, long size, boolean notifyEvent) throws IOException {
+		if (path == null || path.getPathString() == null) {
 			throw new IllegalArgumentException("path is null.");
+		}
+		if (path.isRoot()) {
+			throw new IllegalArgumentException("Cannot create root path.");
 		}
 
 		FileMetadata fileMetadata = null;
 		try {
 			fileMetadata = SubstanceClientsUtil.DFS.createNewFile(this.dfsClientResolver, this.accessToken, path, size);
+
+			// Send notification
+			if (fileMetadata != null && notifyEvent) {
+				Object source = getFile(path.getParent());
+				if (path.getParent() == null || path.getParent().isRoot()) {
+					source = this;
+				} else {
+					source = getFile(path.getParent());
+				}
+				DFile file = new DFileImpl(this, fileMetadata);
+				notifyFileEvent(this, DfsEvent.CREATE, source, null, file);
+			}
 
 		} catch (ClientException e) {
 			handle(e);
@@ -261,14 +321,17 @@ public class DFSImpl extends DFS {
 
 	@Override
 	public FileMetadata create(Path path, InputStream inputStream) throws IOException {
-		if (path == null) {
+		if (path == null || path.getPathString() == null) {
 			throw new IllegalArgumentException("path is null.");
+		}
+		if (path.isRoot()) {
+			throw new IllegalArgumentException("Cannot create root path.");
 		}
 		if (inputStream == null) {
 			throw new IllegalArgumentException("inputStream is null.");
 		}
 
-		FileMetadata fileMetadata = createNewFile(path, inputStream.available());
+		FileMetadata fileMetadata = createNewFile(path, inputStream.available(), false);
 		if (fileMetadata == null) {
 			throw new IOException("New file cannot be created. Path is '" + path.getPathString() + "'.");
 		}
@@ -276,25 +339,48 @@ public class DFSImpl extends DFS {
 		String fileId = fileMetadata.getFileId();
 		setContents(fileId, inputStream);
 
+		// Send notification
+		Object source = getFile(path.getParent());
+		if (path.getParent() == null || path.getParent().isRoot()) {
+			source = this;
+		} else {
+			source = getFile(path.getParent());
+		}
+		DFile file = new DFileImpl(this, fileMetadata);
+		notifyFileEvent(this, DfsEvent.CREATE, source, null, file);
+
 		return fileMetadata;
 	}
 
 	@Override
 	public FileMetadata create(Path path, byte[] bytes) throws IOException {
-		if (path == null) {
+		if (path == null || path.getPathString() == null) {
 			throw new IllegalArgumentException("path is null.");
+		}
+		if (path.isRoot()) {
+			throw new IllegalArgumentException("Cannot create root path.");
 		}
 		if (bytes == null) {
 			throw new IllegalArgumentException("bytes is null.");
 		}
 
-		FileMetadata fileMetadata = createNewFile(path, bytes.length);
+		FileMetadata fileMetadata = createNewFile(path, bytes.length, false);
 		if (fileMetadata == null) {
 			throw new IOException("New file cannot be created. Path is '" + path.getPathString() + "'.");
 		}
 
 		String fileId = fileMetadata.getFileId();
 		setContents(fileId, bytes);
+
+		// Send notification
+		Object source = getFile(path.getParent());
+		if (path.getParent() == null || path.getParent().isRoot()) {
+			source = this;
+		} else {
+			source = getFile(path.getParent());
+		}
+		DFile file = new DFileImpl(this, fileMetadata);
+		notifyFileEvent(this, DfsEvent.CREATE, source, null, file);
 
 		return fileMetadata;
 	}
@@ -370,8 +456,11 @@ public class DFSImpl extends DFS {
 		try {
 			// long size = inputStream.available();
 			outputStream = getOutputStream(fileId);
-
 			IOUtil.copy(inputStream, outputStream);
+
+			// Send notification
+			DFile file = getFileById(fileId);
+			notifyFileEvent(this, DfsEvent.CONTENT, file, file, file);
 
 		} finally {
 			IOUtil.closeQuietly(outputStream, true);
@@ -393,8 +482,11 @@ public class DFSImpl extends DFS {
 			inputStream = new ByteArrayInputStream(bytes);
 			long size = bytes.length;
 			outputStream = getOutputStream(fileId, size);
-
 			IOUtil.copy(inputStream, outputStream);
+
+			// Send notification
+			DFile file = getFileById(fileId);
+			notifyFileEvent(this, DfsEvent.CONTENT, file, bytes, bytes);
 
 		} finally {
 			IOUtil.closeQuietly(outputStream, true);
@@ -413,8 +505,15 @@ public class DFSImpl extends DFS {
 
 		boolean succeed = false;
 		try {
+			DFile file = getFileById(fileId);
+			String oldName = (file != null) ? file.getName() : null;
+
 			succeed = SubstanceClientsUtil.DFS.renameFile(this.dfsClientResolver, this.accessToken, fileId, newName);
 
+			// Send notification
+			if (succeed) {
+				notifyFileEvent(this, DfsEvent.RENAME, file, oldName, newName);
+			}
 		} catch (ClientException e) {
 			handle(e);
 		}
@@ -428,12 +527,73 @@ public class DFSImpl extends DFS {
 		}
 		boolean succeed = false;
 		try {
+			DFile file = getFileById(fileId);
+			DFile parent = (file != null) ? file.getParent() : null;
+
 			succeed = SubstanceClientsUtil.DFS.deleteFile(this.dfsClientResolver, this.dfsVolumeClientResolver, this.accessToken, fileId);
 
+			// Send notification
+			if (succeed) {
+				notifyFileEvent(this, DfsEvent.DELETE, parent, file, null);
+			}
 		} catch (ClientException e) {
 			handle(e);
 		}
 		return succeed;
+	}
+
+	/** DFileListener */
+	protected List<DFileListener> fileListeners = new ArrayList<DFileListener>();
+
+	@Override
+	public void addFileListener(DFileListener listener) {
+		if (listener != null && !this.fileListeners.contains(listener)) {
+			this.fileListeners.add(listener);
+		}
+	}
+
+	@Override
+	public void removeFileListener(DFileListener listener) {
+		if (listener != null && this.fileListeners.contains(listener)) {
+			this.fileListeners.remove(listener);
+		}
+	}
+
+	@Override
+	public List<DFileListener> getFileListeners() {
+		return this.fileListeners;
+	}
+
+	/**
+	 * 
+	 * @param dfs
+	 * @param eventType
+	 * @param source
+	 * @param oldValue
+	 * @param newValue
+	 */
+	public void notifyFileEvent(DFS dfs, int eventType, Object source, Object oldValue, Object newValue) {
+		DfsEvent event = new DfsEvent(dfs, eventType, source, oldValue, newValue);
+		DFileListener[] array = this.fileListeners.toArray(new DFileListener[this.fileListeners.size()]);
+		for (DFileListener listener : array) {
+			try {
+				if (DfsEvent.CREATE == eventType) {
+					listener.onFileCreated(event);
+
+				} else if (DfsEvent.DELETE == eventType) {
+					listener.onFileDeleted(event);
+
+				} else if (DfsEvent.REFRESH == eventType) {
+					listener.onFileRefreshed(event);
+
+				} else {
+					listener.onFileModified(event);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
