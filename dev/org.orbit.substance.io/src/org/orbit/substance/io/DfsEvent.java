@@ -1,5 +1,9 @@
 package org.orbit.substance.io;
 
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ */
 public class DfsEvent {
 
 	public static int CREATE = 1;

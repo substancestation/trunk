@@ -15,6 +15,7 @@ import org.origin.common.io.IOUtil;
  *
  * @see com.osgi.example1.fs.client.api.FileRefInputStream
  * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
  */
 public class DFileInputStream extends PipedInputStream {
 

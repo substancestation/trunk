@@ -15,6 +15,10 @@ import org.orbit.substance.io.DFileOutputStream;
 import org.origin.common.adapter.AdaptorSupport;
 import org.origin.common.resource.Path;
 
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ */
 public class DFileImpl implements DFile {
 
 	protected DFS dfs;

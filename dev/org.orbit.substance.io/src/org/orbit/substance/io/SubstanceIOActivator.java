@@ -7,6 +7,10 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ */
 public class SubstanceIOActivator extends AbstractBundleActivator {
 
 	protected static Logger LOG = LoggerFactory.getLogger(SubstanceIOActivator.class);

@@ -8,6 +8,10 @@ import java.net.URI;
 import org.origin.common.adapter.IAdaptable;
 import org.origin.common.resource.Path;
 
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ */
 public interface DFile extends IAdaptable {
 
 	void resolveMetadata(boolean reset) throws IOException;

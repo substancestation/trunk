@@ -23,7 +23,6 @@ import org.origin.common.rest.client.ClientException;
 /**
  * 
  * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
- *
  */
 public class DFSImpl extends DFS {
 
@@ -528,13 +527,19 @@ public class DFSImpl extends DFS {
 		boolean succeed = false;
 		try {
 			DFile file = getFileById(fileId);
-			DFile parent = (file != null) ? file.getParent() : null;
+			DFile parentFile = (file != null) ? file.getParent() : null;
 
 			succeed = SubstanceClientsUtil.DFS.deleteFile(this.dfsClientResolver, this.dfsVolumeClientResolver, this.accessToken, fileId);
 
 			// Send notification
 			if (succeed) {
-				notifyFileEvent(this, DfsEvent.DELETE, parent, file, null);
+				Object source = parentFile;
+				if (parentFile == null) {
+					source = this;
+				} else if (parentFile != null && parentFile.getPath() != null && parentFile.getPath().isRoot()) {
+					source = this;
+				}
+				notifyFileEvent(this, DfsEvent.DELETE, source, file, null);
 			}
 		} catch (ClientException e) {
 			handle(e);
