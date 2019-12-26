@@ -572,6 +572,7 @@ public class DFSImpl extends DFS {
 	 * @param oldValue
 	 * @param newValue
 	 */
+	@Override
 	public void notifyFileEvent(DFS dfs, int eventType, Object source, Object oldValue, Object newValue) {
 		DfsEvent event = new DfsEvent(dfs, eventType, source, oldValue, newValue);
 		DFileListener[] array = this.fileListeners.toArray(new DFileListener[this.fileListeners.size()]);
@@ -580,14 +581,20 @@ public class DFSImpl extends DFS {
 				if (DfsEvent.CREATE == eventType) {
 					listener.onFileCreated(event);
 
-				} else if (DfsEvent.DELETE == eventType) {
-					listener.onFileDeleted(event);
+				} else if (DfsEvent.CONTENT == eventType) {
+					listener.onFileModified(event);
+
+				} else if (DfsEvent.RENAME == eventType) {
+					listener.onFileRenamed(event);
+
+				} else if (DfsEvent.MOVE == eventType) {
+					listener.onFileMoved(event);
 
 				} else if (DfsEvent.REFRESH == eventType) {
 					listener.onFileRefreshed(event);
 
-				} else {
-					listener.onFileModified(event);
+				} else if (DfsEvent.DELETE == eventType) {
+					listener.onFileDeleted(event);
 				}
 
 			} catch (Exception e) {

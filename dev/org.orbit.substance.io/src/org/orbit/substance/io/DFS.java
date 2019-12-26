@@ -154,6 +154,8 @@ public abstract class DFS {
 
 	public abstract List<DFileListener> getFileListeners();
 
+	public abstract void notifyFileEvent(DFS dfs, int eventType, Object source, Object oldValue, Object newValue);
+
 }
 
 // public abstract String getDfsId() throws IOException;
