@@ -248,22 +248,28 @@ public class DFSImpl extends DFS {
 			Path parentPath = path.getParent();
 
 			DFile[] files = listFiles(parentPath);
+
 			if (files != null) {
-				int number = 1;
-				boolean madeUnique = false;
-				String baseLastSegment = lastSegment;
-				for (DFile currFile : files) {
-					if (lastSegment.equals(currFile.getName())) {
-						if (!createUniqueFolderIfExist) {
-							throw new IOException("File already exists.");
-						} else {
-							lastSegment = baseLastSegment + " " + number++;
-							madeUnique = true;
-						}
-					}
+				List<String> names = new ArrayList<String>();
+				for (DFile file : files) {
+					names.add(file.getName());
 				}
-				if (madeUnique) {
-					path = new Path(parentPath, lastSegment);
+
+				if (!createUniqueFolderIfExist) {
+					if (names.contains(lastSegment)) {
+						throw new IOException("File already exists.");
+					}
+				} else {
+					boolean madeUnique = false;
+					int number = 1;
+					String baseLastSegment = lastSegment;
+					while (names.contains(lastSegment)) {
+						lastSegment = baseLastSegment + " " + number++;
+						madeUnique = true;
+					}
+					if (madeUnique) {
+						path = new Path(parentPath, lastSegment);
+					}
 				}
 			}
 
@@ -494,7 +500,7 @@ public class DFSImpl extends DFS {
 	}
 
 	@Override
-	public boolean rename(String fileId, String newName) throws IOException {
+	public boolean rename(String fileId, String newName, boolean notifyEvent) throws IOException {
 		if (fileId == null) {
 			throw new IllegalArgumentException("fileId is null.");
 		}
@@ -510,7 +516,8 @@ public class DFSImpl extends DFS {
 			succeed = SubstanceClientsUtil.DFS.renameFile(this.dfsClientResolver, this.accessToken, fileId, newName);
 
 			// Send notification
-			if (succeed) {
+			if (succeed && notifyEvent) {
+				file = getFileById(fileId);
 				notifyFileEvent(this, DfsEvent.RENAME, file, oldName, newName);
 			}
 		} catch (ClientException e) {

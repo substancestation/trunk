@@ -12,6 +12,7 @@ import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
 import org.orbit.substance.io.DFileOutputStream;
+import org.orbit.substance.io.DfsEvent;
 import org.origin.common.adapter.AdaptorSupport;
 import org.origin.common.resource.Path;
 
@@ -131,7 +132,7 @@ public class DFileImpl implements DFile {
 	@Override
 	public DFile getParent() throws IOException {
 		Path parentPath = this.path.getParent();
-		if (parentPath == null) {
+		if (parentPath == null || parentPath.isEmpty() || parentPath.isRoot()) {
 			return null;
 		}
 		return this.dfs.getFile(parentPath);
@@ -301,12 +302,23 @@ public class DFileImpl implements DFile {
 		if (!exists()) {
 			throw new IOException("File doesn't exists.");
 		}
+		if (newName == null) {
+			throw new IOException("File name cannot be null.");
+		}
 
-		boolean succeed = this.dfs.rename(this.metadata.getFileId(), newName);
+		String oldName = getName();
+		if (newName.equals(oldName)) {
+			// no change is made. file is already with new name.
+			return true;
+		}
+
+		boolean succeed = this.dfs.rename(this.metadata.getFileId(), newName, false);
 		if (succeed) {
 			Path parentPath = this.path.getParent();
 			this.path = new Path(parentPath, newName);
 			this.metadata.setPath(this.path);
+
+			this.dfs.notifyFileEvent(this.dfs, DfsEvent.RENAME, this, oldName, newName);
 		}
 		return succeed;
 	}

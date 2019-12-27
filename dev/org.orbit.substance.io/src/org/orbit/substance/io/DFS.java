@@ -143,7 +143,7 @@ public abstract class DFS {
 
 	public abstract void setContents(String fileId, byte[] bytes) throws IOException;
 
-	public abstract boolean rename(String fileId, String newName) throws IOException;
+	public abstract boolean rename(String fileId, String newName, boolean notifyEvent) throws IOException;
 
 	public abstract boolean delete(String fileId) throws IOException;
 
