@@ -156,6 +156,22 @@ public class DFileImpl implements DFile {
 	}
 
 	@Override
+	public String getFileExtension() throws IOException {
+		if (isDirectory()) {
+			return null;
+		}
+		String fileExtension = null;
+		String lastSegment = this.path.getLastSegment();
+		if (lastSegment != null) {
+			int index = lastSegment.lastIndexOf(".");
+			if (index >= 0 && index < lastSegment.length() - 1) {
+				fileExtension = lastSegment.substring(index + 1);
+			}
+		}
+		return fileExtension;
+	}
+
+	@Override
 	public synchronized boolean exists() throws IOException {
 		resolveMetadata(false);
 		if (this.metadata != null) {
