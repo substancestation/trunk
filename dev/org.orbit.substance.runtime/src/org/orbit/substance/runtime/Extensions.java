@@ -1,7 +1,7 @@
 package org.orbit.substance.runtime;
 
 import org.orbit.infra.api.indexes.ServiceIndexTimerFactory;
-import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
+import org.orbit.platform.sdk.ServiceActivator;
 import org.orbit.substance.runtime.dfs.ws.DfsServiceTimerFactory;
 import org.orbit.substance.runtime.dfs.ws.command.AllocateVolumesCommand;
 import org.orbit.substance.runtime.dfs.ws.command.CreateDirectoryCommand;

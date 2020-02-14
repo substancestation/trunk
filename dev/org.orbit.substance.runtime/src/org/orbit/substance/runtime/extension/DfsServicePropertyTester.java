@@ -2,7 +2,7 @@ package org.orbit.substance.runtime.extension;
 
 import java.util.Map;
 
-import org.orbit.platform.sdk.IProcessContext;
+import org.orbit.platform.sdk.ProcessContext;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.origin.common.extensions.condition.IPropertyTester;
 
@@ -12,8 +12,8 @@ public class DfsServicePropertyTester implements IPropertyTester {
 
 	@Override
 	public boolean accept(Object context, Object source, Object target, Map<String, Object> args) {
-		if (context instanceof IProcessContext) {
-			IProcessContext platformContext = (IProcessContext) context;
+		if (context instanceof ProcessContext) {
+			ProcessContext platformContext = (ProcessContext) context;
 			Object value = platformContext.getProperty(SubstanceConstants.DFS__AUTOSTART);
 			if (value != null && "true".equalsIgnoreCase(value.toString())) {
 				return true;

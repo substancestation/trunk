@@ -1,7 +1,7 @@
 package org.orbit.substance.webconsole;
 
+import org.orbit.platform.sdk.ServiceActivator;
 import org.orbit.platform.sdk.menu.DropdownMenuProvider;
-import org.orbit.platform.sdk.serviceactivator.ServiceActivator;
 import org.orbit.substance.webconsole.extension.WebApplicationActivator;
 import org.orbit.substance.webconsole.extension.WebApplicationPropertyTester;
 import org.origin.common.extensions.Extension;

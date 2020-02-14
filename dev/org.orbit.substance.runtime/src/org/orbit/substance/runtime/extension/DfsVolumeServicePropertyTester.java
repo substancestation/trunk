@@ -3,7 +3,7 @@ package org.orbit.substance.runtime.extension;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.orbit.platform.sdk.IProcessContext;
+import org.orbit.platform.sdk.ProcessContext;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.origin.common.extensions.condition.IPropertyTester;
 import org.origin.common.util.PropertyUtil;
@@ -16,8 +16,8 @@ public class DfsVolumeServicePropertyTester implements IPropertyTester {
 	@Override
 	public boolean accept(Object context, Object source, Object target, Map<String, Object> args) {
 		BundleContext bundleContext = null;
-		if (context instanceof IProcessContext) {
-			IProcessContext platformContext = (IProcessContext) context;
+		if (context instanceof ProcessContext) {
+			ProcessContext platformContext = (ProcessContext) context;
 			bundleContext = platformContext.getBundleContext();
 		}
 		if (bundleContext != null) {
