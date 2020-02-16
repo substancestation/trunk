@@ -49,9 +49,9 @@ public class DfsVolumeNodeAddServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				IConfigRegistry cfgReg = NodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
+				IConfigRegistry cfgReg = NodeConfigHelper.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
-					IConfigElement dfsConfigElement = NodeConfigHelper.INSTANCE.getDfsConfigElement(cfgReg, dfsId);
+					IConfigElement dfsConfigElement = NodeConfigHelper.getDfsConfigElement(cfgReg, dfsId);
 					if (dfsConfigElement != null) {
 						Map<String, Object> attributes = new HashMap<String, Object>();
 						attributes.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID, dfsVolumeId);
@@ -62,7 +62,7 @@ public class DfsVolumeNodeAddServlet extends HttpServlet {
 						message = MessageHelper.INSTANCE.add(message, "Config element for DFS node (dfsId: '" + dfsId + "') cannot be found.");
 					}
 				} else {
-					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
+					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
 				}
 
 			} catch (Exception e) {

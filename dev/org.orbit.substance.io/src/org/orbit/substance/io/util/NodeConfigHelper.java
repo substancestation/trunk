@@ -13,13 +13,11 @@ public class NodeConfigHelper {
 
 	protected static final String CONFIG_REGISTRY_NAME__DFS_NODES = "DFSNodes";
 
-	public static NodeConfigHelper INSTANCE = new NodeConfigHelper();
-
-	public String getNodeConfigListType() {
+	public static String getNodeConfigListType() {
 		return CONFIG_REGISTRY_TYPE__NODE_CONFIG_LIST;
 	}
 
-	public String getConfigRegistryName__DfsNodes() {
+	public static String getConfigRegistryName__DfsNodes() {
 		return CONFIG_REGISTRY_NAME__DFS_NODES;
 	}
 
@@ -30,7 +28,7 @@ public class NodeConfigHelper {
 	 * @return
 	 * @throws IOException
 	 */
-	public IConfigRegistry getDfsNodesConfigRegistry(String accessToken, boolean createIfNotExist) throws IOException {
+	public static IConfigRegistry getDfsNodesConfigRegistry(String accessToken, boolean createIfNotExist) throws IOException {
 		IConfigRegistry cfgReg = null;
 		CFG cfg = CFG.getDefault(accessToken);
 		if (cfg != null) {
@@ -51,7 +49,7 @@ public class NodeConfigHelper {
 	 * @return
 	 * @throws IOException
 	 */
-	public IConfigElement getDfsConfigElement(IConfigRegistry cfgReg, String dfsId) throws IOException {
+	public static IConfigElement getDfsConfigElement(IConfigRegistry cfgReg, String dfsId) throws IOException {
 		IConfigElement result = null;
 		if (cfgReg != null && dfsId != null) {
 			IConfigElement[] rootElements = cfgReg.listRootConfigElements();

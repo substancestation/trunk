@@ -118,7 +118,7 @@ public class DfsVolumeServiceAdapter implements LifecycleAware {
 		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS_VOLUME__INDEXER_ID);
 		if (extension != null) {
 			@SuppressWarnings("unchecked")
-			ServiceIndexTimerFactory<DfsVolumeService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);
+			ServiceIndexTimerFactory<DfsVolumeService> indexTimerFactory = extension.createInstance(ServiceIndexTimerFactory.class);
 			if (indexTimerFactory != null) {
 				this.indexTimer = indexTimerFactory.create(service);
 				if (this.indexTimer != null) {

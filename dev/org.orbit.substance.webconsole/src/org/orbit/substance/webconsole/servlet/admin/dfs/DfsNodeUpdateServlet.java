@@ -53,7 +53,7 @@ public class DfsNodeUpdateServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				IConfigRegistry cfgReg = NodeConfigHelper.INSTANCE.getDfsNodesConfigRegistry(accessToken, true);
+				IConfigRegistry cfgReg = NodeConfigHelper.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
 					IConfigElement configElement = cfgReg.getConfigElement(elementId);
 					if (configElement != null) {
@@ -91,7 +91,7 @@ public class DfsNodeUpdateServlet extends HttpServlet {
 					}
 
 				} else {
-					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.INSTANCE.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
+					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
 				}
 
 			} catch (Exception e) {

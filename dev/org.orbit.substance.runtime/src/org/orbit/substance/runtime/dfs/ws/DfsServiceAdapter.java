@@ -118,7 +118,7 @@ public class DfsServiceAdapter implements LifecycleAware {
 		IExtension extension = PlatformSDKActivator.getInstance().getExtensionRegistry().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID, SubstanceConstants.IDX__DFS__INDEXER_ID);
 		if (extension != null) {
 			@SuppressWarnings("unchecked")
-			ServiceIndexTimerFactory<DfsService> indexTimerFactory = extension.createExecutableInstance(ServiceIndexTimerFactory.class);
+			ServiceIndexTimerFactory<DfsService> indexTimerFactory = extension.createInstance(ServiceIndexTimerFactory.class);
 			if (indexTimerFactory != null) {
 				this.indexTimer = indexTimerFactory.create(service);
 				if (this.indexTimer != null) {
