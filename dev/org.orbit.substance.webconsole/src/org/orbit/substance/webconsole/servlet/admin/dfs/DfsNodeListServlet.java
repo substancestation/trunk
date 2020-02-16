@@ -21,7 +21,7 @@ import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.util.DfsClientResolverByDfsURL;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
-import org.orbit.substance.io.util.NodeConfigHelper;
+import org.orbit.substance.io.util.ConfigRegistryHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 
@@ -53,7 +53,7 @@ public class DfsNodeListServlet extends HttpServlet {
 		try {
 			String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-			IConfigRegistry cfgReg = NodeConfigHelper.getDfsNodesConfigRegistry(accessToken, true);
+			IConfigRegistry cfgReg = ConfigRegistryHelper.getDfsNodesConfigRegistry(accessToken, true);
 			if (cfgReg != null) {
 				configElements = cfgReg.listRootConfigElements();
 
@@ -87,7 +87,7 @@ public class DfsNodeListServlet extends HttpServlet {
 				}
 
 			} else {
-				message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.REGISTRY__DFS_NODES + "' cannot be found or created.");
+				message = MessageHelper.INSTANCE.add(message, "Config registry for '" + ConfigRegistryHelper.REGISTRY__DFS_NODES + "' cannot be found or created.");
 			}
 
 		} catch (Exception e) {

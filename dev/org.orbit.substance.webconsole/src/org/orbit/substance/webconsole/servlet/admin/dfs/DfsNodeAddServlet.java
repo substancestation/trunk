@@ -14,7 +14,7 @@ import org.orbit.infra.io.IConfigElement;
 import org.orbit.infra.io.IConfigRegistry;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
-import org.orbit.substance.io.util.NodeConfigHelper;
+import org.orbit.substance.io.util.ConfigRegistryHelper;
 import org.orbit.substance.webconsole.WebConstants;
 import org.origin.common.servlet.MessageHelper;
 import org.origin.common.util.ServletUtil;
@@ -48,7 +48,7 @@ public class DfsNodeAddServlet extends HttpServlet {
 			try {
 				String accessToken = OrbitTokenUtil.INSTANCE.getAccessToken(request);
 
-				IConfigRegistry cfgReg = NodeConfigHelper.getDfsNodesConfigRegistry(accessToken, true);
+				IConfigRegistry cfgReg = ConfigRegistryHelper.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
 					Map<String, Object> attributes = new HashMap<String, Object>();
 					attributes.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
@@ -56,7 +56,7 @@ public class DfsNodeAddServlet extends HttpServlet {
 					configElement = cfgReg.createRootConfigElement(name, attributes, true);
 
 				} else {
-					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.REGISTRY__DFS_NODES + "' cannot be found or created.");
+					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + ConfigRegistryHelper.REGISTRY__DFS_NODES + "' cannot be found or created.");
 				}
 
 			} catch (Exception e) {

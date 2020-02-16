@@ -7,7 +7,7 @@ import org.orbit.infra.io.IConfigElement;
 import org.orbit.infra.io.IConfigRegistry;
 import org.orbit.substance.api.SubstanceConstants;
 
-public class NodeConfigHelper {
+public class ConfigRegistryHelper {
 
 	public static final String REGISTRY__DFS_NODES = "DFSNodes";
 	public static final String TYPE__NODE_CONFIG_LIST = "NodeConfigList";
