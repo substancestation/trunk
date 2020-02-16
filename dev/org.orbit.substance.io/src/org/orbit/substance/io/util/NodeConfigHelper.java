@@ -9,17 +9,8 @@ import org.orbit.substance.api.SubstanceConstants;
 
 public class NodeConfigHelper {
 
-	protected static final String CONFIG_REGISTRY_TYPE__NODE_CONFIG_LIST = "NodeConfigList";
-
-	protected static final String CONFIG_REGISTRY_NAME__DFS_NODES = "DFSNodes";
-
-	public static String getNodeConfigListType() {
-		return CONFIG_REGISTRY_TYPE__NODE_CONFIG_LIST;
-	}
-
-	public static String getConfigRegistryName__DfsNodes() {
-		return CONFIG_REGISTRY_NAME__DFS_NODES;
-	}
+	public static final String REGISTRY__DFS_NODES = "DFSNodes";
+	public static final String TYPE__NODE_CONFIG_LIST = "NodeConfigList";
 
 	/**
 	 * 
@@ -32,10 +23,10 @@ public class NodeConfigHelper {
 		IConfigRegistry cfgReg = null;
 		CFG cfg = CFG.getDefault(accessToken);
 		if (cfg != null) {
-			cfgReg = cfg.getConfigRegistryByName(getConfigRegistryName__DfsNodes());
+			cfgReg = cfg.getConfigRegistryByName(REGISTRY__DFS_NODES);
 			if (cfgReg == null) {
 				if (createIfNotExist) {
-					cfgReg = cfg.createConfigRegistry(getNodeConfigListType(), getConfigRegistryName__DfsNodes(), null, false);
+					cfgReg = cfg.createConfigRegistry(TYPE__NODE_CONFIG_LIST, REGISTRY__DFS_NODES, null, false);
 				}
 			}
 		}

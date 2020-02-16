@@ -92,7 +92,7 @@ public class DfsVolumeNodeUpdateServlet extends HttpServlet {
 					}
 
 				} else {
-					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.getConfigRegistryName__DfsNodes() + "' cannot be found or created.");
+					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + NodeConfigHelper.REGISTRY__DFS_NODES + "' cannot be found or created.");
 				}
 
 			} catch (Exception e) {
