@@ -51,7 +51,7 @@ public class DfsVolumeNodeDeleteServlet extends HttpServlet {
 				IConfigRegistry cfgReg = ConfigRegistryHelper.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
 					for (String elementId : elementIds) {
-						boolean currIsDeleted = cfgReg.deleteConfigElement(elementId);
+						boolean currIsDeleted = cfgReg.deleteElement(elementId);
 						if (currIsDeleted) {
 							hasSucceed = true;
 						} else {

@@ -55,7 +55,7 @@ public class DfsNodeListServlet extends HttpServlet {
 
 			IConfigRegistry cfgReg = ConfigRegistryHelper.getDfsNodesConfigRegistry(accessToken, true);
 			if (cfgReg != null) {
-				configElements = cfgReg.listRootConfigElements();
+				configElements = cfgReg.listRootElements();
 
 				if (configElements != null) {
 					Map<String, IndexItem> dfsIndexItemMap = DfsIndexItemHelper.getDfsIndexItemsMap(accessToken);

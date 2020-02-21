@@ -56,7 +56,7 @@ public class DfsVolumeNodeUpdateServlet extends HttpServlet {
 
 				IConfigRegistry cfgReg = ConfigRegistryHelper.getDfsNodesConfigRegistry(accessToken, true);
 				if (cfgReg != null) {
-					IConfigElement configElement = cfgReg.getConfigElement(elementId);
+					IConfigElement configElement = cfgReg.getElement(elementId);
 					if (configElement != null) {
 						// Update name
 						String oldName = configElement.getName();

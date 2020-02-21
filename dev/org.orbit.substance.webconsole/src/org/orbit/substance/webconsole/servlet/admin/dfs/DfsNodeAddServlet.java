@@ -53,7 +53,7 @@ public class DfsNodeAddServlet extends HttpServlet {
 					Map<String, Object> attributes = new HashMap<String, Object>();
 					attributes.put(SubstanceConstants.IDX_PROP__DFS__ID, dfsId);
 					attributes.put("enabled", enabled);
-					configElement = cfgReg.createRootConfigElement(name, attributes, true);
+					configElement = cfgReg.createRootElement(name, attributes, true);
 
 				} else {
 					message = MessageHelper.INSTANCE.add(message, "Config registry for '" + ConfigRegistryHelper.REGISTRY__DFS_NODES + "' cannot be found or created.");

@@ -74,7 +74,7 @@ public class DfsVolumeNodeActionServlet extends HttpServlet {
 					for (int i = 0; i < elementIds.length; i++) {
 						String elementId = elementIds[i];
 
-						IConfigElement configElement = cfgReg.getConfigElement(elementId);
+						IConfigElement configElement = cfgReg.getElement(elementId);
 						if (configElement == null) {
 							message = MessageHelper.INSTANCE.add(message, "Config element with elementId '" + elementId + "' cannot be found.");
 							continue;

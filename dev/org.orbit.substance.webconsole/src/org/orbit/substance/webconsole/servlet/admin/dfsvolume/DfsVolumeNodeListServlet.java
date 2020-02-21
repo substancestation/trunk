@@ -65,7 +65,7 @@ public class DfsVolumeNodeListServlet extends HttpServlet {
 				if (cfgReg != null) {
 					dfsConfigElement = ConfigRegistryHelper.getDfsConfigElement(cfgReg, dfsId);
 					if (dfsConfigElement != null) {
-						configElements = dfsConfigElement.memberConfigElements();
+						configElements = dfsConfigElement.getChildrenElements();
 					} else {
 						message = MessageHelper.INSTANCE.add(message, "Config element for DFS node (dfsId: '" + dfsId + "') cannot be found.");
 					}

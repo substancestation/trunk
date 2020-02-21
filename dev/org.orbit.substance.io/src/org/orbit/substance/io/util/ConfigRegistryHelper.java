@@ -43,7 +43,7 @@ public class ConfigRegistryHelper {
 	public static IConfigElement getDfsConfigElement(IConfigRegistry cfgReg, String dfsId) throws IOException {
 		IConfigElement result = null;
 		if (cfgReg != null && dfsId != null) {
-			IConfigElement[] rootElements = cfgReg.listRootConfigElements();
+			IConfigElement[] rootElements = cfgReg.listRootElements();
 			if (rootElements != null) {
 				for (IConfigElement rootElement : rootElements) {
 					String currDfsId = rootElement.getAttribute(SubstanceConstants.IDX_PROP__DFS__ID, String.class);

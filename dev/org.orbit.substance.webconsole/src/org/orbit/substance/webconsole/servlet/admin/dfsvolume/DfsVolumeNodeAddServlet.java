@@ -56,7 +56,7 @@ public class DfsVolumeNodeAddServlet extends HttpServlet {
 						Map<String, Object> attributes = new HashMap<String, Object>();
 						attributes.put(SubstanceConstants.IDX_PROP__DFS_VOLUME__ID, dfsVolumeId);
 						attributes.put("enabled", enabled);
-						configElement = dfsConfigElement.createMemberConfigElement(name, attributes, true);
+						configElement = dfsConfigElement.createChildElement(name, attributes, true);
 
 					} else {
 						message = MessageHelper.INSTANCE.add(message, "Config element for DFS node (dfsId: '" + dfsId + "') cannot be found.");
