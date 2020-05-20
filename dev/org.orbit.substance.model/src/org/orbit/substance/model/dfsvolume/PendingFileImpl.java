@@ -3,7 +3,7 @@ package org.orbit.substance.model.dfsvolume;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import org.origin.common.util.TimeUtil;
+import org.origin.common.util.DateUtil;
 
 public class PendingFileImpl implements PendingFile {
 
@@ -53,7 +53,7 @@ public class PendingFileImpl implements PendingFile {
 	public boolean isExpired() {
 		long dateCreated = getDateCreated();
 		boolean isExpired = false;
-		Date expireTime = TimeUtil.addTimeToDate(new Date(dateCreated), 120, TimeUnit.SECONDS);
+		Date expireTime = DateUtil.addTimeToDate(new Date(dateCreated), 120, TimeUnit.SECONDS);
 		Date timeNow = new Date();
 		if (timeNow.after(expireTime)) {
 			isExpired = true;
