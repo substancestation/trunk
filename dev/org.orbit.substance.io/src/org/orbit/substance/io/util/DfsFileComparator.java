@@ -40,16 +40,8 @@ public class DfsFileComparator implements Comparator<Object> {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			try {
-				name1 = f1.getName();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				name2 = f2.getName();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			name1 = f1.getName();
+			name2 = f2.getName();
 
 			if (type1.compareTo(type2) == 0) {
 				if (this.ASC) {

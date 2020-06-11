@@ -149,7 +149,7 @@ public class DFileImpl implements DFile {
 	}
 
 	@Override
-	public String getName() throws IOException {
+	public String getName() {
 		// resolveMetadata(false);
 
 		return this.path.getLastSegment();
