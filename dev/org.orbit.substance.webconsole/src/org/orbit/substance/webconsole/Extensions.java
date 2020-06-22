@@ -18,9 +18,9 @@ public class Extensions extends ProgramExtensions {
 
 	public static Extensions INSTANCE = new Extensions();
 
-	public Extensions() {
-		setBundleId("org.orbit.substance.webconsole");
-	}
+	// public Extensions() {
+	// setBundleId("org.orbit.substance.webconsole");
+	// }
 
 	@Override
 	public void createExtensions() {
@@ -33,8 +33,7 @@ public class Extensions extends ProgramExtensions {
 
 	protected void createTopMenuExtensions() {
 		String extensionTypeId = DropdownMenuProvider.EXTENSION_TYPE_ID;
-		
-		
+
 	}
 
 	protected void createServiceActivatorExtensions() {

@@ -56,9 +56,9 @@ public class Extensions extends ProgramExtensions {
 
 	protected static Logger LOG = LoggerFactory.getLogger(Extensions.class);
 
-	public Extensions() {
-		setBundleId("org.orbit.substance.runtime");
-	}
+	// public Extensions() {
+	// setBundleId("org.orbit.substance.runtime");
+	// }
 
 	@Override
 	protected String[] getPropertyNames() {
