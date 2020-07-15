@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,6 @@ import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
 import org.orbit.substance.io.DFileListener;
-import org.orbit.substance.io.DFileOutputStream;
 import org.orbit.substance.io.DfsEvent;
 import org.origin.common.io.IOUtil;
 import org.origin.common.resource.Path;
@@ -433,7 +434,31 @@ public class DFSImpl extends DFS {
 		if (file == null) {
 			throw new IOException("File is not found. fileId is '" + fileId + "'.");
 		}
-		return new DFileOutputStream(file);
+		// return new DFileOutputStream(file);
+
+		final PipedInputStream pis = new PipedInputStream();
+		final PipedOutputStream pos = new PipedOutputStream(pis);
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					// int size = 0;
+					// FileMetadata fileMetadata = SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, size);
+					FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(dfsClientResolver, accessToken, fileId);
+					SubstanceClientsUtil.DFS_VOLUME.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pis);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						pis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
+		return pos;
 	}
 
 	@Override
@@ -445,7 +470,29 @@ public class DFSImpl extends DFS {
 		if (file == null) {
 			throw new IOException("File is not found. fileId is '" + fileId + "'.");
 		}
-		return new DFileOutputStream(file, size);
+		// return new DFileOutputStream(file, size);
+
+		final PipedInputStream pis = new PipedInputStream();
+		final PipedOutputStream pos = new PipedOutputStream(pis);
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					FileMetadata fileMetadata = SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, size);
+					SubstanceClientsUtil.DFS_VOLUME.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pis);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						pis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
+		return pos;
 	}
 
 	@Override
@@ -459,8 +506,8 @@ public class DFSImpl extends DFS {
 
 		OutputStream outputStream = null;
 		try {
-			// long size = inputStream.available();
-			outputStream = getOutputStream(fileId);
+			long size = inputStream.available();
+			outputStream = getOutputStream(fileId, size);
 			IOUtil.copy(inputStream, outputStream);
 
 			// Send notification

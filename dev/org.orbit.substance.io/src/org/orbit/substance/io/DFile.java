@@ -46,6 +46,12 @@ public interface DFile extends IAdaptable {
 
 	InputStream getInputStream() throws IOException;
 
+	/**
+	 * Before writing data to the OutputStream, call SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, size); first to allocate volumes.
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	OutputStream getOutputStream() throws IOException;
 
 	OutputStream getOutputStream(long size) throws IOException;

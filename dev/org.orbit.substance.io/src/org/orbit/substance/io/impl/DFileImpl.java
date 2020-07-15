@@ -4,14 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
+import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
+import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
-import org.orbit.substance.io.DFileOutputStream;
 import org.orbit.substance.io.DfsEvent;
 import org.origin.common.adapter.AdaptorSupport;
 import org.origin.common.resource.Path;
@@ -283,7 +287,35 @@ public class DFileImpl implements DFile {
 		if (isDirectory()) {
 			throw new IOException("File is directory.");
 		}
-		return new DFileOutputStream(this);
+		// return new DFileOutputStream(this);
+
+		final PipedInputStream pis = new PipedInputStream();
+		final PipedOutputStream pos = new PipedOutputStream(pis);
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					String fileId = getFileId();
+					DfsClientResolver dfsClientResolver = dfs.getDfsClientResolver();
+					DfsVolumeClientResolver dfsVolumeClientResolver = dfs.getDfsVolumeClientResolver();
+					String accessToken = dfs.getAccessToken();
+					// int size = 0;
+					// FileMetadata fileMetadata = SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, size);
+					FileMetadata fileMetadata = SubstanceClientsUtil.DFS.getFile(dfsClientResolver, accessToken, fileId);
+					SubstanceClientsUtil.DFS_VOLUME.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pis);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						pis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
+		return pos;
 	}
 
 	@Override
@@ -294,7 +326,34 @@ public class DFileImpl implements DFile {
 		if (isDirectory()) {
 			throw new IOException("File is directory.");
 		}
-		return new DFileOutputStream(this, size);
+		// return new DFileOutputStream(this, size);
+
+		final PipedInputStream pis = new PipedInputStream();
+		final PipedOutputStream pos = new PipedOutputStream(pis);
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					String fileId = getFileId();
+					DfsClientResolver dfsClientResolver = dfs.getDfsClientResolver();
+					DfsVolumeClientResolver dfsVolumeClientResolver = dfs.getDfsVolumeClientResolver();
+					String accessToken = dfs.getAccessToken();
+
+					FileMetadata fileMetadata = SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, size);
+					SubstanceClientsUtil.DFS_VOLUME.upload(dfsVolumeClientResolver, accessToken, fileMetadata, pis);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						pis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
+		return pos;
 	}
 
 	@Override

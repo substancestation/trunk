@@ -135,6 +135,13 @@ public abstract class DFS {
 
 	public abstract InputStream getInputStream(String fileId) throws IOException;
 
+	/**
+	 * Before writing data to the OutputStream, call SubstanceClientsUtil.DFS.allocateVolumes(dfsClientResolver, accessToken, fileId, size); first to allocate volumes.
+	 * 
+	 * @param fileId
+	 * @return
+	 * @throws IOException
+	 */
 	public abstract OutputStream getOutputStream(String fileId) throws IOException;
 
 	public abstract OutputStream getOutputStream(String fileId, long size) throws IOException;

@@ -571,6 +571,8 @@ public class FileSystemImpl implements FileSystem {
 
 			if (size > 0) {
 				allocateVolumes(newFileMetadata, size);
+
+				tableHandler.updateFileParts(conn, fileId, newFileMetadata.getFileParts());
 			}
 
 		} catch (SQLException e) {
