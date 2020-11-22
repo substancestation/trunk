@@ -17,8 +17,10 @@ import org.orbit.substance.io.DFS;
 import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
 import org.orbit.substance.io.DfsEvent;
+import org.orbit.substance.io.misc.DFileToIResourceBridge;
 import org.origin.common.adapter.AdaptorSupport;
 import org.origin.common.resource.Path;
+import org.origin.common.resources.IResource;
 
 /**
  * 
@@ -40,6 +42,8 @@ public class DFileImpl implements DFile {
 	public DFileImpl(DFS dfs, Path path) throws IOException {
 		this.dfs = dfs;
 		this.path = path;
+
+		adapt(IResource.class, new DFileToIResourceBridge(this));
 	}
 
 	/**
@@ -52,6 +56,8 @@ public class DFileImpl implements DFile {
 		this.dfs = dfs;
 		this.metadata = fileMetadata;
 		this.path = fileMetadata.getPath();
+
+		adapt(IResource.class, new DFileToIResourceBridge(this));
 	}
 
 	@Override
@@ -160,10 +166,10 @@ public class DFileImpl implements DFile {
 	}
 
 	@Override
-	public String getFileExtension() throws IOException {
-		if (isDirectory()) {
-			return null;
-		}
+	public String getFileExtension() {
+		// if (isDirectory()) {
+		// return null;
+		// }
 		String fileExtension = null;
 		String lastSegment = this.path.getLastSegment();
 		if (lastSegment != null) {

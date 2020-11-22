@@ -28,7 +28,7 @@ public interface DFile extends IAdaptable {
 
 	String getName();
 
-	String getFileExtension() throws IOException;
+	String getFileExtension();
 
 	boolean exists() throws IOException;
 
