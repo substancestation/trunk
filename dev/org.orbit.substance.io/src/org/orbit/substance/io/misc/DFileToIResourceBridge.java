@@ -1,10 +1,13 @@
 package org.orbit.substance.io.misc;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Set;
 
 import org.orbit.substance.io.DFile;
 import org.origin.common.resource.Path;
+import org.origin.common.resources.IFile;
 import org.origin.common.resources.IPath;
 import org.origin.common.resources.IResource;
 import org.origin.common.resources.IWorkspace;
@@ -35,7 +38,7 @@ import org.origin.common.resources.impl.PathImpl;
  * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
  *
  */
-public class DFileToIResourceBridge implements IResource {
+public class DFileToIResourceBridge implements IResource, IFile {
 
 	protected DFile file;
 
@@ -110,7 +113,33 @@ public class DFileToIResourceBridge implements IResource {
 	}
 
 	@Override
-	public void dispose() {
+	public InputStream getInputStream() throws IOException {
+		return this.file.getInputStream();
+	}
+
+	@Override
+	public OutputStream getOutputStream() throws IOException {
+		return this.file.getOutputStream();
+	}
+
+	@Override
+	public boolean create(InputStream input) throws IOException {
+		return this.file.create(input);
+	}
+
+	@Override
+	public boolean create(byte[] bytes) throws IOException {
+		return this.file.create(bytes);
+	}
+
+	@Override
+	public void setContents(InputStream input) throws IOException {
+		this.file.setContents(input);
+	}
+
+	@Override
+	public void setContents(byte[] bytes) throws IOException {
+		this.file.setContents(bytes);
 	}
 
 	@Override
@@ -126,6 +155,10 @@ public class DFileToIResourceBridge implements IResource {
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return this.file.getAdapter(adapter);
+	}
+
+	@Override
+	public void dispose() {
 	}
 
 }
