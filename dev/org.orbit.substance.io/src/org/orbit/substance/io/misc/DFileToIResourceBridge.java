@@ -152,9 +152,16 @@ public class DFileToIResourceBridge implements IResource, IFile {
 		this.file.adapt(classes, object);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		return this.file.getAdapter(adapter);
+		T value = this.file.getAdapter(adapter);
+		if (value == null && adapter != null) {
+			if (adapter.isAssignableFrom(DFile.class)) {
+				value = (T) this.file;
+			}
+		}
+		return value;
 	}
 
 	@Override
