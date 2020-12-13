@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
-import org.origin.common.io.IOUtil;
 import org.origin.common.jdbc.DatabaseTableAware;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.jdbc.ResultSetListHandler;
 import org.origin.common.jdbc.ResultSetSingleHandler;
+import org.origin.common.util.IOUtil;
 
 /*
  * Table name:

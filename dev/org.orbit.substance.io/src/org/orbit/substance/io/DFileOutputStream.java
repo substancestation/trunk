@@ -10,7 +10,7 @@ import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.dfs.FileMetadata;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
-import org.origin.common.io.IOUtil;
+import org.origin.common.util.IOUtil;
 
 /**
  * A DFile output stream that uploads the content of a file on the fly.

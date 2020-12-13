@@ -20,9 +20,9 @@ import org.orbit.substance.api.util.SubstanceClientsUtil;
 import org.orbit.substance.io.util.DfsClientResolverByDfsId;
 import org.orbit.substance.io.util.DfsVolumeClientResolverImpl;
 import org.orbit.substance.webconsole.WebConstants;
-import org.origin.common.io.IOUtil;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.servlet.MessageHelper;
+import org.origin.common.util.IOUtil;
 import org.origin.common.util.ServletUtil;
 
 public class FileContentServlet extends HttpServlet {

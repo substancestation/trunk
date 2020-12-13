@@ -23,13 +23,13 @@ import org.orbit.substance.api.dfsvolume.DfsVolumeServiceMetadata;
 import org.orbit.substance.api.dfsvolume.FileContentMetadata;
 import org.orbit.substance.model.dfs.FileContentAccess;
 import org.orbit.substance.model.dfs.FilePart;
-import org.origin.common.io.ChecksumUtil;
-import org.origin.common.io.IOUtil;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.WSClientConstants;
 import org.origin.common.rest.model.ServiceMetadata;
 import org.origin.common.rest.model.ServiceMetadataImpl;
+import org.origin.common.util.ChecksumUtil;
+import org.origin.common.util.IOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

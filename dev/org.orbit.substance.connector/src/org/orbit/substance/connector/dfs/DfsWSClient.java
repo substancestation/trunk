@@ -19,11 +19,11 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.orbit.substance.model.dfs.FileMetadataDTO;
-import org.origin.common.io.IOUtil;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
 import org.origin.common.rest.client.WSClient;
 import org.origin.common.rest.client.WSClientConfiguration;
+import org.origin.common.util.IOUtil;
 
 /*
  * Dfs web service client.

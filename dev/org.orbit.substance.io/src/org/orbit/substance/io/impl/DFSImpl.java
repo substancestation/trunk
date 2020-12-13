@@ -17,9 +17,9 @@ import org.orbit.substance.io.DFile;
 import org.orbit.substance.io.DFileInputStream;
 import org.orbit.substance.io.DFileListener;
 import org.orbit.substance.io.DfsEvent;
-import org.origin.common.io.IOUtil;
 import org.origin.common.resource.Path;
 import org.origin.common.rest.client.ClientException;
+import org.origin.common.util.IOUtil;
 
 /**
  * 
