@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.orbit.platform.sdk.http.AccessTokenSupport;
+import org.orbit.platform.sdk.http.AccessTokenProvider;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.SubstanceConstants;
@@ -42,7 +42,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	protected ServiceRegistration<?> serviceRegistry;
 	protected ServiceEditPolicies editPolicies;
 	// protected Map<Object, Object> properties = new HashMap<Object, Object>();
-	protected AccessTokenSupport accessTokenSupport;
+	protected AccessTokenProvider accessTokenSupport;
 
 	/**
 	 * 
@@ -51,7 +51,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	public DfsVolumeServiceImpl(Map<Object, Object> initProperties) {
 		this.initProperties = (initProperties != null) ? initProperties : new HashMap<Object, Object>();
 		this.editPolicies = new ServiceEditPoliciesImpl(DfsVolumeService.class, this);
-		this.accessTokenSupport = new AccessTokenSupport(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_VOLUME_ADMIN);
+		this.accessTokenSupport = new AccessTokenProvider(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_VOLUME_ADMIN);
 	}
 
 	/** AccessTokenAware */

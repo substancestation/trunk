@@ -7,7 +7,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.orbit.platform.sdk.http.AccessTokenSupport;
+import org.orbit.platform.sdk.http.AccessTokenProvider;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.SubstanceRuntimeActivator;
@@ -31,7 +31,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	protected ServiceRegistration<?> serviceRegistry;
 	protected ServiceEditPolicies wsEditPolicies;
 	protected Map<String, FileSystem> accountIdToFileSystemMap = new HashMap<String, FileSystem>();
-	protected AccessTokenSupport accessTokenSupport;
+	protected AccessTokenProvider accessTokenSupport;
 
 	/**
 	 * 
@@ -40,7 +40,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	public DfsServiceImpl(Map<Object, Object> initProperties) {
 		this.initProperties = (initProperties != null) ? initProperties : new HashMap<Object, Object>();
 		this.wsEditPolicies = new ServiceEditPoliciesImpl(DfsService.class, this);
-		this.accessTokenSupport = new AccessTokenSupport(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_ADMIN);
+		this.accessTokenSupport = new AccessTokenProvider(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_ADMIN);
 	}
 
 	/** AccessTokenAware */
