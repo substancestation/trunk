@@ -22,7 +22,7 @@ public class ConfigRegistryHelper {
 	 */
 	public static IConfigRegistry getDfsNodesConfigRegistry(String accessToken, boolean createIfNotExist) throws IOException {
 		IConfigRegistry cfgReg = null;
-		CFG cfg = CFGFactory.INSTANCE.createCFG(accessToken);
+		CFG cfg = CFGFactory.getInstance().createCFG(accessToken);
 		if (cfg != null) {
 			cfgReg = cfg.getConfigRegistryByName(REGISTRY__DFS_NODES);
 			if (cfgReg == null) {
