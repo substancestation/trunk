@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.orbit.infra.io.IConfigElement;
-import org.orbit.infra.io.IConfigRegistry;
+import org.orbit.infra.io.configregistry.IConfigElement;
+import org.orbit.infra.io.configregistry.IConfigRegistry;
 import org.orbit.platform.sdk.util.OrbitTokenUtil;
 import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.io.util.ConfigRegistryHelper;

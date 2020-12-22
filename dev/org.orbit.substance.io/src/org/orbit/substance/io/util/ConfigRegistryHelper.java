@@ -2,9 +2,10 @@ package org.orbit.substance.io.util;
 
 import java.io.IOException;
 
-import org.orbit.infra.io.CFG;
-import org.orbit.infra.io.IConfigElement;
-import org.orbit.infra.io.IConfigRegistry;
+import org.orbit.infra.io.configregistry.CFG;
+import org.orbit.infra.io.configregistry.CFGFactory;
+import org.orbit.infra.io.configregistry.IConfigElement;
+import org.orbit.infra.io.configregistry.IConfigRegistry;
 import org.orbit.substance.api.SubstanceConstants;
 
 public class ConfigRegistryHelper {
@@ -21,7 +22,7 @@ public class ConfigRegistryHelper {
 	 */
 	public static IConfigRegistry getDfsNodesConfigRegistry(String accessToken, boolean createIfNotExist) throws IOException {
 		IConfigRegistry cfgReg = null;
-		CFG cfg = CFG.getDefault(accessToken);
+		CFG cfg = CFGFactory.INSTANCE.createCFG(accessToken);
 		if (cfg != null) {
 			cfgReg = cfg.getConfigRegistryByName(REGISTRY__DFS_NODES);
 			if (cfgReg == null) {

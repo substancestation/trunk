@@ -6,6 +6,7 @@
 <%@ page import="org.orbit.infra.api.*"%>
 <%@ page import="org.orbit.infra.api.indexes.*"%>
 <%@ page import="org.orbit.infra.io.*"%>
+<%@ page import="org.orbit.infra.io.configregistry.*"%>
 <%@ page import="org.orbit.substance.api.*"%>
 <%@ page import="org.orbit.substance.api.dfsvolume.*"%>
 <%@ page import="org.orbit.substance.webconsole.*"%>
