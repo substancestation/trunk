@@ -87,7 +87,7 @@
 						// String name = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__NAME);
 						// String hostUrl = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__HOST_URL);
 						// String dfsVolumeContextRoot = (String) dfsVolumeIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS_VOLUME__CONTEXT_ROOT);
-						// String dfsVolumeServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(hostUrl, dfsVolumeContextRoot);
+						// String dfsVolumeServiceUrl = WebServiceHelper.INSTANCE.getURL(hostUrl, dfsVolumeContextRoot);
 						String name = "(depreciated)";
 						String dfsVolumeServiceUrl = "(depreciated)";
 

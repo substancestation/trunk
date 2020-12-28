@@ -12,7 +12,7 @@ import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.origin.common.extensions.core.IExtension;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.server.FeatureConstants;
-import org.origin.common.rest.util.LifecycleAware;
+import org.origin.common.service.ILifecycle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * - uninstall edit policy
  * 
  */
-public class DfsVolumeServiceAdapter implements LifecycleAware {
+public class DfsVolumeServiceAdapter implements ILifecycle {
 
 	protected static Logger LOG = LoggerFactory.getLogger(DfsVolumeServiceAdapter.class);
 
@@ -50,18 +50,11 @@ public class DfsVolumeServiceAdapter implements LifecycleAware {
 		this.properties = properties;
 	}
 
-	// public IndexServiceClient getIndexProvider() {
-	// return InfraClients.getInstance().getIndexService(this.properties, true);
-	// }
-
 	public DfsVolumeService getService() {
 		return (this.serviceTracker != null) ? serviceTracker.getService() : null;
 	}
 
-	/**
-	 * 
-	 * @param bundleContext
-	 */
+	/** ILifecycle */
 	@Override
 	public void start(final BundleContext bundleContext) {
 		this.serviceTracker = new ServiceTracker<DfsVolumeService, DfsVolumeService>(bundleContext, DfsVolumeService.class, new ServiceTrackerCustomizer<DfsVolumeService, DfsVolumeService>() {
@@ -85,10 +78,6 @@ public class DfsVolumeServiceAdapter implements LifecycleAware {
 		this.serviceTracker.open();
 	}
 
-	/**
-	 * 
-	 * @param bundleContext
-	 */
 	@Override
 	public void stop(BundleContext bundleContext) {
 		if (this.serviceTracker != null) {
@@ -155,3 +144,7 @@ public class DfsVolumeServiceAdapter implements LifecycleAware {
 	}
 
 }
+
+// public IndexServiceClient getIndexProvider() {
+// return InfraClients.getInstance().getIndexService(this.properties, true);
+// }

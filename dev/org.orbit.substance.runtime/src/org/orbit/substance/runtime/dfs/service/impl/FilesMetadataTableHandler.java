@@ -13,7 +13,7 @@ import org.orbit.substance.model.dfs.FilePart;
 import org.orbit.substance.runtime.dfs.service.FileMetadata;
 import org.orbit.substance.runtime.util.RuntimeModelConverter;
 import org.origin.common.jdbc.AbstractResultSetHandler;
-import org.origin.common.jdbc.DatabaseTableAware;
+import org.origin.common.jdbc.DatabaseTableProvider;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.jdbc.ResultSetListHandler;
 import org.origin.common.jdbc.ResultSetSingleHandler;
@@ -29,7 +29,7 @@ import org.origin.common.jdbc.ResultSetSingleHandler;
  *      dfs1_account4
  * 
  */
-public class FilesMetadataTableHandler implements DatabaseTableAware {
+public class FilesMetadataTableHandler implements DatabaseTableProvider {
 
 	public static Map<String, FilesMetadataTableHandler> tableHandlerMap = new HashMap<String, FilesMetadataTableHandler>();
 
@@ -128,7 +128,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 	@Override
 	public String getCreateTableSQL(String database) {
 		StringBuilder sb = new StringBuilder();
-		if (DatabaseTableAware.MYSQL.equalsIgnoreCase(database)) {
+		if (DatabaseTableProvider.MYSQL.equalsIgnoreCase(database)) {
 			sb.append("CREATE TABLE IF NOT EXISTS " + getTableName() + " (");
 			sb.append("    id int NOT NULL AUTO_INCREMENT,");
 			sb.append("    fileId varchar(250) NOT NULL,");
@@ -145,7 +145,7 @@ public class FilesMetadataTableHandler implements DatabaseTableAware {
 			sb.append("    PRIMARY KEY (id)");
 			sb.append(");");
 
-		} else if (DatabaseTableAware.POSTGRESQL.equalsIgnoreCase(database)) {
+		} else if (DatabaseTableProvider.POSTGRESQL.equalsIgnoreCase(database)) {
 			sb.append("CREATE TABLE IF NOT EXISTS " + getTableName() + " (");
 			sb.append("    id serial NOT NULL,");
 			sb.append("    fileId varchar(250) NOT NULL,");

@@ -12,7 +12,7 @@ import org.orbit.substance.runtime.dfs.service.DfsService;
 import org.origin.common.extensions.core.IExtension;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.server.FeatureConstants;
-import org.origin.common.rest.util.LifecycleAware;
+import org.origin.common.service.ILifecycle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * - uninstall edit policy
  * 
  */
-public class DfsServiceAdapter implements LifecycleAware {
+public class DfsServiceAdapter implements ILifecycle {
 
 	protected static Logger LOG = LoggerFactory.getLogger(DfsServiceAdapter.class);
 
@@ -50,18 +50,11 @@ public class DfsServiceAdapter implements LifecycleAware {
 		this.properties = properties;
 	}
 
-	// public IndexServiceClient getIndexProvider() {
-	// return InfraClients.getInstance().getIndexService(this.properties, true);
-	// }
-
 	public DfsService getService() {
 		return (this.serviceTracker != null) ? serviceTracker.getService() : null;
 	}
 
-	/**
-	 * 
-	 * @param bundleContext
-	 */
+	/** ILifecycle */
 	@Override
 	public void start(final BundleContext bundleContext) {
 		this.serviceTracker = new ServiceTracker<DfsService, DfsService>(bundleContext, DfsService.class, new ServiceTrackerCustomizer<DfsService, DfsService>() {
@@ -85,10 +78,6 @@ public class DfsServiceAdapter implements LifecycleAware {
 		this.serviceTracker.open();
 	}
 
-	/**
-	 * 
-	 * @param bundleContext
-	 */
 	@Override
 	public void stop(BundleContext bundleContext) {
 		if (this.serviceTracker != null) {
@@ -155,6 +144,10 @@ public class DfsServiceAdapter implements LifecycleAware {
 	}
 
 }
+
+// public IndexServiceClient getIndexProvider() {
+// return InfraClients.getInstance().getIndexService(this.properties, true);
+// }
 
 // IExtension extension = ExtensionActivator.getDefault().getExtensionService().getExtension(ServiceIndexTimerFactory.EXTENSION_TYPE_ID,
 // SubstanceConstants.DFS_METADATA_INDEXER_ID);

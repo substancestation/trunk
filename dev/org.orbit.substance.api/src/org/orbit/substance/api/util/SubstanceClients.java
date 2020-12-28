@@ -5,12 +5,17 @@ import java.util.Map;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.origin.common.rest.client.ServiceConnectorAdapter;
-import org.origin.common.rest.util.LifecycleAware;
+import org.origin.common.service.ILifecycle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SubstanceClients implements LifecycleAware {
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ *
+ */
+public class SubstanceClients implements ILifecycle {
 
 	protected static Logger LOG = LoggerFactory.getLogger(SubstanceClients.class);
 
@@ -23,6 +28,7 @@ public class SubstanceClients implements LifecycleAware {
 	protected ServiceConnectorAdapter<DfsClient> dfsServiceConnector;
 	protected ServiceConnectorAdapter<DfsVolumeClient> dfsVolumeServiceConnector;
 
+	/** ILifecycle */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		this.dfsServiceConnector = new ServiceConnectorAdapter<DfsClient>(DfsClient.class);

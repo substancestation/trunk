@@ -14,11 +14,11 @@ import javax.ws.rs.core.Response.Status;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.origin.common.rest.annotation.Secured;
-import org.origin.common.rest.editpolicy.EditPoliciesAware;
 import org.origin.common.rest.editpolicy.WSCommand;
 import org.origin.common.rest.model.ErrorDTO;
 import org.origin.common.rest.model.Request;
 import org.origin.common.rest.server.AbstractWSApplicationResource;
+import org.origin.common.service.IWebService;
 
 /*
  * File content web service resource.
@@ -48,18 +48,18 @@ public class DfsVolumeWSResource extends AbstractWSApplicationResource {
 	@Path("request")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response request(@Context HttpHeaders httpHeaders, Request request) {
-		EditPoliciesAware editPoliciesAwareService = null;
+		IWebService webService = null;
 		Object service = getService();
-		if (service instanceof EditPoliciesAware) {
-			editPoliciesAwareService = (EditPoliciesAware) service;
+		if (service instanceof IWebService) {
+			webService = (IWebService) service;
 		}
 
-		if (editPoliciesAwareService == null) {
+		if (webService == null) {
 			ErrorDTO error = new ErrorDTO("The 'request' POST method is not supported by service.");
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(error).build();
 		}
 
-		WSCommand command = editPoliciesAwareService.getEditPolicies().getCommand(httpHeaders, request);
+		WSCommand command = webService.getEditPolicies().getCommand(httpHeaders, request);
 		if (command != null) {
 			try {
 				return command.execute(request);
@@ -81,7 +81,7 @@ public class DfsVolumeWSResource extends AbstractWSApplicationResource {
 // @Path("request")
 // @Consumes(MediaType.APPLICATION_JSON)
 // public Response request(@Context HttpHeaders httpHeaders, Request request) {
-// EditPoliciesAwareService service = getService();
+// IWebService service = getService();
 //
 // WSCommand command = service.getEditPolicies().getCommand(httpHeaders, request);
 // if (command != null) {

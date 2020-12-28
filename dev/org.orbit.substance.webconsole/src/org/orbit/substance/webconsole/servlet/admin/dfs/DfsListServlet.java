@@ -25,7 +25,7 @@ import org.orbit.substance.api.dfs.DfsServiceMetadata;
 import org.orbit.substance.io.util.DfsClientResolverByDfsURL;
 import org.orbit.substance.io.util.DfsIndexItemHelper;
 import org.orbit.substance.webconsole.WebConstants;
-import org.origin.common.service.WebServiceAwareHelper;
+import org.origin.common.service.WebServiceHelper;
 import org.origin.common.servlet.MessageHelper;
 
 public class DfsListServlet extends HttpServlet {
@@ -65,7 +65,7 @@ public class DfsListServlet extends HttpServlet {
 				String dfsId = (String) dfsIndexItem.getProperties().get(SubstanceConstants.IDX_PROP__DFS__ID);
 				String currHostUrl = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
 				String currContextRoot = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
-				String dfsServiceUrl = WebServiceAwareHelper.INSTANCE.getURL(currHostUrl, currContextRoot);
+				String dfsServiceUrl = WebServiceHelper.INSTANCE.getURL(currHostUrl, currContextRoot);
 
 				boolean isOnline = IndexItemHelper.INSTANCE.isOnline(dfsIndexItem);
 

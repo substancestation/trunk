@@ -14,7 +14,7 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClient;
 import org.orbit.substance.api.dfsvolume.DfsVolumeClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
-import org.origin.common.service.WebServiceAwareHelper;
+import org.origin.common.service.WebServiceHelper;
 
 public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 
@@ -53,7 +53,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 		if (dfsVolumeIndexItem != null) {
 			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
 			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
-			serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
+			serviceURL = WebServiceHelper.INSTANCE.getURL(hostURL, contextRoot);
 		}
 		return serviceURL;
 	}
@@ -86,7 +86,7 @@ public class DfsVolumeClientResolverImpl implements DfsVolumeClientResolver {
 			String hostURL = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
 			String contextRoot = (String) dfsVolumeIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
 
-			String serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
+			String serviceURL = WebServiceHelper.INSTANCE.getURL(hostURL, contextRoot);
 			if (serviceURL != null) {
 				DfsVolumeClient dfsVolumeClient = resolve(serviceURL, accessToken);
 				if (dfsVolumeClient != null) {

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.orbit.platform.sdk.http.AccessTokenProvider;
+import org.orbit.platform.sdk.http.AccessTokenHandler;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.model.dfsvolume.PendingFile;
 import org.orbit.substance.runtime.SubstanceConstants;
@@ -28,21 +28,25 @@ import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.editpolicy.ServiceEditPoliciesImpl;
 import org.origin.common.rest.model.StatusDTO;
 import org.origin.common.rest.server.ServerException;
-import org.origin.common.rest.util.LifecycleAware;
+import org.origin.common.service.ILifecycle;
 import org.origin.common.util.DiskSpaceUnit;
 import org.origin.common.util.IOUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, PropertyChangeListener {
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ *
+ */
+public class DfsVolumeServiceImpl implements ILifecycle, DfsVolumeService, PropertyChangeListener {
 
 	protected Map<Object, Object> initProperties;
 	protected Properties databaseProperties;
 	protected String database;
 	protected ServiceRegistration<?> serviceRegistry;
 	protected ServiceEditPolicies editPolicies;
-	// protected Map<Object, Object> properties = new HashMap<Object, Object>();
-	protected AccessTokenProvider accessTokenSupport;
+	protected AccessTokenHandler accessTokenHandler;
 
 	/**
 	 * 
@@ -51,13 +55,13 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	public DfsVolumeServiceImpl(Map<Object, Object> initProperties) {
 		this.initProperties = (initProperties != null) ? initProperties : new HashMap<Object, Object>();
 		this.editPolicies = new ServiceEditPoliciesImpl(DfsVolumeService.class, this);
-		this.accessTokenSupport = new AccessTokenProvider(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_VOLUME_ADMIN);
+		this.accessTokenHandler = new AccessTokenHandler(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_VOLUME_ADMIN);
 	}
 
-	/** AccessTokenAware */
+	/** AccessTokenProvider */
 	@Override
 	public String getAccessToken() {
-		String tokenValue = this.accessTokenSupport.getAccessToken();
+		String tokenValue = this.accessTokenHandler.getAccessToken();
 		return tokenValue;
 	}
 
@@ -66,6 +70,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 		return this.initProperties;
 	}
 
+	/** ILifecycle */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		SubstanceRuntimeActivator.getInstance().getDfsVolumeConfigPropertiesHandler().addPropertyChangeListener(this);
@@ -200,7 +205,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	// return DatabaseUtil.getProperties(driver, url, username, password);
 	// }
 
-	/** ConnectionAware */
+	/** ConnectionProvider */
 	@Override
 	public Connection getConnection() throws SQLException {
 		return DatabaseUtil.getConnection(this.databaseProperties);
@@ -229,7 +234,7 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 		return this.database;
 	}
 
-	/** WebServiceAware */
+	/** IWebService */
 	@Override
 	public String getName() {
 		// return (String) this.properties.get(SubstanceConstants.DFS_VOLUME__NAME);
@@ -266,7 +271,6 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 		return configPropertiesHandler.getProperty(SubstanceConstants.DFS_VOLUME__CONTEXT_ROOT, this.initProperties);
 	}
 
-	/** EditPoliciesAware */
 	@Override
 	public ServiceEditPolicies getEditPolicies() {
 		return this.editPolicies;
@@ -986,6 +990,8 @@ public class DfsVolumeServiceImpl implements LifecycleAware, DfsVolumeService, P
 	}
 
 }
+
+// protected Map<Object, Object> properties = new HashMap<Object, Object>();
 
 // /**
 // * Initialize database tables.

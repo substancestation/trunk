@@ -12,7 +12,7 @@ import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfs.service.DfsService;
-import org.origin.common.service.WebServiceAwareHelper;
+import org.origin.common.service.WebServiceHelper;
 import org.origin.common.util.MapHelper;
 
 public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
@@ -42,7 +42,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		String name = dfs.getName();
 		String hostURL = dfs.getHostURL();
 		String contextRoot = dfs.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfs);
+		String baseURL = WebServiceHelper.INSTANCE.getURL(dfs);
 
 		Date now = new Date();
 
@@ -66,7 +66,7 @@ public class DfsServiceTimer extends ServiceIndexTimer<DfsService> {
 		String name = dfs.getName();
 		String hostURL = dfs.getHostURL();
 		String contextRoot = dfs.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfs);
+		String baseURL = WebServiceHelper.INSTANCE.getURL(dfs);
 
 		Date now = new Date();
 

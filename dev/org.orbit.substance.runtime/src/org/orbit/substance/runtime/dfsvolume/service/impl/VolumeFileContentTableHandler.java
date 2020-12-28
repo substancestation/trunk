@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orbit.substance.runtime.dfsvolume.service.FileContentMetadata;
-import org.origin.common.jdbc.DatabaseTableAware;
+import org.origin.common.jdbc.DatabaseTableProvider;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.jdbc.ResultSetListHandler;
 import org.origin.common.jdbc.ResultSetSingleHandler;
@@ -29,7 +29,7 @@ import org.origin.common.util.IOUtil;
  * 		dfs1_volume1_block3
  * 
  */
-public class VolumeFileContentTableHandler implements DatabaseTableAware {
+public class VolumeFileContentTableHandler implements DatabaseTableProvider {
 
 	public static Map<String, VolumeFileContentTableHandler> tableHandlerMap = new HashMap<String, VolumeFileContentTableHandler>();
 
@@ -134,7 +134,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	@Override
 	public String getCreateTableSQL(String database) {
 		StringBuilder sb = new StringBuilder();
-		if (DatabaseTableAware.MYSQL.equalsIgnoreCase(database)) {
+		if (DatabaseTableProvider.MYSQL.equalsIgnoreCase(database)) {
 			sb.append("CREATE TABLE IF NOT EXISTS " + getTableName() + " (");
 			sb.append("    id int NOT NULL AUTO_INCREMENT,");
 			sb.append("    fileId varchar(500) NOT NULL,");
@@ -148,7 +148,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 			sb.append("    PRIMARY KEY (id)");
 			sb.append(");");
 
-		} else if (DatabaseTableAware.POSTGRESQL.equalsIgnoreCase(database)) {
+		} else if (DatabaseTableProvider.POSTGRESQL.equalsIgnoreCase(database)) {
 			sb.append("CREATE TABLE IF NOT EXISTS " + getTableName() + " (");
 			sb.append("    id serial NOT NULL,");
 			sb.append("    fileId varchar(500) NOT NULL,");
@@ -350,7 +350,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 	public InputStream getContent(Connection conn, String fileId, int partId) throws SQLException {
 		InputStream inputStream = null;
 
-		if (DatabaseTableAware.MYSQL.equalsIgnoreCase(this.database)) {
+		if (DatabaseTableProvider.MYSQL.equalsIgnoreCase(this.database)) {
 			ResultSet rs = null;
 			PreparedStatement pstmt = null;
 			try {
@@ -368,7 +368,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 				DatabaseUtil.closeQuietly(pstmt, true);
 			}
 
-		} else if (DatabaseTableAware.POSTGRESQL.equalsIgnoreCase(this.database)) {
+		} else if (DatabaseTableProvider.POSTGRESQL.equalsIgnoreCase(this.database)) {
 			ResultSet rs = null;
 			PreparedStatement pstmt = null;
 			try {
@@ -420,7 +420,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 		int contentLength = bytes.length;
 
 		try {
-			if (DatabaseTableAware.MYSQL.equalsIgnoreCase(this.database)) {
+			if (DatabaseTableProvider.MYSQL.equalsIgnoreCase(this.database)) {
 				PreparedStatement pstmt = null;
 				try {
 					String updateSQL = "UPDATE " + getTableName() + " SET fileContent=? WHERE fileId=? AND partId=?";
@@ -438,7 +438,7 @@ public class VolumeFileContentTableHandler implements DatabaseTableAware {
 					DatabaseUtil.closeQuietly(pstmt, true);
 				}
 
-			} else if (DatabaseTableAware.POSTGRESQL.equalsIgnoreCase(this.database)) {
+			} else if (DatabaseTableProvider.POSTGRESQL.equalsIgnoreCase(this.database)) {
 				PreparedStatement pstmt = null;
 				try {
 					String updateSQL = "UPDATE " + getTableName() + " SET fileContent=? WHERE fileId=? AND partId=?";

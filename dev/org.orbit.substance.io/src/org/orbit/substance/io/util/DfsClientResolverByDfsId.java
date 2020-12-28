@@ -11,7 +11,7 @@ import org.orbit.substance.api.SubstanceConstants;
 import org.orbit.substance.api.dfs.DfsClient;
 import org.orbit.substance.api.dfs.DfsClientResolver;
 import org.orbit.substance.api.util.SubstanceClientsUtil;
-import org.origin.common.service.WebServiceAwareHelper;
+import org.origin.common.service.WebServiceHelper;
 
 public class DfsClientResolverByDfsId implements DfsClientResolver {
 
@@ -60,7 +60,7 @@ public class DfsClientResolverByDfsId implements DfsClientResolver {
 		if (dfsIndexItem != null) {
 			String hostURL = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__HOST_URL);
 			String contextRoot = (String) dfsIndexItem.getProperties().get(InfraConstants.SERVICE__CONTEXT_ROOT);
-			serviceURL = WebServiceAwareHelper.INSTANCE.getURL(hostURL, contextRoot);
+			serviceURL = WebServiceHelper.INSTANCE.getURL(hostURL, contextRoot);
 		}
 		return serviceURL;
 	}

@@ -12,7 +12,7 @@ import org.orbit.infra.api.indexes.IndexServiceClient;
 import org.orbit.infra.api.indexes.ServiceIndexTimer;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
-import org.origin.common.service.WebServiceAwareHelper;
+import org.origin.common.service.WebServiceHelper;
 import org.origin.common.util.MapHelper;
 
 public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
@@ -44,7 +44,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		String name = dfsVolume.getName();
 		String hostURL = dfsVolume.getHostURL();
 		String contextRoot = dfsVolume.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfsVolume);
+		String baseURL = WebServiceHelper.INSTANCE.getURL(dfsVolume);
 		// long blockCapacityBytes = service.getDefaultBlockCapacity();
 
 		Date now = new Date();
@@ -73,7 +73,7 @@ public class DfsVolumeServiceTimer extends ServiceIndexTimer<DfsVolumeService> {
 		String name = dfsVolume.getName();
 		String hostURL = dfsVolume.getHostURL();
 		String contextRoot = dfsVolume.getContextRoot();
-		String baseURL = WebServiceAwareHelper.INSTANCE.getURL(dfsVolume);
+		String baseURL = WebServiceHelper.INSTANCE.getURL(dfsVolume);
 
 		// long blockCapacityBytes = service.getDefaultBlockCapacity();
 

@@ -7,7 +7,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.orbit.platform.sdk.http.AccessTokenProvider;
+import org.orbit.platform.sdk.http.AccessTokenHandler;
 import org.orbit.platform.sdk.http.OrbitRoles;
 import org.orbit.substance.runtime.SubstanceConstants;
 import org.orbit.substance.runtime.SubstanceRuntimeActivator;
@@ -19,19 +19,23 @@ import org.origin.common.event.PropertyChangeListener;
 import org.origin.common.jdbc.DatabaseUtil;
 import org.origin.common.rest.editpolicy.ServiceEditPolicies;
 import org.origin.common.rest.editpolicy.ServiceEditPoliciesImpl;
-import org.origin.common.rest.util.LifecycleAware;
 import org.origin.common.util.DiskSpaceUnit;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChangeListener {
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ *
+ */
+public class DfsServiceImpl implements DfsService, PropertyChangeListener {
 
 	protected Map<Object, Object> initProperties;
 	protected Properties databaseProperties;
 	protected ServiceRegistration<?> serviceRegistry;
-	protected ServiceEditPolicies wsEditPolicies;
+	protected ServiceEditPolicies editPolicies;
+	protected AccessTokenHandler accessTokenHandler;
 	protected Map<String, FileSystem> accountIdToFileSystemMap = new HashMap<String, FileSystem>();
-	protected AccessTokenProvider accessTokenSupport;
 
 	/**
 	 * 
@@ -39,14 +43,14 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 	 */
 	public DfsServiceImpl(Map<Object, Object> initProperties) {
 		this.initProperties = (initProperties != null) ? initProperties : new HashMap<Object, Object>();
-		this.wsEditPolicies = new ServiceEditPoliciesImpl(DfsService.class, this);
-		this.accessTokenSupport = new AccessTokenProvider(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_ADMIN);
+		this.editPolicies = new ServiceEditPoliciesImpl(DfsService.class, this);
+		this.accessTokenHandler = new AccessTokenHandler(SubstanceConstants.TOKEN_PROVIDER__ORBIT, OrbitRoles.DFS_ADMIN);
 	}
 
-	/** AccessTokenAware */
+	/** AccessTokenProvider */
 	@Override
 	public String getAccessToken() {
-		String tokenValue = this.accessTokenSupport.getAccessToken();
+		String tokenValue = this.accessTokenHandler.getAccessToken();
 		return tokenValue;
 	}
 
@@ -89,7 +93,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 		}
 	}
 
-	/** ConnectionAware */
+	/** ConnectionProvider */
 	@Override
 	public Connection getConnection() throws SQLException {
 		return DatabaseUtil.getConnection(this.databaseProperties);
@@ -105,7 +109,7 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 		this.databaseProperties = DatabaseUtil.getProperties(driver, url, username, password);
 	}
 
-	/** WebServiceAware */
+	/** IWebService */
 	@Override
 	public String getName() {
 		// return (String) this.properties.get(SubstanceConstants.DFS__NAME);
@@ -142,10 +146,9 @@ public class DfsServiceImpl implements LifecycleAware, DfsService, PropertyChang
 		return configPropertiesHandler.getProperty(SubstanceConstants.DFS__CONTEXT_ROOT, this.initProperties);
 	}
 
-	/** EditPoliciesAware */
 	@Override
 	public ServiceEditPolicies getEditPolicies() {
-		return this.wsEditPolicies;
+		return this.editPolicies;
 	}
 
 	/** DfsService */

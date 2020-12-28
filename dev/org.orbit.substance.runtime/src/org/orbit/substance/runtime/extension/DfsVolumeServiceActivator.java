@@ -7,13 +7,19 @@ import org.orbit.platform.sdk.ProcessContext;
 import org.orbit.platform.sdk.ServiceActivator;
 import org.orbit.substance.runtime.dfsvolume.service.DfsVolumeService;
 import org.orbit.substance.runtime.dfsvolume.service.impl.DfsVolumeServiceImpl;
-import org.origin.common.rest.util.LifecycleAware;
+import org.origin.common.service.ILifecycle;
 import org.osgi.framework.BundleContext;
 
+/**
+ * 
+ * @author <a href="mailto:yangyang4j@gmail.com">Yang Yang</a>
+ *
+ */
 public class DfsVolumeServiceActivator implements ServiceActivator {
 
 	public static final String ID = "org.orbit.substance.runtime.DfsVolumeServiceActivator";
 
+	/** ILifecycle */
 	@Override
 	public void start(ProcessContext context, IProcess process) throws Exception {
 		BundleContext bundleContext = context.getBundleContext();
@@ -32,8 +38,8 @@ public class DfsVolumeServiceActivator implements ServiceActivator {
 
 		// Stop DFS Volume service
 		DfsVolumeService service = process.getAdapter(DfsVolumeService.class);
-		if (service instanceof LifecycleAware) {
-			((LifecycleAware) service).stop(bundleContext);
+		if (service instanceof ILifecycle) {
+			((ILifecycle) service).stop(bundleContext);
 		}
 	}
 
