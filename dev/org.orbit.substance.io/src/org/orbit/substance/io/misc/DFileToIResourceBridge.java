@@ -165,6 +165,11 @@ public class DFileToIResourceBridge implements IResource, IFile {
 	}
 
 	@Override
+	public <T> Class<T>[] getAdaptedClasses() {
+		return this.file.getAdaptedClasses();
+	}
+
+	@Override
 	public void dispose() {
 	}
 

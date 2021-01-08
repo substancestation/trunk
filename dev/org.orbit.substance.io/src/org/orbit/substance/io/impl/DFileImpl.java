@@ -471,6 +471,11 @@ public class DFileImpl implements DFile {
 	}
 
 	@Override
+	public <T> Class<T>[] getAdaptedClasses() {
+		return this.adaptorSupport.getAdaptedClasses();
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
